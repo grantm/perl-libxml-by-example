@@ -12,6 +12,6 @@ my $parser = XML::LibXML->new();
 my $doc    = $parser->parse_file($filename);
 
 foreach my $title ($doc->findnodes('/playlist/movie/title')) {
-    say $title->to_literal;
+    say $title->to_literal();
 }
 

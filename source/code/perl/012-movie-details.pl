@@ -17,8 +17,8 @@ foreach my $movie ($doc->findnodes('//movie')) {
     say 'Rating:   ', $movie->findvalue('./mpaa-rating');
     say 'Duration: ', $movie->findvalue('./running-time'), " minutes";
     my $cast = join ', ', map {
-        $_->findvalue('./@name')
-    } $movie->findnodes('./cast/person');
+        $_->to_literal();
+    } $movie->findnodes('./cast/person/@name');
     say 'Starring: ', $cast;
     say "";
 }

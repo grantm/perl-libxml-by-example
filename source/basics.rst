@@ -29,8 +29,9 @@ boilerplate section, the script loads the ``XML::LibXML`` module:
 
 .. sidebar:: Is XML::LibXML installed?
 
-    If you don't have the ``XML::LibXML`` module installed on your system,
-    you'll get an error like this:
+    If you try running this example script but you don't have the
+    ``XML::LibXML`` module installed on your system, then you'll get an error
+    like this:
 
         ``Can't locate XML/LibXML.pm in @INC ... at ./source/code/perl/010-list-titles.pl line 7.``
 
@@ -72,13 +73,15 @@ to find.  XPath is a query language and the way we use it to select elements
 from the DOM is similar to the way we use SQL to select records from a
 relational database.  See :doc:`xpath` for examples of more complex queries.
 
-Each time through the loop, ``$title`` will contain an object from the DOM
-which is the next element matching the XPath expression.  This object provides
+The return value from ``findnodes()`` is a list of elements from the DOM that
+match the XPath expression. So each time through the loop, ``$title`` will
+contain an object representing the next matching element.  This object provides
 a number of properties and methods that can be used to access the element and
 its attributes, as well as the text content and 'child' elements that may be
-contained within it.  The example script simply calls the ``to_literal()``
-method on the object - which returns the text content of the element *and all
-its child elements* (but does not include any of the attributes).
+contained within it.  Inside the loop, the example simply calls the
+``to_literal()`` method on the object - which returns the text content of the
+element *and all its child elements* (but does not include any of the
+attributes).
 
 A more complex example
 ----------------------
@@ -121,13 +124,107 @@ and will produce the following output::
     Duration: 144 minutes
     Starring: Matt Damon, Jessica Chastain, Kristen Wiig
 
-Let's look more closely at the main loop:
+Let's compare the main loop of the first script:
+
+.. literalinclude:: /code/perl/010-list-titles.pl
+    :language: perl
+    :lines: 14-16
+
+with the main loop of the second script:
 
 .. literalinclude:: /code/perl/012-movie-details.pl
     :language: perl
     :lines: 14-24
 
+The structure of the main loop is very similar but the XPath expression
+passed to ``findnodes()`` is different in each case:
+
+``'/playlist/movie/title'``
+    | Will match every ``<title>`` element which is the child of ...
+    | a ``<movie>`` element which is the child of ...
+    | a ``<playlist>`` element which is ...
+    | the top-level element in the document.
+
+    Or, to phrase it a different way, the search will start at the top of the
+    document and look for a ``<playlist>`` element; if one is found, the search
+    will continue for child ``<movie>`` elements; and for each one that is
+    found the search will continue for child ``<title>`` elements.
+
+``'//movie'``
+    Will match every ``<movie>`` element at any level of nesting.
+
+In both cases, the XPath expression starts with a '/' which means the search
+will start at the the top of the document.
+
+Inside the second script's loop are a number of calls to ``findvalue()``.  This
+is a handy shortcut method that is typically used when you expect the XPath
+expression to match *exactly one node*.  It combines the functionality of
+``findnodes()`` and ``to_literal()`` into a single method.  So this code:
+
+.. code-block:: perl
+
+    $movie->findvalue('./title');
+
+is equivalent to:
+
+.. code-block:: perl
+
+    $movie->findnodes('./title')->to_literal();
+
+There are a couple of other interesting differences with the XPath searches in
+the loop compared to previous examples.  Firstly, the ``findvalue()`` method is
+being called on ``$movie`` (which represents one ``<movie>`` element) rather
+than on ``$doc`` (which represents the whole document). This means that the
+``$movie`` element is the **context element**.  Secondly, the XPath expression
+starts with a '.' which means: start the search at the context element rather
+than at the top of the document.
+
+This second script illustrates a common pattern when working with ``XML::LibXML``:
+
+#. find 'interesting' elements using an XPath query starting with '/' or '//'
+
+#. iterate through those elements in a ``foreach`` loop
+
+#. get additional data from child elements using XPath queries starting with '.'
+
+
+Accessing Attributes
+--------------------
+
+When listing cast members in the main loop of the script above, this code:
+
+.. literalinclude:: /code/perl/012-movie-details.pl
+    :language: perl
+    :lines: 19-22
+
+Is used to transform this XML:
+
+.. code-block:: xml
+    :linenos:
+
+    <cast>
+      <person name="Matt Damon" role="Mark Watney" />
+      <person name="Jessica Chastain" role="Melissa Lewis" />
+      <person name="Kristen Wiig" role="Annie Montrose" />
+    </cast>
+
+into this output::
+
+    Starring: Matt Damon, Jessica Chastain, Kristen Wiig
+
+In an XPath expression, a name that starts with ``@`` will match an attribute
+rather than an element, so ``'person/@name'`` refers to an attribute called
+``name`` on a ``<person>`` element.  The call to
+``findnodes('./cast/person/@name')`` will return three DOM nodes representing
+attribute values which are then transformed into plain strings using
+``to_literal()``, as we've seen for element nodes, inside a `map
+<http://perldoc.perl.org/functions/map.html>`_ block.
+
+getAttribute
+
+
 .. rubric:: Footnotes
 
 .. [#f1] This XML file was created specifically for this example using
-   information from `IMDb <http://imdb.com/>`_.
+   information from `IMDb <http://imdb.com/>`_.  This data format is only an
+   example and does not form part of any API.
