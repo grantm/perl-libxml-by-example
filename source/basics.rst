@@ -24,9 +24,6 @@ and will produce the following output::
     Interstellar
     The Martian
 
-If we break the example down line-by-line we see that after a standard
-boilerplate section, the script loads the ``XML::LibXML`` module:
-
 .. sidebar:: Is XML::LibXML installed?
 
     If you try running this example script but you don't have the
@@ -38,24 +35,21 @@ boilerplate section, the script loads the ``XML::LibXML`` module:
     If you do get this error, then refer to :doc:`installation` for help on
     installing ``XML::LibXML``.
 
+If we break the example down line-by-line we see that after a standard
+boilerplate section, the script loads the ``XML::LibXML`` module:
+
 .. literalinclude:: /code/perl/010-list-titles.pl
     :language: perl
     :lines: 7
 
-Next, a parser object is created:
+Next, the ``load_xml()`` class method is called to parse the XML file and
+return a document object:
 
 .. literalinclude:: /code/perl/010-list-titles.pl
     :language: perl
     :lines: 11
 
-The parser object's ``parse_file()`` method is called to parse the XML file and
-return a document object:
-
-.. literalinclude:: /code/perl/010-list-titles.pl
-    :language: perl
-    :lines: 12
-
-The ``$doc`` variable now contains an object representing all the elements of
+The ``$dom`` variable now contains an object representing all the elements of
 the XML document arranged in a tree structure known as a
 :doc:`Document Object Model <dom>` or 'DOM'.
 
@@ -65,7 +59,7 @@ loop is used to iterate through the matching elements:
 
 .. literalinclude:: /code/perl/010-list-titles.pl
     :language: perl
-    :lines: 14-16
+    :lines: 13-15
 
 The ``findnodes()`` method takes one argument - an **XPath expression**.  This
 is a string describing the location and characteristics of the elements we want
@@ -78,10 +72,57 @@ match the XPath expression. So each time through the loop, ``$title`` will
 contain an object representing the next matching element.  This object provides
 a number of properties and methods that can be used to access the element and
 its attributes, as well as the text content and 'child' elements that may be
-contained within it.  Inside the loop, the example simply calls the
+contained within it.  Inside the loop, this example simply calls the
 ``to_literal()`` method on the object - which returns the text content of the
-element *and all its child elements* (but does not include any of the
-attributes).
+element (which does not include any of the attributes but does include the text
+content of any child elements).
+
+Other XML sources
+-----------------
+
+The first example script called ``XML::LibXML->load_xml()`` with the
+``location`` argument set to the name of a file.  The ``location`` argument
+also accepts a URL:
+
+.. code-block:: perl
+
+    $dom = XML::LibXML->load_xml(location => 'http://techcrunch.com/feed/');
+
+If you have the XML in a string, instead of ``location``, use ``string``:
+
+.. code-block:: perl
+
+    $dom = XML::LibXML->load_xml(string => $xml_string);
+
+Or, you can provide a Perl file handle to parse from an  open file or socket,
+using ``IO``:
+
+.. code-block:: perl
+
+    $dom = XML::LibXML->load_xml(IO => $fh);
+
+When providing a string or a file handle, it's crucial that you **do not**
+decode the bytes of the source data (for example by using ``':utf8'`` when
+opening a file).  The underlying ``libxml2`` library is written in C to decode
+bytes and does not understand Perl's character strings.  If you have assembled
+your XML document by concatenating Perl character strings, you will need to
+encode it to a byte string (for example using ``Encode::encode_utf8()``) before
+passing to the parser.
+
+If you have enabled UTF-8 globally with something like this in your script:
+
+.. code-block:: perl
+
+    use open ':encoding(utf8)';
+
+Then you'll need to turn **off** the encoding IO layers for any file handle
+that you pass to XML::LibXML:
+
+.. code-block:: perl
+
+    open my $fh, '<', $filename;
+    binmode $fh, ':raw';
+    $dom = XML::LibXML->load_xml(IO => $fh);
 
 A more complex example
 ----------------------
@@ -128,13 +169,13 @@ Let's compare the main loop of the first script:
 
 .. literalinclude:: /code/perl/010-list-titles.pl
     :language: perl
-    :lines: 14-16
+    :lines: 13-15
 
 with the main loop of the second script:
 
 .. literalinclude:: /code/perl/012-movie-details.pl
     :language: perl
-    :lines: 14-24
+    :lines: 13-23
 
 The structure of the main loop is very similar but the XPath expression
 passed to ``findnodes()`` is different in each case:
@@ -174,7 +215,7 @@ is equivalent to:
 There are a couple of other interesting differences with the XPath searches in
 the loop compared to previous examples.  Firstly, the ``findvalue()`` method is
 being called on ``$movie`` (which represents one ``<movie>`` element) rather
-than on ``$doc`` (which represents the whole document). This means that the
+than on ``$dom`` (which represents the whole document). This means that the
 ``$movie`` element is the **context element**.  Secondly, the XPath expression
 starts with a '.' which means: start the search at the context element rather
 than at the top of the document.
@@ -188,16 +229,16 @@ This second script illustrates a common pattern when working with ``XML::LibXML`
 #. get additional data from child elements using XPath queries starting with '.'
 
 
-Accessing Attributes
+Accessing attributes
 --------------------
 
-When listing cast members in the main loop of the script above, this code:
+When listing cast members in the main loop of the script above, this code ...
 
 .. literalinclude:: /code/perl/012-movie-details.pl
     :language: perl
-    :lines: 19-22
+    :lines: 18-21
 
-Is used to transform this XML:
+is used to transform this XML ...
 
 .. code-block:: xml
     :linenos:

@@ -8,10 +8,9 @@ use XML::LibXML;
 
 my $filename = 'source/code/xml/playlist.xml';
 
-my $parser = XML::LibXML->new();
-my $doc    = $parser->parse_file($filename);
+my $dom = XML::LibXML->load_xml(location => $filename);
 
-foreach my $movie ($doc->findnodes('//movie')) {
+foreach my $movie ($dom->findnodes('//movie')) {
     say 'Title:    ', $movie->findvalue('./title');
     say 'Director: ', $movie->findvalue('./director');
     say 'Rating:   ', $movie->findvalue('./mpaa-rating');

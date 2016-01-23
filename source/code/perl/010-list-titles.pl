@@ -8,10 +8,9 @@ use XML::LibXML;
 
 my $filename = 'source/code/xml/playlist.xml';
 
-my $parser = XML::LibXML->new();
-my $doc    = $parser->parse_file($filename);
+my $dom = XML::LibXML->load_xml(location => $filename);
 
-foreach my $title ($doc->findnodes('/playlist/movie/title')) {
+foreach my $title ($dom->findnodes('/playlist/movie/title')) {
     say $title->to_literal();
 }
 

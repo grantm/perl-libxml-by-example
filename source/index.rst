@@ -8,7 +8,7 @@ The ``XML::LibXML`` Perl module is a wrapper around the ``libxml2`` parser
 library, which is written in C.  This tutorial uses sample code to introduce
 the features of ``XML::LibXML`` and the ways in which you can use the module.
 
-Get started with :doc:`basics` or jump directly to a specific topic using the
+Get started with :doc:`a basic example <basics>` or jump directly to a specific topic using the
 links below:
 
 .. toctree::

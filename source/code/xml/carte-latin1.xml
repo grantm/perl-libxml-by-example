@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso8859-1"?>
+<carte>
+  <cours nom="ENTRÉE">
+    <plat>Châtaignes de France bio en fin velouté et cuisinées au jus, poule faisane et crème-mousse truffée</plat>
+    <plat>Nos hors-d'oeuvres (3 entrées en format réduit à déguster)</plat>
+  </cours>
+  <cours nom="PLAT PRINCIPAL">
+    <plat>Ravioles snackées de topinambour et céleri, truffe noire 'Tuber Melanosporum'</plat>
+    <plat>Légumes d'hiver de T. Riant et C. Latour, cuisinés ensemble, huile d'olives mûres</plat>
+  </cours>
+  <cours nom="DESSERT">
+    <plat>Soufflé fort en goût de chocolat, noisettes caramélisées et sablé au chocolat fleur de sel</plat>
+    <plat>Sorbets aux fruits et glaces crémeuses</plat>
+  </cours>
+</carte>
