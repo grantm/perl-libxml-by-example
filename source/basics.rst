@@ -255,14 +255,47 @@ into this output::
 
 In an XPath expression, a name that starts with ``@`` will match an attribute
 rather than an element, so ``'person/@name'`` refers to an attribute called
-``name`` on a ``<person>`` element.  The call to
+``name`` on a ``<person>`` element.  In this case, the call to
 ``findnodes('./cast/person/@name')`` will return three DOM nodes representing
 attribute values which are then transformed into plain strings using
 ``to_literal()``, as we've seen for element nodes, inside a `map
 <http://perldoc.perl.org/functions/map.html>`_ block.
 
-getAttribute
+Another approach is to select the *element* with XPath and then call a DOM
+method on the element node to get the attribute value:
 
+.. literalinclude:: /code/perl/040-attributes.pl
+    :language: perl
+    :lines: 31-34
+
+There's a shortcut syntax you can use to make this even easier, simply treat
+the element node as a hashref:
+
+.. literalinclude:: /code/perl/040-attributes.pl
+    :language: perl
+    :lines: 42-45
+
+You might be a bit wary of poking around directly inside the element object
+(rather than using accessor methods) but that's **not** what this shortcut
+syntax is doing.  Instead, every `XML::LibXML::Element
+<https://metacpan.org/pod/XML::LibXML::Element>`_ object returned from the XPath
+query has been 'tied' using `XML::LibXML::AttributeHash
+<https://metacpan.org/pod/XML::LibXML::AttributeHash>`_ so that hash lookups
+'inside' the object actually get proxied to ``getAttribute()`` method calls.
+
+This method really comes into its own when you want to access more than one
+attribute of an element:
+
+.. literalinclude:: /code/perl/040-attributes.pl
+    :language: perl
+    :lines: 53-56
+
+Which will produce this output::
+
+    Starring:
+     * Matt Damon (as Mark Watney)
+     * Jessica Chastain (as Melissa Lewis)
+     * Kristen Wiig (as Annie Montrose)
 
 .. rubric:: Footnotes
 
