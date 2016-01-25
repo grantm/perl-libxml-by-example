@@ -49,9 +49,14 @@
             return el;
         },
 
-        set_message: function (msg) {
+        set_message: function (msg, class_name) {
             var text = this.text_node(msg);
-            this.empty(this.message_box).appendChild(text);
+            var el = this.empty(this.message_box)
+            el.className = '';
+            if(class_name) {
+                el.className = class_name;
+            }
+            el.appendChild(text);
         },
 
         empty: function (el) {
@@ -70,40 +75,48 @@
             this.render_children(this.empty(this.doc_tree), xml_dom.childNodes)
         },
 
-        render_children: function (out, elems) {
-            for(var i = 0; i < elems.length; i++) {
-                var el = elems[i];
-                if(el.nodeType === el.ELEMENT_NODE) {
-                    var el_out = this.element_node('span', 'element');
-                    if(el._xpsb_match_) {
-                        el_out.classList.add("xp-match");
-                    }
-                    el_out.appendChild(this.text_node('<'));
+        render_children: function (out, nodes) {
+            for(var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                var node_out = this.element_node('span');
+                if(node.nodeType === node.ELEMENT_NODE) {
+                    node_out.classList.add('element');
+                    node_out.appendChild(this.text_node('<'));
                     var ts_out = this.element_node('span', 'tag-name');
-                    ts_out.appendChild(this.text_node(el.nodeName));
-                    el_out.appendChild(ts_out);
-                    this.render_attributes(el_out, el);
-                    el_out.appendChild(this.text_node('>'));
+                    ts_out.appendChild(this.text_node(node.nodeName));
+                    node_out.appendChild(ts_out);
+                    this.render_attributes(node_out, node);
+                    node_out.appendChild(this.text_node('>'));
                     var ch_out = this.element_node('span', 'children');
-                    this.render_children(ch_out, el.childNodes)
-                    el_out.appendChild(ch_out);
-                    el_out.appendChild(this.text_node('</'));
+                    this.render_children(ch_out, node.childNodes)
+                    node_out.appendChild(ch_out);
+                    node_out.appendChild(this.text_node('</'));
                     var te_out = this.element_node('span', 'tag-name');
-                    te_out.appendChild(this.text_node(el.nodeName));
-                    el_out.appendChild(te_out);
-                    el_out.appendChild(this.text_node('>'));
-                    out.appendChild(el_out);
+                    te_out.appendChild(this.text_node(node.nodeName));
+                    node_out.appendChild(te_out);
+                    node_out.appendChild(this.text_node('>'));
                 }
-                else if(el.nodeType === el.TEXT_NODE) {
-                    var text_out = this.element_node('span', 'text');
-                    if(el._xpsb_match_) {
-                        text_out.classList.add("xp-match");
-                    }
-                    text_out.appendChild(this.text_node(el.textContent));
-                    out.appendChild(text_out);
+                else if(node.nodeType === node.TEXT_NODE || node.nodeType === node.CDATA_SECTION_NODE) {
+                    node_out.classList.add('text');
+                    node_out.appendChild(this.text_node(node.textContent));
+                }
+                else if(node.nodeType === node.COMMENT_NODE) {
+                    node_out.classList.add('comment');
+                    node_out.appendChild(this.text_node('<!-- '));
+                    node_out.appendChild(this.text_node(node.textContent));
+                    node_out.appendChild(this.text_node(' -->'));
                 }
                 else {
-                    out.appendChild(this.text_node("[Unimplemented nodeType:" + el.nodeType + "]\n"));
+                    node_out.classList.add('not-implemented');
+                    node_out.appendChild(this.text_node("[Unimplemented nodeType:" + node.nodeType + "]\n"));
+                }
+                if(node._xpsb_match_) {
+                    var el_wrap = this.element_node('span', 'xp-match');
+                    el_wrap.appendChild(node_out);
+                    out.appendChild(el_wrap);
+                }
+                else {
+                    out.appendChild(node_out);
                 }
             }
         },
@@ -114,9 +127,6 @@
             for(var i = 0; i < attr.length; i++) {
                 out.appendChild(this.text_node(' '));
                 var a_out = this.element_node('span', 'attr');
-                if(attr[i]._xpsb_match_) {
-                    a_out.classList.add("xp-match");
-                }
                 var an_out = this.element_node('span', 'attr-name');
                 an_out.appendChild(this.text_node(attr[i].name));
                 a_out.appendChild(an_out);
@@ -125,26 +135,41 @@
                 av_out.appendChild(this.text_node(attr[i].value));
                 a_out.appendChild(av_out);
                 a_out.appendChild(this.text_node('"'));
-                out.appendChild(a_out);
+                if(attr[i]._xpsb_match_) {
+                    var a_wrap = this.element_node('span', 'xp-match');
+                    a_wrap.appendChild(a_out);
+                    out.appendChild(a_wrap);
+                }
+                else {
+                    out.appendChild(a_out);
+                }
             }
         },
 
         show_matches: function (xp) {
             var count = 0;
-            this.empty(this.message_box);
+            this.set_message('');
             var xml_dom = this.parse_xml();
             if(xp && xp.match(/\S/)) {
                 var ns_resolver = null;
-                var result = xml_dom.evaluate(xp, xml_dom.documentElement, ns_resolver, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
-                var match = result.iterateNext();
-                while(match) {
-                    count++;
-                    match._xpsb_match_ = true;
-                    match = result.iterateNext();
+                try {
+                    var result = xml_dom.evaluate(
+                        xp, xml_dom.documentElement, ns_resolver,
+                        XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null
+                    );
+                    var match = result.iterateNext();
+                    while(match) {
+                        count++;
+                        match._xpsb_match_ = true;
+                        match = result.iterateNext();
+                    }
+                    var s = count === 1 ? '' : 'es';
+                    count = count === 0 ? 'No' : count;
+                    this.set_message('Query returned ' + count + ' match' + s, 'success');
                 }
-                var s = count === 1 ? '' : 'es';
-                count = count === 0 ? 'No' : count;
-                this.set_message('Query returned ' + count + ' match' + s);
+                catch (e) {
+                    this.set_message(e, 'error');
+                }
             }
             this.render_xml(xml_dom);
         },

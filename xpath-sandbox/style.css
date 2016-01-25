@@ -53,6 +53,21 @@ body {
 
 #message-box {
   margin: 2.4em 0;
+  border-radius: 0.2em;
+}
+
+#message-box.error {
+  padding: 0.5em 1em;
+  border: 1px solid #ddaaaa;
+  background-color: #ffcccc;
+  color: #aa3333;
+}
+
+#message-box.success {
+  padding: 0.5em 1em;
+  border: 1px solid #aaddaa;
+  background-color: #ccffcc;
+  color: #229922;
 }
 
 #doc-tree {
@@ -61,6 +76,11 @@ body {
   background-color: #f4f4f4;
   margin: 2.4em 0;
   padding: 1.1em;
+}
+
+span.element, span.text, span.comment {
+  padding: 2px;
+  line-height: 1.4;
 }
 
 .tag-name {
@@ -77,21 +97,34 @@ body {
   color: #4070A0;
 }
 
-.xp-match {
-  display: inline-block;
-  padding: 1px 3px;
-  background-color: #ffffcc;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
-  border-radius: 2px;
-  margin-top: 2px;
+.comment {
+  color: #7f7f7f;
+  font-style: italic;
 }
 
-.xp-match:hover {
+.xp-match {
+  background-color: #ffffcc;
+  outline: 1px solid #ddddaa;
+  margin-top: 2px;
+  z-index: -1;
+}
+
+.xp-match > span {
+  background-color: #ffffcc;
+  position: relative;
+}
+
+.xp-match > span:hover {
   background-color: #fff5c5;
 }
 
-.xp-match:hover > .tag-name {
+.xp-match:hover > .element > .tag-name {
   color: #880000;
+}
+
+.not-implemented {
+  color: #ff0000;
+  background-color: #ffcccc;
 }
 
 @media only screen and (max-width: 800px) {
