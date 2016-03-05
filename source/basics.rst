@@ -115,8 +115,8 @@ decode the bytes of the source data (for example by using ``':utf8'`` when
 opening a file).  The underlying ``libxml2`` library is written in C to decode
 bytes and does not understand Perl's character strings.  If you have assembled
 your XML document by concatenating Perl character strings, you will need to
-encode it to a byte string (for example using ``Encode::encode_utf8()``) before
-passing to the parser.
+encode it to a byte string (for example using ``Encode::encode_utf8()``) and
+then pass the byte string to the parser.
 
 If you have enabled UTF-8 globally with something like this in your script:
 
@@ -137,15 +137,15 @@ A more complex example
 ----------------------
 
 Now let's look at a slightly more complex example.  :download:`This script
-</code/012-movie-details.pl>` takes the same XML input and extracts more
+</code/040-movie-details.pl>` takes the same XML input and extracts more
 details from each ``<movie>`` element:
 
-.. literalinclude:: /code/012-movie-details.pl
+.. literalinclude:: /code/040-movie-details.pl
     :language: perl
 
 and will produce the following output:
 
-.. literalinclude:: /_output/012-movie-details.pl-out
+.. literalinclude:: /_output/040-movie-details.pl-out
     :language: none
 
 Let's compare the main loop of the first script:
@@ -156,7 +156,7 @@ Let's compare the main loop of the first script:
 
 with the main loop of the second script:
 
-.. literalinclude:: /code/012-movie-details.pl
+.. literalinclude:: /code/040-movie-details.pl
     :language: perl
     :lines: 13-23
 
@@ -217,7 +217,7 @@ Accessing attributes
 
 When listing cast members in the main loop of the script above, this code ...
 
-.. literalinclude:: /code/012-movie-details.pl
+.. literalinclude:: /code/040-movie-details.pl
     :language: perl
     :lines: 18-21
 
@@ -234,7 +234,7 @@ is used to transform this XML ...
 
 into this output:
 
-.. literalinclude:: /_output/012-movie-details.pl-out
+.. literalinclude:: /_output/040-movie-details.pl-out
     :language: none
     :lines: 29
 
@@ -249,35 +249,38 @@ attribute values which are then transformed into plain strings using
 Another approach is to select the *element* with XPath and then call a DOM
 method on the element node to get the attribute value:
 
-.. literalinclude:: /code/040-attributes.pl
+.. literalinclude:: /code/050-attributes.pl
     :language: perl
     :lines: 31-34
 
 There's a shortcut syntax you can use to make this even easier, simply treat
 the element node as a hashref:
 
-.. literalinclude:: /code/040-attributes.pl
+.. literalinclude:: /code/050-attributes.pl
     :language: perl
     :lines: 42-45
 
-You might be a bit wary of poking around directly inside the element object
-(rather than using accessor methods) but that's **not** what this shortcut
-syntax is doing.  Instead, every `XML::LibXML::Element
-<https://metacpan.org/pod/XML::LibXML::Element>`_ object returned from the XPath
-query has been 'tied' using `XML::LibXML::AttributeHash
+You might be a bit wary of poking around directly inside the element object,
+rather than using accessor methods. But don't worry, that's **not** what this
+shortcut syntax is doing.  Instead, every `XML::LibXML::Element
+<https://metacpan.org/pod/XML::LibXML::Element>`_ object returned from the
+XPath query has been `'tied'
+<https://metacpan.org/pod/distribution/perl/pod/perltie.pod>`_ using
+`XML::LibXML::AttributeHash
 <https://metacpan.org/pod/XML::LibXML::AttributeHash>`_ so that hash lookups
 'inside' the object actually get proxied to ``getAttribute()`` method calls.
 
 This method really comes into its own when you want to access more than one
-attribute of an element:
+attribute of an element and when you want to interpolate an attribute value
+into a string:
 
-.. literalinclude:: /code/040-attributes.pl
+.. literalinclude:: /code/050-attributes.pl
     :language: perl
     :lines: 53-56
 
 Which will produce this output:
 
-.. literalinclude:: /_output/040-attributes.pl-out
+.. literalinclude:: /_output/050-attributes.pl-out
     :language: none
     :lines: 5-8
 
