@@ -8,7 +8,7 @@ As you saw in the :doc:`basic examples <basics>`, the ``findnodes()`` method
 takes an XPath expression and finds nodes in the :doc:`DOM <xpath>` that match
 the expression.  For example this expression:
 
-.. code-block:: xpath
+.. code-block:: none
 
     //title
 

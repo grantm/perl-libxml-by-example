@@ -5,10 +5,10 @@ A Basic Example
 ===============
 
 The first thing you'll need is an XML document.  The example programs in this
-section will use the :download:`playlist.xml </code/xml/playlist.xml>`
+section will use the :download:`playlist.xml </code/playlist.xml>`
 file shown below. This file contains details of five different movies:
 
-.. literalinclude:: /code/xml/playlist.xml
+.. literalinclude:: /code/playlist.xml
     :language: xml
     :linenos:
 
@@ -20,10 +20,10 @@ file shown below. This file contains details of five different movies:
     querying movie details.
 
 Once you have the sample XML document, you can use :download:`this script
-</code/perl/010-list-titles.pl>` to extract and print the title of each movie,
+</code/010-list-titles.pl>` to extract and print the title of each movie,
 in the order they appear in the XML:
 
-.. literalinclude:: /code/perl/010-list-titles.pl
+.. literalinclude:: /code/010-list-titles.pl
     :language: perl
 
 and will produce the following output::
@@ -48,14 +48,14 @@ and will produce the following output::
 If we break the example down line-by-line we see that after a standard
 boilerplate section, the script loads the ``XML::LibXML`` module:
 
-.. literalinclude:: /code/perl/010-list-titles.pl
+.. literalinclude:: /code/010-list-titles.pl
     :language: perl
     :lines: 7
 
 Next, the ``load_xml()`` class method is called to parse the XML file and
 return a document object:
 
-.. literalinclude:: /code/perl/010-list-titles.pl
+.. literalinclude:: /code/010-list-titles.pl
     :language: perl
     :lines: 11
 
@@ -67,7 +67,7 @@ Finally we get to the guts of the script where the ``findnodes()`` method is
 called to search the DOM for the elements we're interested in and a ``foreach``
 loop is used to iterate through the matching elements:
 
-.. literalinclude:: /code/perl/010-list-titles.pl
+.. literalinclude:: /code/010-list-titles.pl
     :language: perl
     :lines: 13-15
 
@@ -140,10 +140,10 @@ A more complex example
 ----------------------
 
 Now let's look at a slightly more complex example.  :download:`This script
-</code/perl/012-movie-details.pl>` takes the same XML input and extracts more
+</code/012-movie-details.pl>` takes the same XML input and extracts more
 details from each ``<movie>`` element:
 
-.. literalinclude:: /code/perl/012-movie-details.pl
+.. literalinclude:: /code/012-movie-details.pl
     :language: perl
 
 and will produce the following output::
@@ -180,13 +180,13 @@ and will produce the following output::
 
 Let's compare the main loop of the first script:
 
-.. literalinclude:: /code/perl/010-list-titles.pl
+.. literalinclude:: /code/010-list-titles.pl
     :language: perl
     :lines: 13-15
 
 with the main loop of the second script:
 
-.. literalinclude:: /code/perl/012-movie-details.pl
+.. literalinclude:: /code/012-movie-details.pl
     :language: perl
     :lines: 13-23
 
@@ -247,7 +247,7 @@ Accessing attributes
 
 When listing cast members in the main loop of the script above, this code ...
 
-.. literalinclude:: /code/perl/012-movie-details.pl
+.. literalinclude:: /code/012-movie-details.pl
     :language: perl
     :lines: 18-21
 
@@ -277,14 +277,14 @@ attribute values which are then transformed into plain strings using
 Another approach is to select the *element* with XPath and then call a DOM
 method on the element node to get the attribute value:
 
-.. literalinclude:: /code/perl/040-attributes.pl
+.. literalinclude:: /code/040-attributes.pl
     :language: perl
     :lines: 31-34
 
 There's a shortcut syntax you can use to make this even easier, simply treat
 the element node as a hashref:
 
-.. literalinclude:: /code/perl/040-attributes.pl
+.. literalinclude:: /code/040-attributes.pl
     :language: perl
     :lines: 42-45
 
@@ -299,7 +299,7 @@ query has been 'tied' using `XML::LibXML::AttributeHash
 This method really comes into its own when you want to access more than one
 attribute of an element:
 
-.. literalinclude:: /code/perl/040-attributes.pl
+.. literalinclude:: /code/040-attributes.pl
     :language: perl
     :lines: 53-56
 
