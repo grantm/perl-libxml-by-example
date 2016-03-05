@@ -6,7 +6,7 @@ use warnings;
 
 use XML::LibXML;
 
-my $filename = 'source/code/xml/playlist.xml';
+my $filename = 'playlist.xml';
 
 my $dom = XML::LibXML->load_xml(location => $filename);
 

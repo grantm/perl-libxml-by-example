@@ -15,8 +15,8 @@ links below:
    :maxdepth: 2
 
    basics
-   dom
    xpath
+   dom
    installation
 
 

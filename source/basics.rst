@@ -4,14 +4,24 @@
 A Basic Example
 ===============
 
-Let's start with an XML file [#f1]_ containing details of five different movies:
+The first thing you'll need is an XML document.  The example programs in this
+section will use the :download:`playlist.xml </code/xml/playlist.xml>`
+file shown below. This file contains details of five different movies:
 
 .. literalinclude:: /code/xml/playlist.xml
     :language: xml
     :linenos:
 
-The following script will extract and print each movie title, in the order they
-appear in the XML:
+.. note::
+
+    Although this XML document contains details which came from the fabulous
+    `IMDb.com <http://www.imdb.com/>`_ web site, the file structure was created
+    specifically for this example and does not represent an actual API for
+    querying movie details.
+
+Once you have the sample XML document, you can use :download:`this script
+</code/perl/010-list-titles.pl>` to extract and print the title of each movie,
+in the order they appear in the XML:
 
 .. literalinclude:: /code/perl/010-list-titles.pl
     :language: perl
@@ -30,7 +40,7 @@ and will produce the following output::
     ``XML::LibXML`` module installed on your system, then you'll get an error
     like this:
 
-        ``Can't locate XML/LibXML.pm in @INC ... at ./source/code/perl/010-list-titles.pl line 7.``
+        ``Can't locate XML/LibXML.pm in @INC ... at ./010-list-titles.pl line 7.``
 
     If you do get this error, then refer to :doc:`installation` for help on
     installing ``XML::LibXML``.
@@ -65,17 +75,19 @@ The ``findnodes()`` method takes one argument - an **XPath expression**.  This
 is a string describing the location and characteristics of the elements we want
 to find.  XPath is a query language and the way we use it to select elements
 from the DOM is similar to the way we use SQL to select records from a
-relational database.  See :doc:`xpath` for examples of more complex queries.
+relational database.  The next section (:doc:`xpath`) will include examples of
+more complex queries.
 
-The return value from ``findnodes()`` is a list of elements from the DOM that
-match the XPath expression. So each time through the loop, ``$title`` will
-contain an object representing the next matching element.  This object provides
-a number of properties and methods that can be used to access the element and
-its attributes, as well as the text content and 'child' elements that may be
-contained within it.  Inside the loop, this example simply calls the
-``to_literal()`` method on the object - which returns the text content of the
-element (which does not include any of the attributes but does include the text
-content of any child elements).
+The ``findnodes()`` method returns a list of objects from the DOM that match
+the XPath expression. Each time through the loop, ``$title`` will contain an
+object representing the next matching element.  This object provides a number
+of properties and methods that you can use to access the element and its
+attributes, as well as any text content and 'child' elements.
+
+Inside the loop, this example simply calls the ``to_literal()`` method to get
+the text content of the element.  The string returned by ``to_literal()`` will
+not include any of the attributes but will include the text content of any
+child elements.
 
 Other XML sources
 -----------------
@@ -127,8 +139,9 @@ that you pass to XML::LibXML:
 A more complex example
 ----------------------
 
-Now let's look at a slightly more complex example.  This script takes the same
-XML input and extracts more details from each ``<movie>`` element:
+Now let's look at a slightly more complex example.  :download:`This script
+</code/perl/012-movie-details.pl>` takes the same XML input and extracts more
+details from each ``<movie>`` element:
 
 .. literalinclude:: /code/perl/012-movie-details.pl
     :language: perl
@@ -297,8 +310,5 @@ Which will produce this output::
      * Jessica Chastain (as Melissa Lewis)
      * Kristen Wiig (as Annie Montrose)
 
-.. rubric:: Footnotes
-
-.. [#f1] This XML file was created specifically for this example using
-   information from `IMDb <http://imdb.com/>`_.  This data format is only an
-   example and does not form part of any API.
+That's it for the basic examples.  The next topic will look more closely at
+:doc:`XPath expressions <xpath>`.

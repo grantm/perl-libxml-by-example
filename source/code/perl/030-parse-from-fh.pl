@@ -8,7 +8,7 @@ binmode(STDOUT, ':utf8');
 
 use XML::LibXML;
 
-my $filename = 'source/code/xml/carte-latin1.xml';
+my $filename = 'carte-latin1.xml';
 open my $fh, '<', $filename;  # affected by 'use open' above
 binmode $fh, ':raw';          # turn off effects of 'use open'
 
