@@ -12,10 +12,14 @@ use strict;
 use warnings;
 use autodie;
 
+
 chdir('source/code');
 
 my $out_dir = '../_output';
 mkdir($out_dir) unless -d $out_dir;
+
+my $zip_file = "$out_dir/perl-libxml-examples.zip";
+my $rezip = ! -e $zip_file;
 
 say "Running example scripts";
 
@@ -31,3 +35,19 @@ foreach my $script (sort glob '*.pl') {
         or exit $? >> 8;
 }
 
+$rezip ||= check_zip_age();
+if($rezip) {
+    say "Creating perl-libxml-examples.zip";
+    system("zip $zip_file *") == 0
+        or exit $? >> 8;
+}
+
+exit;
+
+sub check_zip_age {
+    my $zip_age = -M $zip_file;
+    foreach my $file (glob '*') {
+        return 1 if $zip_age > -M $file;
+    }
+    return 0;
+}

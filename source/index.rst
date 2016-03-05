@@ -5,8 +5,10 @@ Perl XML::LibXML by Example
 ===========================
 
 The ``XML::LibXML`` Perl module is a wrapper around the ``libxml2`` parser
-library, which is written in C.  This tutorial uses sample code to introduce
+library, which is written in C.  This tutorial uses example code to introduce
 the features of ``XML::LibXML`` and the ways in which you can use the module.
+The example scripts and XML documents are available as a :download:`ZIP file
+download </_output/perl-libxml-examples.zip>`.
 
 Get started with :doc:`a basic example <basics>` or jump directly to a specific topic using the
 links below:
