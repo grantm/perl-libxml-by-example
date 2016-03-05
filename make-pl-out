@@ -35,7 +35,7 @@ foreach my $script (sort glob '*.pl') {
         or exit $? >> 8;
 }
 
-$rezip ||= check_zip_age();
+$rezip ||= zip_is_stale();
 if($rezip) {
     say "Creating perl-libxml-examples.zip";
     system("zip $zip_file *") == 0
@@ -44,7 +44,7 @@ if($rezip) {
 
 exit;
 
-sub check_zip_age {
+sub zip_is_stale {
     my $zip_age = -M $zip_file;
     foreach my $file (glob '*') {
         return 1 if $zip_age > -M $file;
