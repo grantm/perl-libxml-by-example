@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+#
+# Runs each of the .pl scripts in source/code and captures the output into a
+# .pl-out file.
+#
+# The script first chdir's into the source/code directory so that the scripts
+# can simply assume any .xml file is in the current directory.
+#
+
+use 5.010;
+use strict;
+use warnings;
+use autodie;
+
+chdir('source/code');
+
+my $out_dir = '../_output';
+mkdir($out_dir) unless -d $out_dir;
+
+say "Running example scripts";
+
+foreach my $script (sort glob '*.pl') {
+    my $out_file = "$out_dir/$script-out";
+    if(-e $out_file) {
+        my $script_age = -M $script;
+        my $output_age = -M $out_file;
+        next if $script_age > $output_age;
+    }
+    say "  $script > $out_dir/$script-out";
+    system("./$script > $out_dir/$script-out") == 0
+        or exit $? >> 8;
+}
+

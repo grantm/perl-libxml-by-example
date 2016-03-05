@@ -48,8 +48,9 @@ help:
 
 clean:
 	rm -rf $(BUILDDIR)/*
+	rm -rf source/_output
 
-html:
+html: pl-out
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -175,3 +176,6 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+pl-out:
+	./make-pl-out

@@ -26,13 +26,10 @@ in the order they appear in the XML:
 .. literalinclude:: /code/010-list-titles.pl
     :language: perl
 
-and will produce the following output::
+and will produce the following output:
 
-    Apollo 13
-    Solaris
-    Ender's Game
-    Interstellar
-    The Martian
+.. literalinclude:: /_output/010-list-titles.pl-out
+    :language: none
 
 .. sidebar:: Is XML::LibXML installed?
 
@@ -146,37 +143,10 @@ details from each ``<movie>`` element:
 .. literalinclude:: /code/012-movie-details.pl
     :language: perl
 
-and will produce the following output::
+and will produce the following output:
 
-    Title:    Apollo 13
-    Director: Ron Howard
-    Rating:   PG
-    Duration: 140 minutes
-    Starring: Tom Hanks, Bill Paxton, Kevin Bacon, Gary Sinise, Ed Harris
-
-    Title:    Solaris
-    Director: Steven Soderbergh
-    Rating:   PG-13
-    Duration: 99 minutes
-    Starring: George Clooney, Natascha McElhone, Ulrich Tukur
-
-    Title:    Ender's Game
-    Director: Gavin Hood
-    Rating:   PG-13
-    Duration: 114 minutes
-    Starring: Asa Butterfield, Harrison Ford, Hailee Steinfeld
-
-    Title:    Interstellar
-    Director: Christopher Nolan
-    Rating:   PG-13
-    Duration: 169 minutes
-    Starring: Matthew McConaughey, Anne Hathaway, Jessica Chastain, Michael Caine
-
-    Title:    The Martian
-    Director: Ridley Scott
-    Rating:   PG-13
-    Duration: 144 minutes
-    Starring: Matt Damon, Jessica Chastain, Kristen Wiig
+.. literalinclude:: /_output/012-movie-details.pl-out
+    :language: none
 
 Let's compare the main loop of the first script:
 
@@ -262,9 +232,11 @@ is used to transform this XML ...
       <person name="Kristen Wiig" role="Annie Montrose" />
     </cast>
 
-into this output::
+into this output:
 
-    Starring: Matt Damon, Jessica Chastain, Kristen Wiig
+.. literalinclude:: /_output/012-movie-details.pl-out
+    :language: none
+    :lines: 29
 
 In an XPath expression, a name that starts with ``@`` will match an attribute
 rather than an element, so ``'person/@name'`` refers to an attribute called
@@ -303,12 +275,11 @@ attribute of an element:
     :language: perl
     :lines: 53-56
 
-Which will produce this output::
+Which will produce this output:
 
-    Starring:
-     * Matt Damon (as Mark Watney)
-     * Jessica Chastain (as Melissa Lewis)
-     * Kristen Wiig (as Annie Montrose)
+.. literalinclude:: /_output/040-attributes.pl-out
+    :language: none
+    :lines: 5-8
 
 That's it for the basic examples.  The next topic will look more closely at
 :doc:`XPath expressions <xpath>`.
