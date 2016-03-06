@@ -1,0 +1,15 @@
+{#
+    basic/page.html
+    ~~~~~~~~~~~~~~~
+
+    Master template for simple pages.
+
+    :copyright: Copyright 2007-2014 by the Sphinx team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
+#}
+{%- extends "layout.html" %}
+{%- set script_files = script_files + ["_static/plxbe.js"] %}
+{%- set css_files = css_files + ["_static/plxbe.css"] %}
+{% block body %}
+  {{ body }}
+{% endblock %}
