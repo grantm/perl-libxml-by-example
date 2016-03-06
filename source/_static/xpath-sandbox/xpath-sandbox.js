@@ -174,7 +174,7 @@
                         match = result.iterateNext();
                     }
                     var s = count === 1 ? '' : 'es';
-                    count = count === 0 ? 'No' : count;
+                    count = count === 0 ? 'no' : count;
                     this.set_message('Query returned ' + count + ' match' + s, 'success');
                 }
                 catch (e) {
