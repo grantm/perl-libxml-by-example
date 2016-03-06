@@ -37,6 +37,16 @@
             }.bind(this));
         },
 
+        process_query_string: function () {
+            this.url_param = {};
+            var qs = window.location.search.substring(1);
+            var parse = /([^;=]+)=([^;]*)/g;
+            var match;
+            while (match = parse.exec(qs)) {
+                this.url_param[match[1]] = decodeURIComponent(match[2]);
+            }
+        },
+
         text_node: function (content) {
             return hdoc.createTextNode(content);
         },
@@ -196,9 +206,11 @@
 
         init: function () {
             this.get_ui_elements();
+            this.process_query_string();
+            this.query_xpath.value = this.url_param.q || '';
             this.init_event_handlers();
             this.set_default_xml_source();
-            this.show_matches('');
+            this.show_matches(this.query_xpath.value);
             this.query_xpath.focus();
         }
 
