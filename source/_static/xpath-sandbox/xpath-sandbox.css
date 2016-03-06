@@ -67,7 +67,7 @@ body {
   padding: 0.5em 1em;
   border: 1px solid #aaddaa;
   background-color: #ccffcc;
-  color: #229922;
+  color: #227722;
 }
 
 #doc-tree {
@@ -115,7 +115,7 @@ span.element, span.text, span.comment {
 }
 
 .xp-match > span:hover {
-  background-color: #fff5c5;
+  background-color: #e0ffc5;
 }
 
 .xp-match:hover > .element > .tag-name {
