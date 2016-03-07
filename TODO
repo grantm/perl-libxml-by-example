@@ -1,0 +1,25 @@
+* XPath in more detail
+* DOM methods and documentation
+  - walking the DOM tree?
+* working with namespaces
+* working with HTML
+* generating XML ?
+* validating XML ?
+* installing XML::LibXML
+* working with huge XML files
+
+* customise the sphinx theme
+
+* XPath sandbox
+  - update the URL on submit
+  - allow selecting between different canned XML documents
+  - add support for namespaces
+  - allow user to upload their own XML::Document
+
+Glossary Terms
+
+* DOM
+* element
+* node
+* Clarkian notation
+* document fragment
