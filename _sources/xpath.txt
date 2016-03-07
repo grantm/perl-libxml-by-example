@@ -1,0 +1,85 @@
+.. highlight:: none
+    :linenothreshold: 1
+
+XPath Expressions
+=================
+
+As you saw in the :doc:`basic examples <basics>` section, the ``findnodes()``
+method takes an XPath expression and finds nodes in the :doc:`DOM <xpath>` that
+match the expression.  There are two ways to call calling the ``findnodes()``
+method:
+
+* on the object representing the whole document, or
+
+* on an element from the DOM - the element on which you call the method is
+  called the context element
+
+If your XPath expression starts with a '/' then the search will start at
+top-most element in the document - even if you call ``findnodes()`` on a
+different context element.
+
+Start your XPath expression with '.' to search down through the children of the
+context element.
+
+The remainder of this section simply includes examples of XPath expressions and
+descriptions of what they match.
+
+.. note::
+
+    You can try out different XPath expressions in the `XPath sandbox
+    <_static/xpath-sandbox/xpath-sandbox.html>`_.  The sandbox doesn't actually
+    use Perl or libxml, it simply uses Javascript to access the XPath engine
+    built into your browser.  However, the expression matching should work just
+    as it would in your Perl scripts.
+
+.. role:: xpath(code)
+
+.. role:: xpath_tm(code)
+
+:xpath_tm:`/playlist`
+
+    Match the top-most element of the document if (and *only if*) it is a
+    ``<playlist>`` element.
+
+:xpath_tm:`//title`
+
+    Match every ``<title>`` element in the document.
+
+:xpath_tm:`//movie/title`
+
+    Match every ``<title>`` element that is the direct child of a ``<movie>``
+    element.
+
+:xpath:`./title`
+
+    Match every ``<title>`` element that is the direct child of the context
+    element, e.g.:
+
+    .. literalinclude:: /code/100-xpath-examples
+        :language: perl
+        :lines: 13-15
+
+:xpath_tm:`//title/..`
+
+    Match any element which is the parent of a ``<title>`` element.
+
+:xpath_tm:`/*`
+
+    Match the top-most element of the document regardless of the element name.
+
+:xpath_tm:`//person[position()=2]`
+
+    Match the second ``<person>`` element in each sequence of adjacent
+    ``<person>`` elements.  Note that the first element in a sequence is at
+    potiion 1 not 0.
+
+:xpath_tm:`//person[2]`
+
+    This is simply a shorthand form of the ``position()=2`` expression above.
+
+:xpath_tm:`//person[position()<3]`
+
+    Match the first two ``<person>`` elements in each sequence of adjacent
+    ``<person>`` elements.
+
+*<to be continued>*

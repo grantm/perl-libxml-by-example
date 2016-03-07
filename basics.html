@@ -1,0 +1,775 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>A Basic Example &mdash; Perl XML::LibXML by Example 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/plxbe.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/plxbe.js"></script>
+    <link rel="top" title="Perl XML::LibXML by Example 1.0 documentation" href="index.html" />
+    <link rel="next" title="XPath Expressions" href="xpath.html" />
+    <link rel="prev" title="Perl XML::LibXML by Example" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="xpath.html" title="XPath Expressions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Perl XML::LibXML by Example"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Perl XML::LibXML by Example 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="a-basic-example">
+<h1>A Basic Example<a class="headerlink" href="#a-basic-example" title="Permalink to this headline">¶</a></h1>
+<p>The first thing you&#8217;ll need is an XML document.  The example programs in this
+section will use the <a class="reference download internal" href="_downloads/playlist.xml"><tt class="xref download docutils literal"><span class="pre">playlist.xml</span></tt></a>
+file shown below. This file contains details of five different movies:</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;playlist&gt;</span>
+  <span class="nt">&lt;movie</span> <span class="na">id=</span><span class="s">&quot;tt0112384&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Apollo 13<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;director&gt;</span>Ron Howard<span class="nt">&lt;/director&gt;</span>
+    <span class="nt">&lt;release-date&gt;</span>1995-06-30<span class="nt">&lt;/release-date&gt;</span>
+    <span class="nt">&lt;mpaa-rating&gt;</span>PG<span class="nt">&lt;/mpaa-rating&gt;</span>
+    <span class="nt">&lt;running-time&gt;</span>140<span class="nt">&lt;/running-time&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>adventure<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>drama<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;cast&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Tom Hanks&quot;</span> <span class="na">role=</span><span class="s">&quot;Jim Lovell&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Bill Paxton&quot;</span> <span class="na">role=</span><span class="s">&quot;Fred Haise&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Kevin Bacon&quot;</span> <span class="na">role=</span><span class="s">&quot;Jack Swigert&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Gary Sinise&quot;</span> <span class="na">role=</span><span class="s">&quot;Ken Mattingly&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Ed Harris&quot;</span> <span class="na">role=</span><span class="s">&quot;Gene Kranz&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/cast&gt;</span>
+    <span class="nt">&lt;imdb-info</span> <span class="na">url=</span><span class="s">&quot;http://www.imdb.com/title/tt0112384/&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;synopsis&gt;</span>
+        NASA must devise a strategy to return Apollo 13 to Earth safely
+        after the spacecraft undergoes massive internal damage putting
+        the lives of the three astronauts on board in jeopardy.
+      <span class="nt">&lt;/synopsis&gt;</span>
+      <span class="nt">&lt;score&gt;</span>7.6<span class="nt">&lt;/score&gt;</span>
+    <span class="nt">&lt;/imdb-info&gt;</span>
+  <span class="nt">&lt;/movie&gt;</span>
+  <span class="nt">&lt;movie</span> <span class="na">id=</span><span class="s">&quot;tt0307479&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Solaris<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;director&gt;</span>Steven Soderbergh<span class="nt">&lt;/director&gt;</span>
+    <span class="nt">&lt;release-date&gt;</span>2002-11-27<span class="nt">&lt;/release-date&gt;</span>
+    <span class="nt">&lt;mpaa-rating&gt;</span>PG-13<span class="nt">&lt;/mpaa-rating&gt;</span>
+    <span class="nt">&lt;running-time&gt;</span>99<span class="nt">&lt;/running-time&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>drama<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>mystery<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>romance<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;cast&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;George Clooney&quot;</span> <span class="na">role=</span><span class="s">&quot;Chris Kelvin&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Natascha McElhone&quot;</span> <span class="na">role=</span><span class="s">&quot;Rheya&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Ulrich Tukur&quot;</span> <span class="na">role=</span><span class="s">&quot;Gibarian&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/cast&gt;</span>
+    <span class="nt">&lt;imdb-info</span> <span class="na">url=</span><span class="s">&quot;http://www.imdb.com/title/tt0307479/&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;synopsis&gt;</span>
+        A troubled psychologist is sent to investigate the crew of an
+        isolated research station orbiting a bizarre planet.
+      <span class="nt">&lt;/synopsis&gt;</span>
+      <span class="nt">&lt;score&gt;</span>6.2<span class="nt">&lt;/score&gt;</span>
+    <span class="nt">&lt;/imdb-info&gt;</span>
+  <span class="nt">&lt;/movie&gt;</span>
+  <span class="nt">&lt;movie</span> <span class="na">id=</span><span class="s">&quot;tt1731141&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Ender&#39;s Game<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;director&gt;</span>Gavin Hood<span class="nt">&lt;/director&gt;</span>
+    <span class="nt">&lt;release-date&gt;</span>2013-11-01<span class="nt">&lt;/release-date&gt;</span>
+    <span class="nt">&lt;mpaa-rating&gt;</span>PG-13<span class="nt">&lt;/mpaa-rating&gt;</span>
+    <span class="nt">&lt;running-time&gt;</span>114<span class="nt">&lt;/running-time&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>action<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>scifi<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;cast&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Asa Butterfield&quot;</span> <span class="na">role=</span><span class="s">&quot;Ender Wiggin&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Harrison Ford&quot;</span> <span class="na">role=</span><span class="s">&quot;Colonel Graff&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Hailee Steinfeld&quot;</span> <span class="na">role=</span><span class="s">&quot;Petra Arkanian&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/cast&gt;</span>
+    <span class="nt">&lt;imdb-info</span> <span class="na">url=</span><span class="s">&quot;http://www.imdb.com/title/tt1731141/&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;synopsis&gt;</span>
+        Young Ender Wiggin is recruited by the International Military
+        to lead the fight against the Formics, a genocidal alien race
+        which nearly annihilated the human race in a previous invasion.
+      <span class="nt">&lt;/synopsis&gt;</span>
+      <span class="nt">&lt;score&gt;</span>6.7<span class="nt">&lt;/score&gt;</span>
+    <span class="nt">&lt;/imdb-info&gt;</span>
+  <span class="nt">&lt;/movie&gt;</span>
+  <span class="nt">&lt;movie</span> <span class="na">id=</span><span class="s">&quot;tt0816692&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Interstellar<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;director&gt;</span>Christopher Nolan<span class="nt">&lt;/director&gt;</span>
+    <span class="nt">&lt;release-date&gt;</span>2014-11-07<span class="nt">&lt;/release-date&gt;</span>
+    <span class="nt">&lt;mpaa-rating&gt;</span>PG-13<span class="nt">&lt;/mpaa-rating&gt;</span>
+    <span class="nt">&lt;running-time&gt;</span>169<span class="nt">&lt;/running-time&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>adventure<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>drama<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>scifi<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;cast&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Matthew McConaughey&quot;</span> <span class="na">role=</span><span class="s">&quot;Cooper&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Anne Hathaway&quot;</span> <span class="na">role=</span><span class="s">&quot;Brand&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Jessica Chastain&quot;</span> <span class="na">role=</span><span class="s">&quot;Murph&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Michael Caine&quot;</span> <span class="na">role=</span><span class="s">&quot;Professor Brand&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/cast&gt;</span>
+    <span class="nt">&lt;imdb-info</span> <span class="na">url=</span><span class="s">&quot;http://www.imdb.com/title/tt0816692/&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;synopsis&gt;</span>
+        A team of explorers travel through a wormhole in space in an
+        attempt to ensure humanity&#39;s survival.
+      <span class="nt">&lt;/synopsis&gt;</span>
+      <span class="nt">&lt;score&gt;</span>8.6<span class="nt">&lt;/score&gt;</span>
+    <span class="nt">&lt;/imdb-info&gt;</span>
+  <span class="nt">&lt;/movie&gt;</span>
+  <span class="nt">&lt;movie</span> <span class="na">id=</span><span class="s">&quot;tt3659388&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>The Martian<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;director&gt;</span>Ridley Scott<span class="nt">&lt;/director&gt;</span>
+    <span class="nt">&lt;release-date&gt;</span>2015-10-02<span class="nt">&lt;/release-date&gt;</span>
+    <span class="nt">&lt;mpaa-rating&gt;</span>PG-13<span class="nt">&lt;/mpaa-rating&gt;</span>
+    <span class="nt">&lt;running-time&gt;</span>144<span class="nt">&lt;/running-time&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>adventure<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>drama<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;genre&gt;</span>scifi<span class="nt">&lt;/genre&gt;</span>
+    <span class="nt">&lt;cast&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Matt Damon&quot;</span> <span class="na">role=</span><span class="s">&quot;Mark Watney&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Jessica Chastain&quot;</span> <span class="na">role=</span><span class="s">&quot;Melissa Lewis&quot;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Kristen Wiig&quot;</span> <span class="na">role=</span><span class="s">&quot;Annie Montrose&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/cast&gt;</span>
+    <span class="nt">&lt;imdb-info</span> <span class="na">url=</span><span class="s">&quot;http://www.imdb.com/title/tt3659388/&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;synopsis&gt;</span>
+        During a manned mission to Mars, Astronaut Mark Watney is
+        presumed dead after a fierce storm and left behind by his crew.
+        But Watney has survived and finds himself stranded and alone on
+        the hostile planet. With only meager supplies, he must draw upon
+        his ingenuity, wit and spirit to subsist and find a way to
+        signal to Earth that he is alive.
+      <span class="nt">&lt;/synopsis&gt;</span>
+      <span class="nt">&lt;score&gt;</span>8.1<span class="nt">&lt;/score&gt;</span>
+    <span class="nt">&lt;/imdb-info&gt;</span>
+  <span class="nt">&lt;/movie&gt;</span>
+<span class="nt">&lt;/playlist&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Although this XML document contains details which came from the fabulous
+<a class="reference external" href="http://www.imdb.com/">IMDb.com</a> web site, the file structure was created
+specifically for this example and does not represent an actual API for
+querying movie details.</p>
+</div>
+<p>Once you have the sample XML document, you can use <a class="reference download internal" href="_downloads/010-list-titles.pl"><tt class="xref download docutils literal"><span class="pre">this</span> <span class="pre">script</span></tt></a> to extract and print the title of each movie,
+in the order they appear in the XML:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">#!/usr/bin/perl</span>
+
+<span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;playlist.xml&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$title</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;/playlist/movie/title&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="nv">$title</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>and will produce the following output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre>Apollo 13
+Solaris
+Ender&#39;s Game
+Interstellar
+The Martian
+</pre></div>
+</td></tr></table></div>
+<div class="sidebar">
+<p class="first sidebar-title">Is XML::LibXML installed?</p>
+<p>If you try running this example script but you don&#8217;t have the
+<tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> module installed on your system, then you&#8217;ll get an error
+like this:</p>
+<blockquote>
+<div><tt class="docutils literal"><span class="pre">Can't</span> <span class="pre">locate</span> <span class="pre">XML/LibXML.pm</span> <span class="pre">in</span> <span class="pre">&#64;INC</span> <span class="pre">...</span> <span class="pre">at</span> <span class="pre">./010-list-titles.pl</span> <span class="pre">line</span> <span class="pre">7.</span></tt></div></blockquote>
+<p class="last">If you do get this error, then refer to <a class="reference internal" href="installation.html"><em>Installing XML::LibXML</em></a> for help on
+installing <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt>.</p>
+</div>
+<p>If we break the example down line-by-line we see that after a standard
+boilerplate section, the script loads the <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> module:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Next, the <tt class="docutils literal"><span class="pre">load_xml()</span></tt> class method is called to parse the XML file and
+return a document object:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>The <tt class="docutils literal"><span class="pre">$dom</span></tt> variable now contains an object representing all the elements of
+the XML document arranged in a tree structure known as a
+<a class="reference internal" href="dom.html"><em>Document Object Model</em></a> or &#8216;DOM&#8217;.</p>
+<p>Finally we get to the guts of the script where the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method is
+called to search the DOM for the elements we&#8217;re interested in and a <tt class="docutils literal"><span class="pre">foreach</span></tt>
+loop is used to iterate through the matching elements:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$title</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;/playlist/movie/title&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="nv">$title</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method takes one argument - an <strong>XPath expression</strong>.  This
+is a string describing the location and characteristics of the elements we want
+to find.  XPath is a query language and the way we use it to select elements
+from the DOM is similar to the way we use SQL to select records from a
+relational database.  The next section (<a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a>) will include examples of
+more complex queries.</p>
+<p>The <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method returns a list of objects from the DOM that match
+the XPath expression. Each time through the loop, <tt class="docutils literal"><span class="pre">$title</span></tt> will contain an
+object representing the next matching element.  This object provides a number
+of properties and methods that you can use to access the element and its
+attributes, as well as any text content and &#8216;child&#8217; elements.</p>
+<p>Inside the loop, this example simply calls the <tt class="docutils literal"><span class="pre">to_literal()</span></tt> method to get
+the text content of the element.  The string returned by <tt class="docutils literal"><span class="pre">to_literal()</span></tt> will
+not include any of the attributes but will include the text content of any
+child elements.</p>
+<div class="section" id="other-xml-sources">
+<h2>Other XML sources<a class="headerlink" href="#other-xml-sources" title="Permalink to this headline">¶</a></h2>
+<p>The first example script called <tt class="docutils literal"><span class="pre">XML::LibXML-&gt;load_xml()</span></tt> with the
+<tt class="docutils literal"><span class="pre">location</span></tt> argument set to the name of a file.  The <tt class="docutils literal"><span class="pre">location</span></tt> argument
+also accepts a URL:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;http://techcrunch.com/feed/&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you have the XML in a string, instead of <tt class="docutils literal"><span class="pre">location</span></tt>, use <tt class="docutils literal"><span class="pre">string</span></tt>:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">string</span> <span class="o">=&gt;</span> <span class="nv">$xml_string</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Or, you can provide a Perl file handle to parse from an  open file or socket,
+using <tt class="docutils literal"><span class="pre">IO</span></tt>:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">IO</span> <span class="o">=&gt;</span> <span class="nv">$fh</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>When providing a string or a file handle, it&#8217;s crucial that you <strong>do not</strong>
+decode the bytes of the source data (for example by using <tt class="docutils literal"><span class="pre">':utf8'</span></tt> when
+opening a file).  The underlying <tt class="docutils literal"><span class="pre">libxml2</span></tt> library is written in C to decode
+bytes and does not understand Perl&#8217;s character strings.  If you have assembled
+your XML document by concatenating Perl character strings, you will need to
+encode it to a byte string (for example using <tt class="docutils literal"><span class="pre">Encode::encode_utf8()</span></tt>) and
+then pass the byte string to the parser.</p>
+<p>If you have enabled UTF-8 globally with something like this in your script:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">use</span> <span class="nb">open</span> <span class="s">&#39;:encoding(utf8)&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Then you&#8217;ll need to turn <strong>off</strong> the encoding IO layers for any file handle
+that you pass to XML::LibXML:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nb">open</span> <span class="k">my</span> <span class="nv">$fh</span><span class="p">,</span> <span class="s">&#39;&lt;&#39;</span><span class="p">,</span> <span class="nv">$filename</span><span class="p">;</span>
+<span class="nb">binmode</span> <span class="nv">$fh</span><span class="p">,</span> <span class="s">&#39;:raw&#39;</span><span class="p">;</span>
+<span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">IO</span> <span class="o">=&gt;</span> <span class="nv">$fh</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-more-complex-example">
+<h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Permalink to this headline">¶</a></h2>
+<p>Now let&#8217;s look at a slightly more complex example.  <a class="reference download internal" href="_downloads/040-movie-details.pl"><tt class="xref download docutils literal"><span class="pre">This</span> <span class="pre">script</span></tt></a> takes the same XML input and extracts more
+details from each <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">#!/usr/bin/perl</span>
+
+<span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;playlist.xml&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$movie</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//movie&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="s">&#39;Title:    &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Director: &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./director&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Rating:   &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./mpaa-rating&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Duration: &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./running-time&#39;</span><span class="p">),</span> <span class="s">&quot; minutes&quot;</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+        <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+    <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person/@name&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
+    <span class="n">say</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>and will produce the following output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29</pre></div></td><td class="code"><div class="highlight"><pre>Title:    Apollo 13
+Director: Ron Howard
+Rating:   PG
+Duration: 140 minutes
+Starring: Tom Hanks, Bill Paxton, Kevin Bacon, Gary Sinise, Ed Harris
+
+Title:    Solaris
+Director: Steven Soderbergh
+Rating:   PG-13
+Duration: 99 minutes
+Starring: George Clooney, Natascha McElhone, Ulrich Tukur
+
+Title:    Ender&#39;s Game
+Director: Gavin Hood
+Rating:   PG-13
+Duration: 114 minutes
+Starring: Asa Butterfield, Harrison Ford, Hailee Steinfeld
+
+Title:    Interstellar
+Director: Christopher Nolan
+Rating:   PG-13
+Duration: 169 minutes
+Starring: Matthew McConaughey, Anne Hathaway, Jessica Chastain, Michael Caine
+
+Title:    The Martian
+Director: Ridley Scott
+Rating:   PG-13
+Duration: 144 minutes
+Starring: Matt Damon, Jessica Chastain, Kristen Wiig
+</pre></div>
+</td></tr></table></div>
+<p>Let&#8217;s compare the main loop of the first script:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$title</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;/playlist/movie/title&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="nv">$title</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>with the main loop of the second script:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$movie</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//movie&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="s">&#39;Title:    &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Director: &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./director&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Rating:   &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./mpaa-rating&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Duration: &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./running-time&#39;</span><span class="p">),</span> <span class="s">&quot; minutes&quot;</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+        <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+    <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person/@name&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
+    <span class="n">say</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>The structure of the main loop is very similar but the XPath expression
+passed to <tt class="docutils literal"><span class="pre">findnodes()</span></tt> is different in each case:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">'/playlist/movie/title'</span></tt></dt>
+<dd><div class="first line-block">
+<div class="line">Will match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element which is the child of ...</div>
+<div class="line">a <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element which is the child of ...</div>
+<div class="line">a <tt class="docutils literal"><span class="pre">&lt;playlist&gt;</span></tt> element which is ...</div>
+<div class="line">the top-level element in the document.</div>
+</div>
+<p class="last">Or, to phrase it a different way, the search will start at the top of the
+document and look for a <tt class="docutils literal"><span class="pre">&lt;playlist&gt;</span></tt> element; if one is found, the search
+will continue for child <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> elements; and for each one that is
+found the search will continue for child <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> elements.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">'//movie'</span></tt></dt>
+<dd>Will match every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element at any level of nesting.</dd>
+</dl>
+<p>In both cases, the XPath expression starts with a &#8216;/&#8217; which means the search
+will start at the the top of the document.</p>
+<p>Inside the second script&#8217;s loop are a number of calls to <tt class="docutils literal"><span class="pre">findvalue()</span></tt>.  This
+is a handy shortcut method that is typically used when you expect the XPath
+expression to match <em>exactly one node</em>.  It combines the functionality of
+<tt class="docutils literal"><span class="pre">findnodes()</span></tt> and <tt class="docutils literal"><span class="pre">to_literal()</span></tt> into a single method.  So this code:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>is equivalent to:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>There are a couple of other interesting differences with the XPath searches in
+the loop compared to previous examples.  Firstly, the <tt class="docutils literal"><span class="pre">findvalue()</span></tt> method is
+being called on <tt class="docutils literal"><span class="pre">$movie</span></tt> (which represents one <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element) rather
+than on <tt class="docutils literal"><span class="pre">$dom</span></tt> (which represents the whole document). This means that the
+<tt class="docutils literal"><span class="pre">$movie</span></tt> element is the <strong>context element</strong>.  Secondly, the XPath expression
+starts with a &#8216;.&#8217; which means: start the search at the context element rather
+than at the top of the document.</p>
+<p>This second script illustrates a common pattern when working with <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt>:</p>
+<ol class="arabic simple">
+<li>find &#8216;interesting&#8217; elements using an XPath query starting with &#8216;/&#8217; or &#8216;//&#8217;</li>
+<li>iterate through those elements in a <tt class="docutils literal"><span class="pre">foreach</span></tt> loop</li>
+<li>get additional data from child elements using XPath queries starting with &#8216;.&#8217;</li>
+</ol>
+</div>
+<div class="section" id="accessing-attributes">
+<h2>Accessing attributes<a class="headerlink" href="#accessing-attributes" title="Permalink to this headline">¶</a></h2>
+<p>When listing cast members in the main loop of the script above, this code ...</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+        <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+    <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person/@name&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>is used to transform this XML ...</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;cast&gt;</span>
+  <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Matt Damon&quot;</span> <span class="na">role=</span><span class="s">&quot;Mark Watney&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Jessica Chastain&quot;</span> <span class="na">role=</span><span class="s">&quot;Melissa Lewis&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;person</span> <span class="na">name=</span><span class="s">&quot;Kristen Wiig&quot;</span> <span class="na">role=</span><span class="s">&quot;Annie Montrose&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/cast&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>into this output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>Starring: Matt Damon, Jessica Chastain, Kristen Wiig
+</pre></div>
+</td></tr></table></div>
+<p>In an XPath expression, a name that starts with <tt class="docutils literal"><span class="pre">&#64;</span></tt> will match an attribute
+rather than an element, so <tt class="docutils literal"><span class="pre">'person/&#64;name'</span></tt> refers to an attribute called
+<tt class="docutils literal"><span class="pre">name</span></tt> on a <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element.  In this case, the call to
+<tt class="docutils literal"><span class="pre">findnodes('./cast/person/&#64;name')</span></tt> will return three DOM nodes representing
+attribute values which are then transformed into plain strings using
+<tt class="docutils literal"><span class="pre">to_literal()</span></tt>, as we&#8217;ve seen for element nodes, inside a <a class="reference external" href="http://perldoc.perl.org/functions/map.html">map</a> block.</p>
+<p>Another approach is to select the <em>element</em> with XPath and then call a DOM
+method on the element node to get the attribute value:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+        <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">getAttribute</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>There&#8217;s a shortcut syntax you can use to make this even easier, simply treat
+the element node as a hashref:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+        <span class="nv">$_</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">name</span><span class="p">};</span>
+    <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>You might be a bit wary of poking around directly inside the element object,
+rather than using accessor methods. But don&#8217;t worry, that&#8217;s <strong>not</strong> what this
+shortcut syntax is doing.  Instead, every <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Element">XML::LibXML::Element</a> object returned from the
+XPath query has been <a class="reference external" href="https://metacpan.org/pod/distribution/perl/pod/perltie.pod">&#8216;tied&#8217;</a> using
+<a class="reference external" href="https://metacpan.org/pod/XML::LibXML::AttributeHash">XML::LibXML::AttributeHash</a> so that hash lookups
+&#8216;inside&#8217; the object actually get proxied to <tt class="docutils literal"><span class="pre">getAttribute()</span></tt> method calls.</p>
+<p>This method really comes into its own when you want to access more than one
+attribute of an element and when you want to interpolate an attribute value
+into a string:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&quot;\n&quot;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+        <span class="s">&quot; * $_-&gt;{name} (as $_-&gt;{role})&quot;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person&#39;</span><span class="p">);</span>
+    <span class="n">say</span> <span class="s">&quot;\nStarring:\n&quot;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Which will produce this output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>Starring:
+ * Matt Damon (as Mark Watney)
+ * Jessica Chastain (as Melissa Lewis)
+ * Kristen Wiig (as Annie Montrose)
+</pre></div>
+</td></tr></table></div>
+<p>That&#8217;s it for the basic examples.  The next topic will look more closely at
+<a class="reference internal" href="xpath.html"><em>XPath expressions</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">A Basic Example</a><ul>
+<li><a class="reference internal" href="#other-xml-sources">Other XML sources</a></li>
+<li><a class="reference internal" href="#a-more-complex-example">A more complex example</a></li>
+<li><a class="reference internal" href="#accessing-attributes">Accessing attributes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Perl XML::LibXML by Example</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="xpath.html"
+                        title="next chapter">XPath Expressions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/basics.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="xpath.html" title="XPath Expressions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Perl XML::LibXML by Example"
+             >previous</a> |</li>
+        <li><a href="index.html">Perl XML::LibXML by Example 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, Grant McLean.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

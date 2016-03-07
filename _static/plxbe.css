@@ -1,0 +1,31 @@
+.xpath,
+.xpath-tm {
+  font-size: 120%;
+  padding: 0.3em;
+}
+
+a.xpath-try-it {
+  display: inline-block;
+  color: #ffffff;
+  background-color: #4c9ed9;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 4px 8px 3px 8px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  margin: 0 0 0 30px;
+}
+
+.xpath-try-it:focus {
+  background-color: #d12828;
+}
+
+.xpath-try-it:hover {
+  background-color: #4080b0;
+}
+

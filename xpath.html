@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>XPath Expressions &mdash; Perl XML::LibXML by Example 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/plxbe.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/plxbe.js"></script>
+    <link rel="top" title="Perl XML::LibXML by Example 1.0 documentation" href="index.html" />
+    <link rel="next" title="The Document Object Model" href="dom.html" />
+    <link rel="prev" title="A Basic Example" href="basics.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="dom.html" title="The Document Object Model"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="basics.html" title="A Basic Example"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Perl XML::LibXML by Example 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="xpath-expressions">
+<h1>XPath Expressions<a class="headerlink" href="#xpath-expressions" title="Permalink to this headline">¶</a></h1>
+<p>As you saw in the <a class="reference internal" href="basics.html"><em>basic examples</em></a> section, the <tt class="docutils literal"><span class="pre">findnodes()</span></tt>
+method takes an XPath expression and finds nodes in the <a class="reference internal" href=""><em>DOM</em></a> that
+match the expression.  There are two ways to call calling the <tt class="docutils literal"><span class="pre">findnodes()</span></tt>
+method:</p>
+<ul class="simple">
+<li>on the object representing the whole document, or</li>
+<li>on an element from the DOM - the element on which you call the method is
+called the context element</li>
+</ul>
+<p>If your XPath expression starts with a &#8216;/&#8217; then the search will start at
+top-most element in the document - even if you call <tt class="docutils literal"><span class="pre">findnodes()</span></tt> on a
+different context element.</p>
+<p>Start your XPath expression with &#8216;.&#8217; to search down through the children of the
+context element.</p>
+<p>The remainder of this section simply includes examples of XPath expressions and
+descriptions of what they match.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can try out different XPath expressions in the <a class="reference external" href="_static/xpath-sandbox/xpath-sandbox.html">XPath sandbox</a>.  The sandbox doesn&#8217;t actually
+use Perl or libxml, it simply uses Javascript to access the XPath engine
+built into your browser.  However, the expression matching should work just
+as it would in your Perl scripts.</p>
+</div>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">/playlist</span></tt></p>
+<blockquote>
+<div>Match the top-most element of the document if (and <em>only if</em>) it is a
+<tt class="docutils literal"><span class="pre">&lt;playlist&gt;</span></tt> element.</div></blockquote>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">//title</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element in the document.</div></blockquote>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">//movie/title</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element that is the direct child of a <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt>
+element.</div></blockquote>
+<p><tt class="code xpath docutils literal"><span class="pre">./title</span></tt></p>
+<blockquote>
+<div><p>Match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element that is the direct child of the context
+element, e.g.:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$movie</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//movie&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="s">&#39;Title: &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+</div></blockquote>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">//title/..</span></tt></p>
+<blockquote>
+<div>Match any element which is the parent of a <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element.</div></blockquote>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">/*</span></tt></p>
+<blockquote>
+<div>Match the top-most element of the document regardless of the element name.</div></blockquote>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">//person[position()=2]</span></tt></p>
+<blockquote>
+<div>Match the second <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element in each sequence of adjacent
+<tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements.  Note that the first element in a sequence is at
+potiion 1 not 0.</div></blockquote>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">//person[2]</span></tt></p>
+<blockquote>
+<div>This is simply a shorthand form of the <tt class="docutils literal"><span class="pre">position()=2</span></tt> expression above.</div></blockquote>
+<p><tt class="code xpath-tm docutils literal"><span class="pre">//person[position()&lt;3]</span></tt></p>
+<blockquote>
+<div>Match the first two <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements in each sequence of adjacent
+<tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements.</div></blockquote>
+<p><em>&lt;to be continued&gt;</em></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="basics.html"
+                        title="previous chapter">A Basic Example</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="dom.html"
+                        title="next chapter">The Document Object Model</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/xpath.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="dom.html" title="The Document Object Model"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="basics.html" title="A Basic Example"
+             >previous</a> |</li>
+        <li><a href="index.html">Perl XML::LibXML by Example 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, Grant McLean.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
