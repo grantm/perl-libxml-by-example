@@ -9,6 +9,8 @@
 * working with huge XML files
 
 * customise the sphinx theme
+* add an index:
+  - http://www.sphinx-doc.org/en/stable/markup/misc.html#index-generating-markup
 
 * XPath sandbox
   - update the URL on submit

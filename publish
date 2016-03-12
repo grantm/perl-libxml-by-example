@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+##############################################################################
+#
+# Publishes latest version to GitHub pages site:
+#
+# * regenerates HTML
+# * rsyncs generated files to parallel checkout dir on gh-pages branch
+# * adds and commits all changes
+# * pushes to GitHub
+#
+
+use 5.010;
+use strict;
+use warnings;
+use autodie;
+
+my $generated_dir = 'build/html';
+my $target_dir = '../perl-libxml-by-example-pages';
+
+system('make', 'html') == 0 or die "Failed to generate HTML from source\n";
+
+system(
+    'rsync', '-rav', '--checksum', '--delete',
+    '--exclude=.git',
+    '--exclude=.nojekyll',
+    '--exclude=.buildinfo',
+    $generated_dir . '/',
+    $target_dir . '/',
+) == 0 or die "Failed to sync files to gh-pages repo\n";
+
+chdir($target_dir);
+
+system('git', 'add', '--all')  == 0
+    or die "Failed to add files to gh-pages repo\n";
+
+system('git', 'commit', '-m', 'Publish site update')  == 0
+    or die "Failed to commit changes to gh-pages repo\n";
+
+system('git', 'push', 'origin')  == 0
+    or die "Failed to push update to GitHub\n";
+
+say "Site updated successfully";
+
