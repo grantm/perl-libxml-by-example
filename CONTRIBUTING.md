@@ -9,8 +9,6 @@ By contributing you agree to the [LICENSE](LICENSE.md) of this repository.
 
 - please comment with a "+1" to help vote for issues that are important to you
 
-- please DO NOT comment with a "+1", use the Subscribe button instead
-
 - please keep discussions on-topic, and respect the opinions of others
 
 
