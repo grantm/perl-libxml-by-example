@@ -1,10 +1,34 @@
-.cc-img {
-  margin: 0px 0px 40px 11px;
+.wy-nav-side .custom-sidebar {
+  margin-top: 50px;
+  padding: 0.8em 1.6em;
+  border-top: 1px solid #444444;
 }
 
+.wy-nav-side .custom-sidebar h3 {
+  display: none;
+}
+
+.wy-nav-side .custom-sidebar a,
+.wy-nav-side .custom-sidebar a:visited {
+  color: #b3b3b3;
+}
+
+.wy-nav-side .custom-sidebar a:hover {
+  color: #2980B9;
+}
+
+.cc-img {
+  margin: 10px 0px 40px 0;
+}
+
+.highlight-xml {
+  max-height: 60vh;
+  overflow-y: auto;
+}
 .xpath,
 .xpath-try {
   display: block;
+  margin-top: 2.4em;
   font-size: 120%;
   padding: 0.3em;
 }
@@ -23,9 +47,12 @@ a.xpath-try-it {
   line-height: 1;
   padding: 4px 8px 3px 8px;
   text-align: center;
-  text-decoration: none;
   text-transform: uppercase;
   margin: 2px 4px 0 16px;
+}
+
+.xpath-try a.xpath-try-it {
+  text-decoration: none;
 }
 
 .xpath-try-it:focus {
@@ -34,5 +61,14 @@ a.xpath-try-it {
 
 .xpath-try:hover .xpath-try-it {
   background-color: #4080b0;
+}
+
+#xpath-expressions > blockquote {
+  margin: 0;
+}
+
+tt.literal.xpath,
+tt.literal.xpath-try {
+  white-space: normal;
 }
 
