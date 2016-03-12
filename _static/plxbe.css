@@ -1,16 +1,19 @@
 .xpath,
-.xpath-tm {
+.xpath-try {
+  display: block;
   font-size: 120%;
   padding: 0.3em;
 }
 
 a.xpath-try-it {
   display: inline-block;
+  float: right;
   color: #ffffff;
   background-color: #4c9ed9;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-family: sans-serif;
   font-size: 10px;
   font-weight: bold;
   line-height: 1;
@@ -18,14 +21,14 @@ a.xpath-try-it {
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
-  margin: 0 0 0 30px;
+  margin: 2px 4px 0 16px;
 }
 
 .xpath-try-it:focus {
   background-color: #d12828;
 }
 
-.xpath-try-it:hover {
+.xpath-try:hover .xpath-try-it {
   background-color: #4080b0;
 }
 

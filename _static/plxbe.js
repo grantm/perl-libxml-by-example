@@ -6,10 +6,10 @@ jQuery(function($) {
     'use strict';
 
     var sandbox_base_url = '_static/xpath-sandbox/xpath-sandbox.html'
-    $('.xpath-tm').each(function() {
+    $('.xpath-try').each(function() {
         var xpath = this.textContent;
         var qs = '?q=' + encodeURIComponent(xpath);
-        $(this).parent().append(
+        $(this).append(
             $('<a />').addClass('xpath-try-it')
                 .text('Try it!')
                 .attr('href', sandbox_base_url + qs)

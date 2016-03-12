@@ -76,14 +76,14 @@ use Perl or libxml, it simply uses Javascript to access the XPath engine
 built into your browser.  However, the expression matching should work just
 as it would in your Perl scripts.</p>
 </div>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">/playlist</span></tt></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">/playlist</span></tt></p>
 <blockquote>
 <div>Match the top-most element of the document if (and <em>only if</em>) it is a
 <tt class="docutils literal"><span class="pre">&lt;playlist&gt;</span></tt> element.</div></blockquote>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">//title</span></tt></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//title</span></tt></p>
 <blockquote>
 <div>Match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element in the document.</div></blockquote>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">//movie/title</span></tt></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//movie/title</span></tt></p>
 <blockquote>
 <div>Match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element that is the direct child of a <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt>
 element.</div></blockquote>
@@ -99,25 +99,104 @@ element, e.g.:</p>
 </pre></div>
 </td></tr></table></div>
 </div></blockquote>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">//title/..</span></tt></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//title/..</span></tt></p>
 <blockquote>
 <div>Match any element which is the parent of a <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element.</div></blockquote>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">/*</span></tt></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">/*</span></tt></p>
 <blockquote>
 <div>Match the top-most element of the document regardless of the element name.</div></blockquote>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">//person[position()=2]</span></tt></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person/&#64;role</span></tt></p>
+<blockquote>
+<div>Match the attribute named <tt class="docutils literal"><span class="pre">role</span></tt> on every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[&#64;role]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element <em>that has an attribute</em> named <tt class="docutils literal"><span class="pre">role</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//*[&#64;url]</span></tt></p>
+<blockquote>
+<div>Match every element that has an attribute named <tt class="docutils literal"><span class="pre">url</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//movie[&#64;id=&quot;tt0307479&quot;]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element that has an attribute named <tt class="docutils literal"><span class="pre">id</span></tt> with the
+value <tt class="docutils literal"><span class="pre">tt0307479</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//*[&#64;id=&quot;tt0307479&quot;]</span></tt></p>
+<blockquote>
+<div>Match every element that has an attribute named <tt class="docutils literal"><span class="pre">id</span></tt> with the value
+<tt class="docutils literal"><span class="pre">tt0307479</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//movie[&#64;id=&quot;tt0307479&quot;]//synopsis</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">synopsis</span></tt> element within every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element that has
+an attribute named <tt class="docutils literal"><span class="pre">id</span></tt> with the value <tt class="docutils literal"><span class="pre">tt0307479</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[position()=2]</span></tt></p>
 <blockquote>
 <div>Match the second <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element in each sequence of adjacent
 <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements.  Note that the first element in a sequence is at
-potiion 1 not 0.</div></blockquote>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">//person[2]</span></tt></p>
+position 1 not 0.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[2]</span></tt></p>
 <blockquote>
 <div>This is simply a shorthand form of the <tt class="docutils literal"><span class="pre">position()=2</span></tt> expression above.</div></blockquote>
-<p><tt class="code xpath-tm docutils literal"><span class="pre">//person[position()&lt;3]</span></tt></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[position()&lt;3]</span></tt></p>
 <blockquote>
 <div>Match the first two <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements in each sequence of adjacent
 <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements.</div></blockquote>
-<p><em>&lt;to be continued&gt;</em></p>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[contains(&#64;name,</span> <span class="pre">'Matt')]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element that has an attribute named <tt class="docutils literal"><span class="pre">name</span></tt>
+which contains the text <tt class="docutils literal"><span class="pre">Matt</span></tt> anywhere in the attribute value.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[contains(&#64;name,</span> <span class="pre">'matt')]</span></tt></p>
+<blockquote>
+<div>Same as above except for the casing of the text to match.  Matching is
+case-sensitive.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[not(contains(&#64;name,</span> <span class="pre">'e'))]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element that has an attribute named <tt class="docutils literal"><span class="pre">name</span></tt>
+which does not contain the letter <tt class="docutils literal"><span class="pre">e</span></tt> anywhere in the attribute value.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[starts-with(&#64;name,</span> <span class="pre">'K')]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element that has an attribute named <tt class="docutils literal"><span class="pre">name</span></tt> with
+a value that starts with the letter <tt class="docutils literal"><span class="pre">K</span></tt>.</div></blockquote>
+<div class="section" id="xpath-functions">
+<h2>XPath Functions<a class="headerlink" href="#xpath-functions" title="Permalink to this headline">¶</a></h2>
+<p>Some of the examples above used <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/XPath/Functions">XPath functions</a>. It&#8217;s worth
+noting that the underlying libxml2 library only supports XPath version 1.0 and
+there are <a class="reference external" href="http://www.mail-archive.com/xml&#64;gnome.org/msg04082.html">no plans to support 2.0</a>.</p>
+<p>XPath 1.0 does not include the <tt class="docutils literal"><span class="pre">lower-case()</span></tt> or <tt class="docutils literal"><span class="pre">upper-case()</span></tt> functions,
+so nasty workarounds like this are required if you need case-insensitive
+matching:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$query</span> <span class="o">=</span> <span class="sx">q{</span>
+<span class="sx">    //person[</span>
+<span class="sx">        contains(</span>
+<span class="sx">            translate(</span>
+<span class="sx">                @name,</span>
+<span class="sx">                &#39;ABCDEFGHIJKLMNOPQRSTUVWXZY&#39;,</span>
+<span class="sx">                &#39;abcdefghijklmnopqrstuvwxyz&#39;</span>
+<span class="sx">            ),</span>
+<span class="sx">            &#39;matt&#39;</span>
+<span class="sx">        )</span>
+<span class="sx">    ]</span>
+<span class="sx">}</span><span class="p">;</span>
+
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$person</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="nv">$query</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="s">&quot;Person: $person-&gt;{name}&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Alternatively, you can use the Perl API to <a class="reference external" href="https://metacpan.org/pod/distribution/XML-LibXML/lib/XML/LibXML/XPathContext.pod#Custom-XPath-functions">register custom XPath functions</a>.</p>
+</div>
 </div>
 
 
@@ -126,6 +205,14 @@ potiion 1 not 0.</div></blockquote>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">XPath Expressions</a><ul>
+<li><a class="reference internal" href="#xpath-functions">XPath Functions</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="basics.html"
                         title="previous chapter">A Basic Example</a></p>
