@@ -1,12 +1,9 @@
 #!/usr/bin/perl
 ##############################################################################
 #
-# Publishes latest version to GitHub pages site:
+# Publish latest version to GitHub pages site:
 #
-# * regenerates HTML
-# * rsyncs generated files to parallel checkout dir on gh-pages branch
-# * adds and commits all changes
-# * pushes to GitHub
+# Use --help option for more details
 #
 
 use 5.010;
@@ -14,30 +11,156 @@ use strict;
 use warnings;
 use autodie;
 
+use Pod::Usage;
+use Getopt::Long  qw(GetOptions);
+use POSIX         qw(strftime);
+
+$| = 1;   # turn off output buffering for prompt
+
+
 my $generated_dir = 'build/html';
 my $target_dir = '../perl-libxml-by-example-pages';
 
-system('make', 'html') == 0 or die "Failed to generate HTML from source\n";
+my(%opt);
 
-system(
-    'rsync', '-rav', '--checksum', '--delete',
-    '--exclude=.git',
-    '--exclude=.nojekyll',
-    '--exclude=.buildinfo',
-    $generated_dir . '/',
-    $target_dir . '/',
-) == 0 or die "Failed to sync files to gh-pages repo\n";
+if(!GetOptions(\%opt, 'help|?', 'message|m=s')) {
+    pod2usage(-exitval => 1,  -verbose => 0);
+}
 
-chdir($target_dir);
+pod2usage(-exitstatus => 0, -verbose => 2) if $opt{help};
 
-system('git', 'add', '--all')  == 0
-    or die "Failed to add files to gh-pages repo\n";
+my $message = commit_message();
+check_uncommitted();
+publish_to_gh_pages($message);
 
-system('git', 'commit', '-m', 'Publish site update')  == 0
-    or die "Failed to commit changes to gh-pages repo\n";
+exit;
 
-system('git', 'push', 'origin')  == 0
-    or die "Failed to push update to GitHub\n";
 
-say "Site updated successfully";
+sub commit_message {
+    if(my $message = $opt{message}) {
+        my $log = `git log --pretty=oneline -1`;
+        my($commit_id) = $log =~ m{\A(\w{12})};
+        return "$message\n\n  Source commit: $commit_id";
+    }
+    else {
+        say "You must specify a commit message with -m";
+        say "Recent commits:";
+        my $mtime = (stat("$target_dir/.git/index"))[9];
+        $mtime = strftime('%F-%T', localtime($mtime));
+        my $log = `git log --pretty=format:'%h %s' \@{$mtime}..`;
+        if($log =~ /\S/) {
+            say $log;
+        }
+        else {
+            say "No changes in source repo";
+        }
+        exit 1;
+    }
+}
+
+
+sub check_uncommitted {
+    my $git_status = `git status -s`;
+    return unless $git_status =~ /\S/;
+
+    say "WARNING: Uncommitted changes ...\n\n$git_status";
+    print "Publish anyway? (y/N) ";
+
+    my $response = <STDIN>;
+    return if $response =~ /^y(es)?/i;
+
+    exit;
+}
+
+
+sub publish_to_gh_pages {
+    my($commit_message) = @_;
+
+    system('make', 'html') == 0
+        or die "Failed to generate HTML from source\n";
+
+    system(
+        'rsync', '-rav', '--checksum', '--delete',
+        '--exclude=.git',
+        '--exclude=.nojekyll',
+        '--exclude=.buildinfo',
+        $generated_dir . '/',
+        $target_dir . '/',
+    ) == 0 or die "Failed to sync files to gh-pages repo\n";
+
+    chdir($target_dir);
+
+    system('git', 'add', '--all') == 0
+        or die "Failed to add files to gh-pages repo\n";
+
+    system('git', 'commit', '-m', $commit_message)  == 0
+        or die "Failed to commit changes to gh-pages repo\n";
+
+    system('git', 'push', 'origin') == 0
+        or die "Failed to push update to GitHub\n";
+
+    say "Site updated successfully";
+}
+
+__END__
+
+=head1 NAME
+
+publish - Push current version of Perl XML::LibXML by Example site to gh-pages
+
+=head1 SYNOPSIS
+
+  publish -m <commit message>
+
+  Options:
+
+   -m <msg>   set the commit message to be used
+   -?         detailed help message
+
+=head1 DESCRIPTION
+
+Generate and publish the current version of the "Perl XML::LibXML by Example"
+documentation project to GitHub pages:
+
+=over 4
+
+=item *
+
+check for uncommitted changes
+
+=item *
+
+regenerate HTML
+
+=item *
+
+rsync generated files to parallel checkout dir on gh-pages branch
+
+=item *
+
+add and commit all changes
+
+=item *
+
+push to GitHub
+
+=back
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<< --message <msg> >> (alias: -m)
+
+Set the text of the commit message to use on the gh-pages branch.
+
+=item B<--help> (alias: -?)
+
+Display this documentation.
+
+=back
+
+=cut
+
+
 
