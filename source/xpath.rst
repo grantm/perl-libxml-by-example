@@ -34,18 +34,18 @@ descriptions of what they match.
 
 .. role:: xpath(code)
 
-.. role:: xpath_tm(code)
+.. role:: xpath_try(code)
 
-:xpath_tm:`/playlist`
+:xpath_try:`/playlist`
 
     Match the top-most element of the document if (and *only if*) it is a
     ``<playlist>`` element.
 
-:xpath_tm:`//title`
+:xpath_try:`//title`
 
     Match every ``<title>`` element in the document.
 
-:xpath_tm:`//movie/title`
+:xpath_try:`//movie/title`
 
     Match every ``<title>`` element that is the direct child of a ``<movie>``
     element.
@@ -59,27 +59,93 @@ descriptions of what they match.
         :language: perl
         :lines: 13-15
 
-:xpath_tm:`//title/..`
+:xpath_try:`//title/..`
 
     Match any element which is the parent of a ``<title>`` element.
 
-:xpath_tm:`/*`
+:xpath_try:`/*`
 
     Match the top-most element of the document regardless of the element name.
 
-:xpath_tm:`//person[position()=2]`
+:xpath_try:`//person/@role`
+
+    Match the attribute named ``role`` on every ``<person>`` element.
+
+:xpath_try:`//person[@role]`
+
+    Match every ``<person>`` element *that has an attribute* named ``role``.
+
+:xpath_try:`//*[@url]`
+
+    Match every element that has an attribute named ``url``.
+
+:xpath_try:`//movie[@id="tt0307479"]`
+
+    Match every ``<movie>`` element that has an attribute named ``id`` with the
+    value ``tt0307479``.
+
+:xpath_try:`//*[@id="tt0307479"]`
+
+    Match every element that has an attribute named ``id`` with the value
+    ``tt0307479``.
+
+:xpath_try:`//movie[@id="tt0307479"]//synopsis`
+
+    Match every ``synopsis`` element within every ``<movie>`` element that has
+    an attribute named ``id`` with the value ``tt0307479``.
+
+:xpath_try:`//person[position()=2]`
 
     Match the second ``<person>`` element in each sequence of adjacent
     ``<person>`` elements.  Note that the first element in a sequence is at
     position 1 not 0.
 
-:xpath_tm:`//person[2]`
+:xpath_try:`//person[2]`
 
     This is simply a shorthand form of the ``position()=2`` expression above.
 
-:xpath_tm:`//person[position()<3]`
+:xpath_try:`//person[position()<3]`
 
     Match the first two ``<person>`` elements in each sequence of adjacent
     ``<person>`` elements.
 
-*<to be continued>*
+:xpath_try:`//person[contains(@name, 'Matt')]`
+
+    Match every ``<person>`` element that has an attribute named ``name``
+    which contains the text ``Matt`` anywhere in the attribute value.
+
+:xpath_try:`//person[contains(@name, 'matt')]`
+
+    Same as above except for the casing of the text to match.  Matching is
+    case-sensitive.
+
+:xpath_try:`//person[not(contains(@name, 'e'))]`
+
+    Match every ``<person>`` element that has an attribute named ``name``
+    which does not contain the letter ``e`` anywhere in the attribute value.
+
+:xpath_try:`//person[starts-with(@name, 'K')]`
+
+    Match every ``<person>`` element that has an attribute named ``name`` with
+    a value that starts with the letter ``K``.
+
+XPath Functions
+---------------
+
+Some of the examples above used `XPath functions
+<https://developer.mozilla.org/en-US/docs/Web/XPath/Functions>`_. It's worth
+noting that the underlying libxml2 library only supports XPath version 1.0 and
+there are `no plans to support 2.0
+<http://www.mail-archive.com/xml@gnome.org/msg04082.html>`_.
+
+XPath 1.0 does not include the ``lower-case()`` or ``upper-case()`` functions,
+so nasty workarounds like this are required if you need case-insensitive
+matching:
+
+.. literalinclude:: /code/110-case-insensitive-xpath-1
+    :language: perl
+    :lines: 13-28
+
+Alternatively, you can use the Perl API to `register custom XPath functions
+<https://metacpan.org/pod/distribution/XML-LibXML/lib/XML/LibXML/XPathContext.pod#Custom-XPath-functions>`_.
+
