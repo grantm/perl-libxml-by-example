@@ -37,7 +37,7 @@ and will produce the following output:
     ``XML::LibXML`` module installed on your system, then you'll get an error
     like this:
 
-        ``Can't locate XML/LibXML.pm in @INC ... at ./010-list-titles.pl line 7.``
+        Can't locate XML/LibXML.pm in @INC ... at ./010-list-titles.pl line 7.
 
     If you do get this error, then refer to :doc:`installation` for help on
     installing ``XML::LibXML``.
