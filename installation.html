@@ -83,7 +83,19 @@
 <li class="toctree-l1"><a class="reference internal" href="basics.html">A Basic Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Installing XML::LibXML</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Installing XML::LibXML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-on-windows">Installing on Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#strawberry-perl">Strawberry Perl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#activeperl">ActivePerl</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-on-linux">Installing on Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#manual-installation">Manual installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-on-mac-os-x">Installing on Mac OS X</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -138,7 +150,67 @@
             
   <div class="section" id="installing-xml-libxml">
 <h1>Installing XML::LibXML<a class="headerlink" href="#installing-xml-libxml" title="Permalink to this headline">¶</a></h1>
-<p><em>&lt;to be written&gt;</em></p>
+<p>You <em>can</em> install the XML::LibXML module using standard tools like <a class="reference external" href="https://metacpan.org/pod/distribution/App-cpanminus/bin/cpanm">cpanm</a>, but there
+are a couple of factors to consider first.  Because the module wraps a C
+library, to install this way you must have a C compiler installed and you must
+have already installed the <tt class="docutils literal"><span class="pre">libxml2</span></tt> library along with its development
+header files.</p>
+<p>There may be easier install options for your platform.</p>
+<div class="section" id="installing-on-windows">
+<h2>Installing on Windows<a class="headerlink" href="#installing-on-windows" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="strawberry-perl">
+<h3>Strawberry Perl<a class="headerlink" href="#strawberry-perl" title="Permalink to this headline">¶</a></h3>
+<p>The most popular Perl distribution for Windows is <a class="reference external" href="http://strawberryperl.com/">Strawberry Perl</a>, which happens to include XML::LibXML in the
+base Perl installer.  So if you have Strawberry Perl, you already have
+XML::LibXML.</p>
+</div>
+<div class="section" id="activeperl">
+<h3>ActivePerl<a class="headerlink" href="#activeperl" title="Permalink to this headline">¶</a></h3>
+<p>Another popular Perl distribution for Windows is <a class="reference external" href="http://www.activestate.com/activeperl/downloads">ActivePerl</a> from ActiveState (who also
+package Perl for Mac OS X, Linux and Solaris).  ActivePerl includes a tool
+called PPM (Perl Package Manager) for installing pre-built Perl modules.  You
+can use the PPM graphical user interface to <a class="reference external" href="http://code.activestate.com/ppm/search:XML::LibXML/">search for the XML::LibXML package</a> then click to select
+and install it.  A command-line interface is also available:</p>
+<div class="highlight-python"><div class="highlight"><pre>ppm install XML-LibXML
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="installing-on-linux">
+<h2>Installing on Linux<a class="headerlink" href="#installing-on-linux" title="Permalink to this headline">¶</a></h2>
+<p>If you are using the system Perl binary, you can install a pre-compiled version
+of XML::LibXML and the underlying libxml2 library from your distribution&#8217;s
+package archive.</p>
+<p>On systems using dpkg/apt (Debian, Ubuntu, Mint, etc.):</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libxml-libxml-perl
+</pre></div>
+</div>
+<p>On systems using rpm/yum (RedHat, CentOS, Fedora, etc.):</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo yum install &quot;perl(XML::LibXML)&quot;
+</pre></div>
+</div>
+<div class="section" id="manual-installation">
+<h3>Manual installation<a class="headerlink" href="#manual-installation" title="Permalink to this headline">¶</a></h3>
+<p>If for some reason you want to compile and install a version of XML::LibXML
+directly from CPAN, you must first install both the <tt class="docutils literal"><span class="pre">libxml2</span></tt> library and
+the header files for linking against the library.  The easiest way to do this
+is to use your distribution&#8217;s packages.  For example on Debian:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libxml2 libxml2-dev
+</pre></div>
+</div>
+<p>You can test that the library is correctly installed and your PATH is set up
+correctly  with this command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">xml2</span><span class="o">-</span><span class="n">config</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+<p>For more information about manual builds, refer to the README file in the
+<a class="reference external" href="https://metacpan.org/release/XML-LibXML">XML::LibXML distribution</a>.</p>
+</div>
+</div>
+<div class="section" id="installing-on-mac-os-x">
+<h2>Installing on Mac OS X<a class="headerlink" href="#installing-on-mac-os-x" title="Permalink to this headline">¶</a></h2>
+<p><em>&lt;to be written - contributions welcome.&gt;</em></p>
+</div>
 </div>
 
 
