@@ -72,7 +72,7 @@ a.xpath-try-it {
   padding: 4px 8px 3px 8px;
   text-align: center;
   text-transform: uppercase;
-  margin: 2px 4px 0 16px;
+  margin: 3px 4px 0 16px;
 }
 
 .xpath-try a.xpath-try-it {
@@ -91,9 +91,20 @@ a.xpath-try-it {
   margin: 0;
 }
 
-tt.literal.xpath,
-tt.literal.xpath-try {
+.document p tt.literal.xpath,
+.document p tt.literal.xpath-try {
+  border: 1px solid #e1e1e5;
+  border-radius: 3px;
+  background-color: #fafafa;
   white-space: normal;
+  padding: 2px 4px;
+}
+
+.document a.xpath-try-it:visited,
+.document a.xpath-try-it:hover {
+  color: #ffffff;
+  text-decoration: none;
+  border: none;
 }
 
 #a-basic-example .sidebar blockquote {
@@ -107,3 +118,7 @@ p.caption {
   text-align: center;
 }
 
+.admonition-title {
+  border-top-left-radius: 0.3em;
+  border-top-right-radius: 0.3em;
+}
