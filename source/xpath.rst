@@ -129,6 +129,20 @@ descriptions of what they match.
     Match every ``<person>`` element that has an attribute named ``name`` with
     a value that starts with the letter ``K``.
 
+:xpath_try:`//director/text()`
+
+    Match every text node which is a direct child of a ``<director>`` element.
+
+:xpath_try:`//cast/text()`
+
+    Match every text node which is a direct child of a ``<cast>`` element.
+    You might imagine that this would not match anything, since in the sample
+    document the ``<cast>`` elements contain only ``<person>`` elements.  But
+    if you look carefully, you'll see that in between each ``<person>`` element
+    there is some whitespace - a newline after the preceding element and then
+    some spaces at the start of the next line.  This whitespace is text and is
+    therefore matched.
+
 XPath Functions
 ---------------
 
