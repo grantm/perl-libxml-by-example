@@ -243,6 +243,18 @@ which does not contain the letter <tt class="docutils literal"><span class="pre"
 <blockquote>
 <div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element that has an attribute named <tt class="docutils literal"><span class="pre">name</span></tt> with
 a value that starts with the letter <tt class="docutils literal"><span class="pre">K</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//director/text()</span></tt></p>
+<blockquote>
+<div>Match every text node which is a direct child of a <tt class="docutils literal"><span class="pre">&lt;director&gt;</span></tt> element.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//cast/text()</span></tt></p>
+<blockquote>
+<div>Match every text node which is a direct child of a <tt class="docutils literal"><span class="pre">&lt;cast&gt;</span></tt> element.
+You might imagine that this would not match anything, since in the sample
+document the <tt class="docutils literal"><span class="pre">&lt;cast&gt;</span></tt> elements contain only <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements.  But
+if you look carefully, you&#8217;ll see that in between each <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element
+there is some whitespace - a newline after the preceding element and then
+some spaces at the start of the next line.  This whitespace is text and is
+therefore matched.</div></blockquote>
 <div class="section" id="xpath-functions">
 <h2>XPath Functions<a class="headerlink" href="#xpath-functions" title="Permalink to this headline">¶</a></h2>
 <p>Some of the examples above used <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/XPath/Functions">XPath functions</a>. It&#8217;s worth

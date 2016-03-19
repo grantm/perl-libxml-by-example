@@ -1,3 +1,27 @@
+.document a:hover,
+footer a:hover {
+  color: #2980B9;
+  border-bottom: 1px dotted #2980B9;
+}
+
+.document a:visited,
+footer a:visited {
+  color: #203d90;
+}
+
+.document p tt.literal {
+  border: none;
+  color: #333333;
+  background-color: transparent;
+  padding: 0 2px;
+  font-size: 80%;
+  font-weight: bold;
+}
+
+.document p a tt.literal {
+  color: inherit;
+}
+
 .wy-nav-side .custom-sidebar {
   margin-top: 50px;
   padding: 0.8em 1.6em;
@@ -78,3 +102,8 @@ tt.literal.xpath-try {
   line-height: 16px;
   margin: 0 0 1.6em 14px;
 }
+
+p.caption {
+  text-align: center;
+}
+

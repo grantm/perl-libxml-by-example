@@ -83,7 +83,11 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="basics.html">A Basic Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">The Document Object Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">The Document Object Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-document-object">The &#8216;Document&#8217; object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#element-objects">&#8216;Element&#8217; objects</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
 </ul>
 
@@ -139,7 +143,249 @@
             
   <div class="section" id="the-document-object-model">
 <h1>The Document Object Model<a class="headerlink" href="#the-document-object-model" title="Permalink to this headline">¶</a></h1>
-<p><em>&lt;to be written&gt;</em></p>
+<p>The <a class="reference internal" href="basics.html"><em>basic examples</em></a> section introduced the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method
+and XPath expressions for extracting parts of an XML document.  For most
+applications, that&#8217;s pretty much all you need, but sometimes it&#8217;s necessary to
+use lower-level methods and to understand the relationships between different
+parts of the document.</p>
+<p>The XML::LibXML module implements Perl bindings for the <a class="reference external" href="https://www.w3.org/TR/DOM-Level-3-Core/core.html">W3C Document Object
+Model</a>.  The W3C DOM
+defines object classes, properties and methods for querying and manipulating
+the different parts of an XML (or HTML) document.  In the Perl implementation,
+object properties are exposed via accessor methods.</p>
+<p>Let&#8217;s start our exploration of the DOM with a simple XML document which
+describes <a class="reference external" href="http://www.bookdepository.com/isbn/9780764142239">a book</a> -
+<a class="reference download internal" href="_downloads/book.xml"><tt class="xref download docutils literal"><span class="pre">book.xml</span></tt></a></p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39; standalone=&quot;yes&quot; ?&gt;</span>
+<span class="nt">&lt;book&gt;</span>
+  <span class="nt">&lt;title</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>Training Your Pet Ferret<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;authors&gt;</span>
+    <span class="nt">&lt;author&gt;</span>Gerry Bucsis<span class="nt">&lt;/author&gt;</span>
+    <span class="nt">&lt;author&gt;</span>Barbara Somerville<span class="nt">&lt;/author&gt;</span>
+  <span class="nt">&lt;/authors&gt;</span>
+  <span class="nt">&lt;isbn&gt;</span>9780764142239<span class="nt">&lt;/isbn&gt;</span>
+  <span class="nt">&lt;dimensions</span> <span class="na">width=</span><span class="s">&quot;162.56mm&quot;</span> <span class="na">height=</span><span class="s">&quot;195.58mm&quot;</span> <span class="na">depth=</span><span class="s">&quot;10.16mm&quot;</span> <span class="na">pages=</span><span class="s">&quot;96&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/book&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>When you ask XML::LibXML to parse the document, it creates an object to
+represent each part of the document and assembles those objects into a
+hierarchy as shown here:</p>
+<div class="figure">
+<img alt="An XML document represented as a Document Object Model" class="illustration" src="_images/dom.png" />
+<p class="caption">A simplified representation of the Document Object Model.</p>
+</div>
+<p>The source XML document has a <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element which contains four other
+elements: <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;authors&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;isbn&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;dimensions&gt;</span></tt>.  The
+<tt class="docutils literal"><span class="pre">&lt;authors&gt;</span></tt> element in turn contains two <tt class="docutils literal"><span class="pre">&lt;author&gt;</span></tt> elements.</p>
+<p>The hierarchy in the picture shows us that <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> has four &#8220;child&#8221;
+elements.  Similarly, <tt class="docutils literal"><span class="pre">&lt;authors&gt;</span></tt> has two child elements and one &#8220;parent&#8221;
+element (<tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt>).  Five of the elements have no child elements but four of
+them do contain text content and one has some attributes.</p>
+<div class="section" id="the-document-object">
+<h2>The &#8216;Document&#8217; object<a class="headerlink" href="#the-document-object" title="Permalink to this headline">¶</a></h2>
+<p>When you parse a document with XML::LibXML the parser returns a &#8216;Document&#8217;
+object - represented in yellow in the picture above.  The reference
+documentation for the <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Document">XML::LibXML::Document</a> class lists methods you can
+use to interact with the document.  The &#8216;Document&#8217; class inherits from the
+&#8216;Node&#8217; class so you&#8217;ll also need to refer to the docs for <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Node">XML::LibXML::Node</a> as well.</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;book.xml&#39;</span><span class="p">);</span>
+
+<span class="n">say</span> <span class="s">&#39;$dom is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$dom</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$dom-&gt;nodeName is: &#39;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre>$dom is a XML::LibXML::Document
+$dom-&gt;nodeName is: #document
+</pre></div>
+</td></tr></table></div>
+<p>The document object also provides methods you can use to extract information
+from the XML declaration section - the very first line of the source XML,
+which precedes the <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&#39;XML Version is: &#39;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">version</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;Document encoding is: &#39;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">encoding</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$is_or_not</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">standalone</span> <span class="p">?</span> <span class="s">&#39;is&#39;</span> <span class="p">:</span> <span class="s">&#39;is not&#39;</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&quot;Document $is_or_not standalone&quot;</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre>XML Version is: 1.0
+Document encoding is: UTF-8
+Document is standalone
+</pre></div>
+</td></tr></table></div>
+<p>You can serialise a whole DOM back out to XML by calling the <tt class="docutils literal"><span class="pre">toString()</span></tt>
+method on the document object:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&quot;DOM as XML:\n&quot;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>The document class also overrides the stringification operator, so if you
+simply treat the object as a string and print it out you&#8217;ll also get the
+serialised XML:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&quot;DOM as a string:\n&quot;</span><span class="p">,</span> <span class="nv">$dom</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="element-objects">
+<h2>&#8216;Element&#8217; objects<a class="headerlink" href="#element-objects" title="Permalink to this headline">¶</a></h2>
+<p>The blue boxes in the picture represent &#8216;Element&#8217; nodes.  The reference
+documentation for the <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Element">XML::LibXML::Element</a> class lists a number of
+methods, but like the &#8216;Document&#8217; class, many more methods are inherited from
+<a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Node">XML::LibXML::Node</a>.</p>
+<p>Every XML document has one single top-level element known as the &#8220;document
+element&#8221; that encloses all the other elements - in our example it&#8217;s the
+<tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element.  You can retrieve this element by calling the
+<tt class="docutils literal"><span class="pre">documentElement()</span></tt> method on the document object and you can determine
+what type of element it is by calling <tt class="docutils literal"><span class="pre">nodeName()</span></tt>:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$book</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$book is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$book</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$book-&gt;nodeName is: &#39;</span><span class="p">,</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre>$book is a XML::LibXML::Element
+$book-&gt;nodeName is: book
+</pre></div>
+</td></tr></table></div>
+<p>The <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element has four child elements.  You can use
+<tt class="docutils literal"><span class="pre">getChildrenByTagName()</span></tt> to get a list of all the child elements with a
+specific element name (this is not a recursive search, it only looks through
+elements which are direct children):</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span><span class="p">(</span><span class="nv">$isbn</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;isbn&#39;</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$isbn is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$isbn</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$isbn-&gt;nodeName is: &#39;</span><span class="p">,</span> <span class="nv">$isbn</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$isbn-&gt;to_literal returns: &#39;</span><span class="p">,</span> <span class="nv">$isbn</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$isbn stringifies to: &#39;</span><span class="p">,</span> <span class="nv">$isbn</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>$isbn is a XML::LibXML::Element
+$isbn-&gt;nodeName is: isbn
+$isbn-&gt;to_literal returns: 9780764142239
+$isbn stringifies to: &lt;isbn&gt;9780764142239&lt;/isbn&gt;
+</pre></div>
+</td></tr></table></div>
+<p>If you&#8217;re not looking for one specific type of element, you can get all the
+children with <tt class="docutils literal"><span class="pre">childNodes()</span></tt>:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">@children</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$count</span> <span class="o">=</span> <span class="nv">@children</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&quot;\$book has $count child nodes:&quot;</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$child</span> <span class="p">(</span><span class="nv">@children</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="nv">$i</span><span class="o">++</span><span class="p">,</span> <span class="s">&quot;: is a &quot;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$child</span><span class="p">),</span> <span class="s">&#39;, name = &#39;</span><span class="p">,</span> <span class="nv">$child</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>We already know that <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> contains four child elements, so you may be
+a little surprised to see <tt class="docutils literal"><span class="pre">childNodes()</span></tt> returns a list of nine nodes:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre>$book has 9 child nodes:
+0: is a XML::LibXML::Text, name = #text
+1: is a XML::LibXML::Element, name = title
+2: is a XML::LibXML::Text, name = #text
+3: is a XML::LibXML::Element, name = authors
+4: is a XML::LibXML::Text, name = #text
+5: is a XML::LibXML::Element, name = isbn
+6: is a XML::LibXML::Text, name = #text
+7: is a XML::LibXML::Element, name = dimensions
+8: is a XML::LibXML::Text, name = #text
+</pre></div>
+</td></tr></table></div>
+<p>If you refer back to the source XML document, you can see that after the
+<tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> tag and before the <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> tag there is some whitespace: a
+line-feed character followed by two spaces at the start of the next line:</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;book&gt;</span>
+  <span class="nt">&lt;title</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>Training Your Pet Ferret<span class="nt">&lt;/title&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>These strings of whitespace are represented in the DOM by &#8216;Text&#8217; nodes, which
+are children of the parent element.  So a more accurate DOM diagram would
+look like this:</p>
+<div class="figure">
+<img alt="Document Object Model including whitespace-only text nodes" class="illustration" src="_images/dom-full.png" />
+<p class="caption">Document Object Model including whitespace-only text nodes</p>
+</div>
+<p>If you want to filter child nodes by type, XML::LibXML provides a number of
+constants which you can import when you load the module:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span> <span class="sx">qw(:libxml)</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>And then you can compare <tt class="docutils literal"><span class="pre">$node-&gt;nodeType</span></tt> to these constants:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">@elements</span> <span class="o">=</span> <span class="nb">grep</span> <span class="p">{</span> <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_ELEMENT_NODE</span> <span class="p">}</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
+<span class="nv">$count</span> <span class="o">=</span> <span class="nv">@elements</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&quot;\$book has $count child elements:&quot;</span><span class="p">;</span>
+<span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$child</span> <span class="p">(</span><span class="nv">@elements</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="nv">$i</span><span class="o">++</span><span class="p">,</span> <span class="s">&quot;: is a &quot;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$child</span><span class="p">),</span> <span class="s">&#39;, name = &#39;</span><span class="p">,</span> <span class="nv">$child</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre>$book has 4 child elements:
+0: is a XML::LibXML::Element, name = title
+1: is a XML::LibXML::Element, name = authors
+2: is a XML::LibXML::Element, name = isbn
+3: is a XML::LibXML::Element, name = dimensions
+</pre></div>
+</td></tr></table></div>
+<p>But you&#8217;ll generally find that it&#8217;s much easier to just use <tt class="docutils literal"><span class="pre">findnodes()</span></tt>
+and <a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a> to select exactly the elements or other nodes you want.</p>
+<p>... <em>&lt;to be continued&gt;</em> ...</p>
+</div>
 </div>
 
 
