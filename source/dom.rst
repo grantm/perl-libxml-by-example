@@ -265,6 +265,55 @@ Output:
     :language: none
     :lines: 1-4
 
+'NodeList' objects
+------------------
+
+The 'NodeList' object is a part of the DOM that makes sense in DOM
+implementations for other languages (e.g.: Java) but doesn't make much sense in
+Perl.  Methods such as ``childNodes()`` or ``findnodes()`` that may need to
+return multiple nodes, return a 'NodeList' object which contains the matching
+nodes and allows the caller to iterate through the result set:
+
+.. literalinclude:: /code/250-dom-nodelist.pl
+    :language: perl
+    :lines: 13-19
+
+Output:
+
+.. literalinclude:: /_output/250-dom-nodelist.pl-out
+    :language: none
+    :lines: 1-5
+
+But things don't need to be that complicated in Perl - if a method needs to
+return a list of values then it can just return a list of values.  So the Perl
+bindings for DOM methods that would return a NodeList check the calling
+context.  If called in a scalar context, they return a NodeList object (as
+above) but in a list context they just return the list of values - much
+simpler:
+
+.. literalinclude:: /code/250-dom-nodelist.pl
+    :language: perl
+    :lines: 23-25
+
+If for some reason you find yourself with a NodeList object you can extract
+the contents as a simple list with ``$result->get_nodelist``.
+
+The NodeList object does implement the ``to_literal()`` method, which returns
+the text content of all the nodes, concatenated together as a single string.
+If you need a list of individual string values, you can use
+``$result->to_literal_list()``:
+
+.. literalinclude:: /code/250-dom-nodelist.pl
+    :language: perl
+    :lines: 29
+
+Output:
+
+.. literalinclude:: /_output/250-dom-nodelist.pl-out
+    :language: none
+    :lines: 12
+
+Modifying the DOM
+-----------------
+
 ... *<to be continued>* ...
-
-
