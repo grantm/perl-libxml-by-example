@@ -5,7 +5,6 @@ use strict;
 use warnings;
 
 use XML::LibXML;
-use Data::Dumper;
 
 my $dom = XML::LibXML->load_xml(location => 'book.xml');
 
