@@ -88,6 +88,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#element-objects">&#8216;Element&#8217; objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#text-objects">&#8216;Text&#8217; objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#attr-objects">&#8216;Attr&#8217; objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nodelist-objects">&#8216;NodeList&#8217; objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modifying-the-dom">Modifying the DOM</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
@@ -505,6 +507,70 @@ $width_attr-&gt;value: 162.56mm
 $width_attr as a string:  width=&quot;162.56mm&quot;
 </pre></div>
 </td></tr></table></div>
+</div>
+<div class="section" id="nodelist-objects">
+<h2>&#8216;NodeList&#8217; objects<a class="headerlink" href="#nodelist-objects" title="Permalink to this headline">¶</a></h2>
+<p>The &#8216;NodeList&#8217; object is a part of the DOM that makes sense in DOM
+implementations for other languages (e.g.: Java) but doesn&#8217;t make much sense in
+Perl.  Methods such as <tt class="docutils literal"><span class="pre">childNodes()</span></tt> or <tt class="docutils literal"><span class="pre">findnodes()</span></tt> that may need to
+return multiple nodes, return a &#8216;NodeList&#8217; object which contains the matching
+nodes and allows the caller to iterate through the result set:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$result is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+<span class="k">my</span> <span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$i</span> <span class="p">(</span><span class="mi">1</span><span class="o">..</span><span class="nv">$result</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">my</span> <span class="nv">$node</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="n">get_node</span><span class="p">(</span><span class="nv">$i</span><span class="p">);</span>
+    <span class="n">say</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeName</span> <span class="k">if</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_ELEMENT_NODE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre>$result is a XML::LibXML::NodeList
+title
+authors
+isbn
+dimensions
+</pre></div>
+</td></tr></table></div>
+<p>But things don&#8217;t need to be that complicated in Perl - if a method needs to
+return a list of values then it can just return a list of values.  So the Perl
+bindings for DOM methods that would return a NodeList check the calling
+context.  If called in a scalar context, they return a NodeList object (as
+above) but in a list context they just return the list of values - much
+simpler:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$node</span> <span class="p">(</span><span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeName</span> <span class="k">if</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_ELEMENT_NODE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>If for some reason you find yourself with a NodeList object you can extract
+the contents as a simple list with <tt class="docutils literal"><span class="pre">$result-&gt;get_nodelist</span></tt>.</p>
+<p>The NodeList object does implement the <tt class="docutils literal"><span class="pre">to_literal()</span></tt> method, which returns
+the text content of all the nodes, concatenated together as a single string.
+If you need a list of individual string values, you can use
+<tt class="docutils literal"><span class="pre">$result-&gt;to_literal_list()</span></tt>:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&#39;Authors: &#39;</span><span class="p">,</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;.//author&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">to_literal_list</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>Authors: Gerry Bucsis, Barbara Somerville
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="modifying-the-dom">
+<h2>Modifying the DOM<a class="headerlink" href="#modifying-the-dom" title="Permalink to this headline">¶</a></h2>
 <p>... <em>&lt;to be continued&gt;</em> ...</p>
 </div>
 </div>
