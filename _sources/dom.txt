@@ -56,7 +56,7 @@ use to interact with the document.  The 'Document' class inherits from the
 
 .. literalinclude:: /code/200-dom-document.pl
     :language: perl
-    :lines: 10-13
+    :lines: 9-12
 
 Output:
 
@@ -70,7 +70,7 @@ which precedes the ``<book>`` element:
 
 .. literalinclude:: /code/200-dom-document.pl
     :language: perl
-    :lines: 14-17
+    :lines: 13-16
 
 Output:
 
@@ -83,7 +83,7 @@ method on the document object:
 
 .. literalinclude:: /code/200-dom-document.pl
     :language: perl
-    :lines: 19
+    :lines: 18
 
 The document class also overrides the stringification operator, so if you
 simply treat the object as a string and print it out you'll also get the
@@ -91,7 +91,7 @@ serialised XML:
 
 .. literalinclude:: /code/200-dom-document.pl
     :language: perl
-    :lines: 21
+    :lines: 20
 
 
 'Element' objects
@@ -99,7 +99,7 @@ serialised XML:
 
 The blue boxes in the picture represent 'Element' nodes.  The reference
 documentation for the `XML::LibXML::Element
-<https://metacpan.org/pod/XML::LibXML::Element>`__ class lists a number of
+<https://metacpan.org/pod/XML::LibXML::Element>`_ class lists a number of
 methods, but like the 'Document' class, many more methods are inherited from
 `XML::LibXML::Node <https://metacpan.org/pod/XML::LibXML::Node>`_.
 
@@ -188,6 +188,82 @@ Output:
 
 But you'll generally find that it's much easier to just use ``findnodes()``
 and :doc:`xpath` to select exactly the elements or other nodes you want.
+
+'Text' objects
+--------------
+
+The green boxes in the picture represent 'Text' nodes.  The reference
+documentation for the `XML::LibXML::Text
+<https://metacpan.org/pod/XML::LibXML::Text>`_ class lists a small number of
+methods and many more are inherited from the Node class.
+
+There are numerous ways to get the text string out of a Text object but it's
+important to be clear on whether you want the text as it appears in the XML
+(including any entity escaping) or whether you want the plain text that the
+source represents.  Consider this tiny source document:
+
+.. literalinclude:: /code/fish-and-chips.xml
+    :language: xml
+    :linenos:
+    :lines: 1
+
+And these different methods for accessing the text:
+
+.. literalinclude:: /code/220-dom-text-nodes.pl
+    :language: perl
+    :lines: 11-19
+
+Producing this output:
+
+.. literalinclude:: /_output/220-dom-text-nodes.pl-out
+    :language: none
+    :lines: 1-6
+
+The ``data()`` and ``nodeValue()`` methods are essentially aliases.  The
+``to_literal()`` method produces the same output via a more complex route, but
+has the advantage that you can call it on any object in the DOM.
+
+The ``toString()`` method is really only useful for serialising a whole DOM or
+a DOM fragment out to XML.  Stringification is particularly handy when you just
+want to print an object out for debugging purposes.
+
+'Attr' objects
+--------------
+
+The red boxes in the picture represent attributes.  You're unlikely to ever
+need to deal with attribute **objects** since it's easier to get and set
+attribute values by calling methods on an Element object and passing in plain
+string values.  An even easier approach is to use the tied hash interface that
+allows you to treat each element as if it were a hashref and access attribute
+values via hash keys:
+
+.. literalinclude:: /code/230-dom-attributes.pl
+    :language: perl
+    :lines: 11-15
+
+Output:
+
+.. literalinclude:: /_output/230-dom-attributes.pl-out
+    :language: none
+    :lines: 1-2
+
+The class name for the attribute objects is 'Attr' - the unfortunate truncation
+of the class name derives from the `W3C DOM spec
+<https://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-637646024>`_.  The
+reference documentation is at: `XML::LibXML::Attr
+<https://metacpan.org/pod/XML::LibXML::Attr>`_.  Some additional methods are
+inherited from the Node class but not all the Node methods work with Attr
+objects (once again due to behaviour specified by the W3C DOM).
+
+.. literalinclude:: /code/240-dom-attr.pl
+    :language: perl
+    :lines: 11-22
+
+Output:
+
+.. literalinclude:: /_output/240-dom-attr.pl-out
+    :language: none
+    :lines: 1-4
 
 ... *<to be continued>* ...
 

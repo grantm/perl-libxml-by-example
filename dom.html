@@ -86,6 +86,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">The Document Object Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-document-object">The &#8216;Document&#8217; object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#element-objects">&#8216;Element&#8217; objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text-objects">&#8216;Text&#8217; objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attr-objects">&#8216;Attr&#8217; objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
@@ -384,6 +386,125 @@ constants which you can import when you load the module:</p>
 </td></tr></table></div>
 <p>But you&#8217;ll generally find that it&#8217;s much easier to just use <tt class="docutils literal"><span class="pre">findnodes()</span></tt>
 and <a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a> to select exactly the elements or other nodes you want.</p>
+</div>
+<div class="section" id="text-objects">
+<h2>&#8216;Text&#8217; objects<a class="headerlink" href="#text-objects" title="Permalink to this headline">¶</a></h2>
+<p>The green boxes in the picture represent &#8216;Text&#8217; nodes.  The reference
+documentation for the <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Text">XML::LibXML::Text</a> class lists a small number of
+methods and many more are inherited from the Node class.</p>
+<p>There are numerous ways to get the text string out of a Text object but it&#8217;s
+important to be clear on whether you want the text as it appears in the XML
+(including any entity escaping) or whether you want the plain text that the
+source represents.  Consider this tiny source document:</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;item&gt;</span>Fish <span class="ni">&amp;amp;</span> Chips<span class="nt">&lt;/item&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>And these different methods for accessing the text:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$item</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<span class="k">my</span><span class="p">(</span><span class="nv">$text</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$item</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">();</span>
+
+<span class="n">say</span> <span class="s">&#39;$text is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$text</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$text-&gt;data = &#39;</span><span class="p">,</span> <span class="nv">$text</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$text-&gt;nodeValue = &#39;</span><span class="p">,</span> <span class="nv">$text</span><span class="o">-&gt;</span><span class="n">nodeValue</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$text-&gt;to_literal = &#39;</span><span class="p">,</span> <span class="nv">$text</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$text-&gt;toString = &#39;</span><span class="p">,</span> <span class="nv">$text</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$text as a string: &#39;</span><span class="p">,</span> <span class="nv">$text</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Producing this output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre>$text is a XML::LibXML::Text
+$text-&gt;data = Fish &amp; Chips
+$text-&gt;nodeValue = Fish &amp; Chips
+$text-&gt;to_literal = Fish &amp; Chips
+$text-&gt;toString = Fish &amp;amp; Chips
+$text as a string: Fish &amp;amp; Chips
+</pre></div>
+</td></tr></table></div>
+<p>The <tt class="docutils literal"><span class="pre">data()</span></tt> and <tt class="docutils literal"><span class="pre">nodeValue()</span></tt> methods are essentially aliases.  The
+<tt class="docutils literal"><span class="pre">to_literal()</span></tt> method produces the same output via a more complex route, but
+has the advantage that you can call it on any object in the DOM.</p>
+<p>The <tt class="docutils literal"><span class="pre">toString()</span></tt> method is really only useful for serialising a whole DOM or
+a DOM fragment out to XML.  Stringification is particularly handy when you just
+want to print an object out for debugging purposes.</p>
+</div>
+<div class="section" id="attr-objects">
+<h2>&#8216;Attr&#8217; objects<a class="headerlink" href="#attr-objects" title="Permalink to this headline">¶</a></h2>
+<p>The red boxes in the picture represent attributes.  You&#8217;re unlikely to ever
+need to deal with attribute <strong>objects</strong> since it&#8217;s easier to get and set
+attribute values by calling methods on an Element object and passing in plain
+string values.  An even easier approach is to use the tied hash interface that
+allows you to treat each element as if it were a hashref and access attribute
+values via hash keys:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$book</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<span class="k">my</span><span class="p">(</span><span class="nv">$dim</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;dimensions&#39;</span><span class="p">);</span>
+
+<span class="n">say</span> <span class="s">&#39;$dim-&gt;getAttribute(&quot;width&quot;) = &#39;</span><span class="p">,</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="n">getAttribute</span><span class="p">(</span><span class="s">&quot;width&quot;</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$dim-&gt;{width} = &#39;</span><span class="p">,</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">width</span><span class="p">};</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre>$dim-&gt;getAttribute(&quot;width&quot;) = 162.56mm
+$dim-&gt;{width} = 162.56mm
+</pre></div>
+</td></tr></table></div>
+<p>The class name for the attribute objects is &#8216;Attr&#8217; - the unfortunate truncation
+of the class name derives from the <a class="reference external" href="https://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-637646024">W3C DOM spec</a>.  The
+reference documentation is at: <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Attr">XML::LibXML::Attr</a>.  Some additional methods are
+inherited from the Node class but not all the Node methods work with Attr
+objects (once again due to behaviour specified by the W3C DOM).</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You probably don&#39;t need this object interface for attributes at all.</span>
+<span class="c1"># The previous example showed how to access attributes directly via</span>
+<span class="c1"># the Element object.</span>
+
+<span class="k">my</span> <span class="nv">$book</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<span class="k">my</span><span class="p">(</span><span class="nv">$dim</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;dimensions&#39;</span><span class="p">);</span>
+<span class="k">my</span><span class="p">(</span><span class="nv">$width_attr</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="n">getAttributeNode</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">);</span>
+
+<span class="n">say</span> <span class="s">&#39;$width_attr is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$width_attr</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$width_attr-&gt;nodeName: &#39;</span><span class="p">,</span> <span class="nv">$width_attr</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$width_attr-&gt;value: &#39;</span><span class="p">,</span> <span class="nv">$width_attr</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&#39;$width_attr as a string: &#39;</span><span class="p">,</span> <span class="nv">$width_attr</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>$width_attr is a XML::LibXML::Attr
+$width_attr-&gt;nodeName: width
+$width_attr-&gt;value: 162.56mm
+$width_attr as a string:  width=&quot;162.56mm&quot;
+</pre></div>
+</td></tr></table></div>
 <p>... <em>&lt;to be continued&gt;</em> ...</p>
 </div>
 </div>
