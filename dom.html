@@ -555,6 +555,25 @@ simpler:</p>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
+<p>When you execute a search that you expect should match exactly one node, take
+care to still use list context:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span><span class="p">(</span><span class="nv">$dim</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./dimensions&#39;</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;$dim is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$dim</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;Page count: &#39;</span><span class="p">,</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">pages</span><span class="p">};</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre>$dim is a XML::LibXML::Element
+Page count: 96
+</pre></div>
+</td></tr></table></div>
+<p>In this example, the assignment <tt class="docutils literal"><span class="pre">my($dim)</span> <span class="pre">=</span> <span class="pre">...</span></tt> uses parentheses to force
+list context, so <tt class="docutils literal"><span class="pre">findnodes()</span></tt> will return a list of Element nodes and the
+first will be assigned to <tt class="docutils literal"><span class="pre">$dim</span></tt>.  Without the parentheses, a NodeList would
+be assigned to <tt class="docutils literal"><span class="pre">$dim</span></tt>.</p>
 <p>If for some reason you find yourself with a NodeList object you can extract
 the contents as a simple list with <tt class="docutils literal"><span class="pre">$result-&gt;get_nodelist</span></tt>.</p>
 <p>The NodeList object does implement the <tt class="docutils literal"><span class="pre">to_literal()</span></tt> method, which returns
@@ -571,7 +590,153 @@ If you need a list of individual string values, you can use
 </div>
 <div class="section" id="modifying-the-dom">
 <h2>Modifying the DOM<a class="headerlink" href="#modifying-the-dom" title="Permalink to this headline">¶</a></h2>
-<p>... <em>&lt;to be continued&gt;</em> ...</p>
+<p>If you wish to modify the DOM, you can create new nodes and add them into the
+node hierarchy in the appropriate place.  You can also modify, move and delete
+existing nodes.  Let&#8217;s start with a simple XML document:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$xml</span> <span class="o">=</span> <span class="sx">q{</span>
+<span class="sx">&lt;record&gt;</span>
+<span class="sx">  &lt;event&gt;Men&#39;s 100m&lt;/event&gt;</span>
+<span class="sx">&lt;/record&gt;</span>
+<span class="sx">}</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">string</span> <span class="o">=&gt;</span> <span class="nv">$xml</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Navigate to the <tt class="docutils literal"><span class="pre">&lt;event&gt;</span></tt> element; change its text content; add an attribute
+and print out the resulting XML:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$record</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<span class="k">my</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$record</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;event&#39;</span><span class="p">);</span>
+<span class="k">my</span> <span class="nv">$text</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="n">firstChild</span><span class="p">;</span>
+<span class="nv">$text</span><span class="o">-&gt;</span><span class="n">setData</span><span class="p">(</span><span class="s">&quot;Men&#39;s 100 metres&quot;</span><span class="p">);</span>
+<span class="nv">$event</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">type</span><span class="p">}</span> <span class="o">=</span> <span class="s">&#39;sprint&#39;</span><span class="p">;</span>
+<span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;record&gt;
+  &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
+&lt;/record&gt;
+</pre></div>
+</td></tr></table></div>
+<p>You can use <tt class="docutils literal"><span class="pre">$dom-&gt;createElement</span></tt> to create a new element and then add it to
+an existing node&#8217;s list of child nodes.  You can append it to the end of the
+list of children or insert it before/after a specific existing child:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">createElement</span><span class="p">(</span><span class="s">&#39;country&#39;</span><span class="p">);</span>
+<span class="nv">$country</span><span class="o">-&gt;</span><span class="n">appendText</span><span class="p">(</span><span class="s">&#39;Jamaica&#39;</span><span class="p">);</span>
+<span class="nv">$record</span><span class="o">-&gt;</span><span class="n">appendChild</span><span class="p">(</span><span class="nv">$country</span><span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">$athlete</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">createElement</span><span class="p">(</span><span class="s">&#39;athlete&#39;</span><span class="p">);</span>
+<span class="nv">$athlete</span><span class="o">-&gt;</span><span class="n">appendText</span><span class="p">(</span><span class="s">&#39;Usain Bolt&#39;</span><span class="p">);</span>
+<span class="nv">$record</span><span class="o">-&gt;</span><span class="n">insertBefore</span><span class="p">(</span><span class="nv">$athlete</span><span class="p">,</span> <span class="nv">$country</span><span class="p">);</span>
+
+<span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;record&gt;
+  &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
+&lt;athlete&gt;Usain Bolt&lt;/athlete&gt;&lt;country&gt;Jamaica&lt;/country&gt;&lt;/record&gt;
+</pre></div>
+</td></tr></table></div>
+<p>Unfortunately that output is probably messier than you were expecting.  To get
+nicely indented XML output, you&#8217;d need to create text nodes containing a
+newline and the appropriate number of spaces for indentation; and then add
+those text nodes in before each new element.  Or, an easier way would be to
+pass the numeric value <tt class="docutils literal"><span class="pre">1</span></tt> to the <tt class="docutils literal"><span class="pre">toString()</span></tt> method as a flag indicating
+that you&#8217;d like the output auto-indented:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;record&gt;
+  &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
+&lt;athlete&gt;Usain Bolt&lt;/athlete&gt;&lt;country&gt;Jamaica&lt;/country&gt;&lt;/record&gt;
+</pre></div>
+</td></tr></table></div>
+<p>But sadly that didn&#8217;t seem to work.  The <tt class="docutils literal"><span class="pre">libxml</span></tt> library won&#8217;t add
+indentation to <em>&#8216;mixed content&#8217;</em> - an element whose list of child nodes
+contains a mixture of both Element nodes and Text nodes.  In this case the
+<tt class="docutils literal"><span class="pre">&lt;record&gt;</span></tt> element contains mixed content (there&#8217;s a whitespace text node
+before the <tt class="docutils literal"><span class="pre">&lt;event&gt;</span></tt> and another after it) so <tt class="docutils literal"><span class="pre">libxml</span></tt> does not try to
+indent its contents.</p>
+<p>If we strip out those extra text nodes then libxml will add indenting:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$node</span> <span class="p">(</span><span class="nv">$record</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nv">$record</span><span class="o">-&gt;</span><span class="n">removeChild</span><span class="p">(</span><span class="nv">$node</span><span class="p">)</span> <span class="k">if</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">!=</span> <span class="n">XML_ELEMENT_NODE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;record&gt;
+  &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
+  &lt;athlete&gt;Usain Bolt&lt;/athlete&gt;
+  &lt;country&gt;Jamaica&lt;/country&gt;
+&lt;/record&gt;
+</pre></div>
+</td></tr></table></div>
+<p>While that did work, it required some rather specific knowledge of the document
+structure.  We were relying on knowing that all the text children of the
+<tt class="docutils literal"><span class="pre">&lt;record&gt;</span></tt> element were whitespace-only and could be discarded.  Here&#8217;s a
+more generic approach which searches recursively through the document and
+deletes every text node that contains only whitespace:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//text()&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">parentNode</span><span class="o">-&gt;</span><span class="n">removeChild</span><span class="p">(</span><span class="nv">$_</span><span class="p">)</span> <span class="k">unless</span> <span class="sr">/\S/</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>That code is a little tricky so some explanation is probably in order:</p>
+<ul class="simple">
+<li>The loop does not declare a loop variable, so <tt class="docutils literal"><span class="pre">$_</span></tt> is used implicitly.</li>
+<li>The trailing <tt class="docutils literal"><span class="pre">unless</span></tt> clause runs a regex comparison against <tt class="docutils literal"><span class="pre">$_</span></tt>
+which implicitly calls <tt class="docutils literal"><span class="pre">toString()</span></tt> on the Text node.</li>
+<li><tt class="docutils literal"><span class="pre">unless</span> <span class="pre">/\S/</span></tt> is a double negative which means <em>&#8220;unless the text contains
+a non-whitespace character&#8221;</em>.</li>
+<li>the <tt class="docutils literal"><span class="pre">removeChild()</span></tt> method needs to be called on the <em>parent</em> of the node
+we&#8217;re removing, so if the Text node is whitespace-only then we need to
+use <tt class="docutils literal"><span class="pre">parentNode()</span></tt>.</li>
+</ul>
+<p>If you&#8217;re generating XML from scratch then creating and assembling DOM nodes is
+very fiddly and <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> might not be the best tool for the job.
+<a class="reference external" href="https://metacpan.org/pod/XML::Generator">XML::Generator</a> is an excellent
+tool for generating XML - especially if you need to deal with namespaces.</p>
 </div>
 </div>
 
