@@ -9,16 +9,18 @@ footer a:visited {
   color: #203d90;
 }
 
-.document p tt.literal {
+.document p tt.literal,
+.document li tt.literal {
   border: none;
-  color: #333333;
+  color: #D11A1A;
   background-color: transparent;
   padding: 0 2px;
   font-size: 80%;
   font-weight: bold;
 }
 
-.document p a tt.literal {
+.document p a tt.literal,
+.document li a tt.literal {
   color: inherit;
 }
 
@@ -121,4 +123,8 @@ p.caption {
 .admonition-title {
   border-top-left-radius: 0.3em;
   border-top-right-radius: 0.3em;
+}
+
+ol.arabic.simple li {
+  padding-left: 8px;
 }
