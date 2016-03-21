@@ -26,4 +26,11 @@ foreach my $node ($book->childNodes) {
 
 say '';
 
+my($dim) = $book->findnodes('./dimensions');
+say '$dim is a ', ref($dim);
+say 'Page count: ', $dim->{pages};
+
+say '';
+
 say 'Authors: ', join ', ', $book->findnodes('.//author')->to_literal_list;
+

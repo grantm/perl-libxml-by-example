@@ -295,6 +295,24 @@ simpler:
     :language: perl
     :lines: 23-25
 
+When you execute a search that you expect should match exactly one node, take
+care to still use list context:
+
+.. literalinclude:: /code/250-dom-nodelist.pl
+    :language: perl
+    :lines: 29-31
+
+Output:
+
+.. literalinclude:: /_output/250-dom-nodelist.pl-out
+    :language: none
+    :lines: 12-13
+
+In this example, the assignment ``my($dim) = ...`` uses parentheses to force
+list context, so ``findnodes()`` will return a list of Element nodes and the
+first will be assigned to ``$dim``.  Without the parentheses, a NodeList would
+be assigned to ``$dim``.
+
 If for some reason you find yourself with a NodeList object you can extract
 the contents as a simple list with ``$result->get_nodelist``.
 
@@ -305,15 +323,111 @@ If you need a list of individual string values, you can use
 
 .. literalinclude:: /code/250-dom-nodelist.pl
     :language: perl
-    :lines: 29
+    :lines: 35
 
 Output:
 
 .. literalinclude:: /_output/250-dom-nodelist.pl-out
     :language: none
-    :lines: 12
+    :lines: 15
 
 Modifying the DOM
 -----------------
 
-... *<to be continued>* ...
+If you wish to modify the DOM, you can create new nodes and add them into the
+node hierarchy in the appropriate place.  You can also modify, move and delete
+existing nodes.  Let's start with a simple XML document:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 9-14
+
+Navigate to the ``<event>`` element; change its text content; add an attribute
+and print out the resulting XML:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 16-21
+
+Output:
+
+.. literalinclude:: /_output/260-dom-modification.pl-out
+    :language: none
+    :lines: 1-4
+
+You can use ``$dom->createElement`` to create a new element and then add it to
+an existing node's list of child nodes.  You can append it to the end of the
+list of children or insert it before/after a specific existing child:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 25-33
+
+Output:
+
+.. literalinclude:: /_output/260-dom-modification.pl-out
+    :language: none
+    :lines: 7-10
+
+Unfortunately that output is probably messier than you were expecting.  To get
+nicely indented XML output, you'd need to create text nodes containing a
+newline and the appropriate number of spaces for indentation; and then add
+those text nodes in before each new element.  Or, an easier way would be to
+pass the numeric value ``1`` to the ``toString()`` method as a flag indicating
+that you'd like the output auto-indented:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 35
+
+Output:
+
+.. literalinclude:: /_output/260-dom-modification.pl-out
+    :language: none
+    :lines: 12-15
+
+But sadly that didn't seem to work.  The ``libxml`` library won't add
+indentation to *'mixed content'* - an element whose list of child nodes
+contains a mixture of both Element nodes and Text nodes.  In this case the
+``<record>`` element contains mixed content (there's a whitespace text node
+before the ``<event>`` and another after it) so ``libxml`` does not try to
+indent its contents.
+
+If we strip out those extra text nodes then libxml will add indenting:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 39-42
+
+Output:
+
+.. literalinclude:: /_output/260-dom-modification.pl-out
+    :language: none
+    :lines: 17-22
+
+While that did work, it required some rather specific knowledge of the document
+structure.  We were relying on knowing that all the text children of the
+``<record>`` element were whitespace-only and could be discarded.  Here's a
+more generic approach which searches recursively through the document and
+deletes every text node that contains only whitespace:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 46-49
+
+That code is a little tricky so some explanation is probably in order:
+
+* The loop does not declare a loop variable, so ``$_`` is used implicitly.
+* The trailing ``unless`` clause runs a regex comparison against ``$_``
+  which implicitly calls ``toString()`` on the Text node.
+* ``unless /\S/`` is a double negative which means *"unless the text contains
+  a non-whitespace character"*.
+* the ``removeChild()`` method needs to be called on the *parent* of the node
+  we're removing, so if the Text node is whitespace-only then we need to
+  use ``parentNode()``.
+
+If you're generating XML from scratch then creating and assembling DOM nodes is
+very fiddly and ``XML::LibXML`` might not be the best tool for the job.
+`XML::Generator <https://metacpan.org/pod/XML::Generator>`_ is an excellent
+tool for generating XML - especially if you need to deal with namespaces.
+
