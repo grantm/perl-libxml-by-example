@@ -413,7 +413,7 @@ deletes every text node that contains only whitespace:
 
 .. literalinclude:: /code/260-dom-modification.pl
     :language: perl
-    :lines: 46-49
+    :lines: 48-50
 
 That code is a little tricky so some explanation is probably in order:
 
@@ -426,8 +426,87 @@ That code is a little tricky so some explanation is probably in order:
   we're removing, so if the Text node is whitespace-only then we need to
   use ``parentNode()``.
 
+Another handy method for adding to the DOM is ``appendWellBalancedChunk()``.
+This method takes a string containing a fragment of XML.  It must be well
+balanced - each opening tag must have a matching closing tag and elements must
+be properly nested.  The XML fragment is parsed to create a
+`XML::LibXML::DocumentFragment
+<https://metacpan.org/pod/XML::LibXML::DocumentFragment>`_ which is then
+appended to the target element:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 54-57
+
+Output:
+
+.. literalinclude:: /_output/260-dom-modification.pl-out
+    :language: none
+    :lines: 31-39
+
+One 'gotcha' with the ``appendWellBalancedChunk()`` method is that the XML
+parsing phase expects a string of bytes.  So if you have a Perl string that
+might contain non-ASCII characters, you first need to encode the character
+string to a byte string in UTF-8 and then pass the byte string to
+``appendWellBalancedChunk()``:
+
+.. literalinclude:: /code/260-dom-modification.pl
+    :language: perl
+    :lines: 62-63
+
+Creating a new Document
+-----------------------
+
+You can create a document from scratch by calling
+``XML::LibXML::Document->new()`` rather than parsing from an existing document.
+Then use the methods discussed above to add elements and text content:
+
+.. literalinclude:: /code/270-dom-from-scratch.pl
+    :language: perl
+    :lines: 1-16
+
+In this example, the document encoding was declared as UTF-8 when the Document
+object was created.  Text content was added by calling ``appendText()`` and
+passing it a normal Perl character string - which happened to contain some
+non-ASCII characters.  When opening the file for output it is not necessary to
+use an encoding layer since the output from ``libxml`` will already be encoded
+as utf-8 bytes.
+
+The file contents look like this:
+
+.. literalinclude:: /_output/270-dom-from-scratch.pl-out
+    :language: none
+    :lines: 1-2
+
+If we hex-dump the file we can see the `e-acute character
+<http://www.mclean.net.nz/ucf/?c=U+00E9>`_ was written out as the 2-byte UTF-8
+sequence ``C3 A9`` and the `euro symbol
+<http://www.mclean.net.nz/ucf/?c=U+20AC>`_ was written as a 3-byte UTF-8
+sequence: ``E2 82 AC``:
+
+.. literalinclude:: /_output/270-dom-from-scratch.pl-out
+    :language: none
+    :lines: 4-8
+
+To output the document in a different encoding all you need to do is change the
+second parameter passed to ``new()`` when creating the Document object.  No
+other code changes are required:
+
+.. literalinclude:: /code/270-dom-from-scratch.pl
+    :language: perl
+    :lines: 28
+
+This time when hex-dumping the file we can see the e-acute character was
+written out as the single byte ``E9`` and the euro symbol which cannot be
+represented directly in Latin-1 was written in numeric character entity form
+``&#8364;``:
+
+.. literalinclude:: /_output/270-dom-from-scratch.pl-out
+    :language: none
+    :lines: 10-15
+
 If you're generating XML from scratch then creating and assembling DOM nodes is
 very fiddly and ``XML::LibXML`` might not be the best tool for the job.
 `XML::Generator <https://metacpan.org/pod/XML::Generator>`_ is an excellent
-tool for generating XML - especially if you need to deal with namespaces.
+module for generating XML - especially if you need to deal with namespaces.
 

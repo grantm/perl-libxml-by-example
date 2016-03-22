@@ -1,11 +1,12 @@
+* Basics
+  - handling parse errors
 * XPath in more detail
-* DOM methods and documentation
-  - walking the DOM tree?
+  - compound expressions with | or &
 * working with namespaces
 * working with HTML
-* generating XML ?
 * validating XML ?
 * installing XML::LibXML
+  - dependency - iconv
 * working with huge XML files
 
 * customise the sphinx theme

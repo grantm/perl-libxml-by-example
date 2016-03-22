@@ -43,9 +43,24 @@ foreach my $node ($record->childNodes()) {
 say $dom->toString(1);
 
 $dom = $dom2;
+$record = $dom->documentElement;
 
 foreach ($dom->findnodes('//text()')) {
     $_->parentNode->removeChild($_) unless /\S/;
 }
 
 say $dom->toString(1);
+
+$record->appendWellBalancedChunk(
+    '<time>9.58s</time><date>2009-08-16</date><location>Berlin, Germany</location>'
+);
+
+say $dom->toString(1);
+
+
+my $perl_string = "<time>9.58s</time><date>2009-08-16</date><location>B\x{e9}rlin, Germany</location>";
+my $byte_string = Encode::encode_utf8($perl_string);
+$record->appendWellBalancedChunk($byte_string, 'UTF-8');
+
+say $dom->toString(1);
+
