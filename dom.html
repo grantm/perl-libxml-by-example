@@ -90,6 +90,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#attr-objects">&#8216;Attr&#8217; objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#nodelist-objects">&#8216;NodeList&#8217; objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#modifying-the-dom">Modifying the DOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-new-document">Creating a new Document</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
@@ -733,10 +734,141 @@ a non-whitespace character&#8221;</em>.</li>
 we&#8217;re removing, so if the Text node is whitespace-only then we need to
 use <tt class="docutils literal"><span class="pre">parentNode()</span></tt>.</li>
 </ul>
+<p>Another handy method for adding to the DOM is <tt class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></tt>.
+This method takes a string containing a fragment of XML.  It must be well
+balanced - each opening tag must have a matching closing tag and elements must
+be properly nested.  The XML fragment is parsed to create a
+<a class="reference external" href="https://metacpan.org/pod/XML::LibXML::DocumentFragment">XML::LibXML::DocumentFragment</a> which is then
+appended to the target element:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$record</span><span class="o">-&gt;</span><span class="n">appendWellBalancedChunk</span><span class="p">(</span>
+    <span class="s">&#39;&lt;time&gt;9.58s&lt;/time&gt;&lt;date&gt;2009-08-16&lt;/date&gt;&lt;location&gt;Berlin, Germany&lt;/location&gt;&#39;</span>
+<span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;record&gt;
+  &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
+  &lt;athlete&gt;Usain Bolt&lt;/athlete&gt;
+  &lt;country&gt;Jamaica&lt;/country&gt;
+  &lt;time&gt;9.58s&lt;/time&gt;
+  &lt;date&gt;2009-08-16&lt;/date&gt;
+  &lt;location&gt;Berlin, Germany&lt;/location&gt;
+&lt;/record&gt;
+</pre></div>
+</td></tr></table></div>
+<p>One &#8216;gotcha&#8217; with the <tt class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></tt> method is that the XML
+parsing phase expects a string of bytes.  So if you have a Perl string that
+might contain non-ASCII characters, you first need to encode the character
+string to a byte string in UTF-8 and then pass the byte string to
+<tt class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></tt>:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$byte_string</span> <span class="o">=</span> <span class="nn">Encode::</span><span class="n">encode_utf8</span><span class="p">(</span><span class="nv">$perl_string</span><span class="p">);</span>
+<span class="nv">$record</span><span class="o">-&gt;</span><span class="n">appendWellBalancedChunk</span><span class="p">(</span><span class="nv">$byte_string</span><span class="p">,</span> <span class="s">&#39;UTF-8&#39;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="creating-a-new-document">
+<h2>Creating a new Document<a class="headerlink" href="#creating-a-new-document" title="Permalink to this headline">¶</a></h2>
+<p>You can create a document from scratch by calling
+<tt class="docutils literal"><span class="pre">XML::LibXML::Document-&gt;new()</span></tt> rather than parsing from an existing document.
+Then use the methods discussed above to add elements and text content:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">#!/usr/bin/perl</span>
+
+<span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">autodie</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Document</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="s">&#39;1.0&#39;</span><span class="p">,</span> <span class="s">&#39;UTF-8&#39;</span><span class="p">);</span>
+<span class="k">my</span> <span class="nv">$title</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">createElement</span><span class="p">(</span><span class="s">&#39;title&#39;</span><span class="p">);</span>
+<span class="nv">$title</span><span class="o">-&gt;</span><span class="n">appendText</span><span class="p">(</span><span class="s">&quot;Caf\x{e9} lunch: \x{20ac}12.50&quot;</span><span class="p">);</span>
+<span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">setDocumentElement</span><span class="p">(</span><span class="nv">$title</span><span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;temp-utf8.xml&#39;</span><span class="p">;</span>
+<span class="nb">open</span> <span class="k">my</span> <span class="nv">$out</span><span class="p">,</span> <span class="s">&#39;&gt;:raw&#39;</span><span class="p">,</span> <span class="nv">$filename</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>In this example, the document encoding was declared as UTF-8 when the Document
+object was created.  Text content was added by calling <tt class="docutils literal"><span class="pre">appendText()</span></tt> and
+passing it a normal Perl character string - which happened to contain some
+non-ASCII characters.  When opening the file for output it is not necessary to
+use an encoding layer since the output from <tt class="docutils literal"><span class="pre">libxml</span></tt> will already be encoded
+as utf-8 bytes.</p>
+<p>The file contents look like this:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;title&gt;Café lunch: €12.50&lt;/title&gt;
+</pre></div>
+</td></tr></table></div>
+<p>If we hex-dump the file we can see the <a class="reference external" href="http://www.mclean.net.nz/ucf/?c=U+00E9">e-acute character</a> was written out as the 2-byte UTF-8
+sequence <tt class="docutils literal"><span class="pre">C3</span> <span class="pre">A9</span></tt> and the <a class="reference external" href="http://www.mclean.net.nz/ucf/?c=U+20AC">euro symbol</a> was written as a 3-byte UTF-8
+sequence: <tt class="docutils literal"><span class="pre">E2</span> <span class="pre">82</span> <span class="pre">AC</span></tt>:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre>0000000: 3c3f 786d 6c20 7665 7273 696f 6e3d 2231  &lt;?xml version=&quot;1
+0000010: 2e30 2220 656e 636f 6469 6e67 3d22 5554  .0&quot; encoding=&quot;UT
+0000020: 462d 3822 3f3e 0a3c 7469 746c 653e 4361  F-8&quot;?&gt;.&lt;title&gt;Ca
+0000030: 66c3 a920 6c75 6e63 683a 20e2 82ac 3132  f.. lunch: ...12
+0000040: 2e35 303c 2f74 6974 6c65 3e0a            .50&lt;/title&gt;.
+</pre></div>
+</td></tr></table></div>
+<p>To output the document in a different encoding all you need to do is change the
+second parameter passed to <tt class="docutils literal"><span class="pre">new()</span></tt> when creating the Document object.  No
+other code changes are required:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Document</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="s">&#39;1.0&#39;</span><span class="p">,</span> <span class="s">&#39;ISO8859-1&#39;</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>This time when hex-dumping the file we can see the e-acute character was
+written out as the single byte <tt class="docutils literal"><span class="pre">E9</span></tt> and the euro symbol which cannot be
+represented directly in Latin-1 was written in numeric character entity form
+<tt class="docutils literal"><span class="pre">&amp;#8364;</span></tt>:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre>0000000: 3c3f 786d 6c20 7665 7273 696f 6e3d 2231  &lt;?xml version=&quot;1
+0000010: 2e30 2220 656e 636f 6469 6e67 3d22 4953  .0&quot; encoding=&quot;IS
+0000020: 4f38 3835 392d 3122 3f3e 0a3c 7469 746c  O8859-1&quot;?&gt;.&lt;titl
+0000030: 653e 4361 66e9 206c 756e 6368 3a20 2623  e&gt;Caf. lunch: &amp;#
+0000040: 3833 3634 3b31 322e 3530 3c2f 7469 746c  8364;12.50&lt;/titl
+0000050: 653e 0a                                  e&gt;.
+</pre></div>
+</td></tr></table></div>
 <p>If you&#8217;re generating XML from scratch then creating and assembling DOM nodes is
 very fiddly and <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> might not be the best tool for the job.
 <a class="reference external" href="https://metacpan.org/pod/XML::Generator">XML::Generator</a> is an excellent
-tool for generating XML - especially if you need to deal with namespaces.</p>
+module for generating XML - especially if you need to deal with namespaces.</p>
 </div>
 </div>
 
