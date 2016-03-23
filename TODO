@@ -1,7 +1,5 @@
 * Basics
   - handling parse errors
-* XPath in more detail
-  - compound expressions with | or &
 * working with namespaces
 * working with HTML
 * validating XML ?

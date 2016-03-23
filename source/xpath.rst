@@ -143,6 +143,15 @@ descriptions of what they match.
     some spaces at the start of the next line.  This whitespace is text and is
     therefore matched.
 
+:xpath_try:`//director or //genre`
+
+    Match every element which is a ``<director>`` or a ``<genre>``.
+
+:xpath_try:`//person[contains(@name, 'Bill') and contains(@role, 'Fred')]`
+
+    Match every ``<person>`` element which contains ``Bill`` in the ``name``
+    attribute **and** contains ``Fred`` in the role attribute.
+
 XPath Functions
 ---------------
 
