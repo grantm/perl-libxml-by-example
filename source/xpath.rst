@@ -152,6 +152,14 @@ descriptions of what they match.
     Match every ``<person>`` element which contains ``Bill`` in the ``name``
     attribute **and** contains ``Fred`` in the role attribute.
 
+:xpath_try:`//person[@name='Kevin Bacon']/../person[@name!='Kevin Bacon']`
+
+    Find every person who has played alongside Kevin Bacon.  First find every
+    ``<person>`` element with a name attribute equal to ``Kevin Bacon``. Then
+    find the parent of each matching element and look for its child
+    ``<person>`` elements with a name attribute which is not equal to ``Kevin
+    Bacon``.
+
 XPath Functions
 ---------------
 
