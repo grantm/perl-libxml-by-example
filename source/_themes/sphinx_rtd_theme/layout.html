@@ -130,7 +130,9 @@
             {% endif %}
           {% endblock %}
         </div>
-        {% include "customsidebar.html" %}
+        {%- if customsidebar %}
+        {%- include customsidebar %}
+        {%- endif %}
       </div>
     </nav>
 
