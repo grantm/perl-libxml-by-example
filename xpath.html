@@ -92,8 +92,7 @@
 
             
           
-        </div>
-        <div class="custom-sidebar">
+        </div><div class="custom-sidebar">
   <h3>Project Source</h3>
   <ul>
     <li><a href="https://github.com/grantm/perl-libxml-by-example">Project
@@ -255,6 +254,13 @@ if you look carefully, you&#8217;ll see that in between each <tt class="docutils
 there is some whitespace - a newline after the preceding element and then
 some spaces at the start of the next line.  This whitespace is text and is
 therefore matched.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//director</span> <span class="pre">or</span> <span class="pre">//genre</span></tt></p>
+<blockquote>
+<div>Match every element which is a <tt class="docutils literal"><span class="pre">&lt;director&gt;</span></tt> or a <tt class="docutils literal"><span class="pre">&lt;genre&gt;</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[contains(&#64;name,</span> <span class="pre">'Bill')</span> <span class="pre">and</span> <span class="pre">contains(&#64;role,</span> <span class="pre">'Fred')]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element which contains <tt class="docutils literal"><span class="pre">Bill</span></tt> in the <tt class="docutils literal"><span class="pre">name</span></tt>
+attribute <strong>and</strong> contains <tt class="docutils literal"><span class="pre">Fred</span></tt> in the role attribute.</div></blockquote>
 <div class="section" id="xpath-functions">
 <h2>XPath Functions<a class="headerlink" href="#xpath-functions" title="Permalink to this headline">¶</a></h2>
 <p>Some of the examples above used <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/XPath/Functions">XPath functions</a>. It&#8217;s worth
