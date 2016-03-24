@@ -30,8 +30,8 @@ foreach my $script (sort glob '*.pl') {
         my $output_age = -M $out_file;
         next if $script_age > $output_age;
     }
-    say "  $script > $out_dir/$script-out";
-    system("./$script > $out_dir/$script-out") == 0
+    say "  $script > $out_dir/$script-out 2> $out_dir/$script-err";
+    system("./$script > $out_dir/$script-out 2> $out_dir/$script-err") == 0
         or exit $? >> 8;
 }
 
