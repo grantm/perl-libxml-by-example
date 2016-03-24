@@ -20,6 +20,8 @@ topic using the links below:
    basics
    xpath
    dom
+   namespaces
+   html
    installation
 
 
