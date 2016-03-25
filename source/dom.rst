@@ -492,18 +492,18 @@ To output the document in a different encoding all you need to do is change the
 second parameter passed to ``new()`` when creating the Document object.  No
 other code changes are required:
 
-.. literalinclude:: /code/270-dom-from-scratch.pl
+.. literalinclude:: /code/271-dom-from-scratch-latin1.pl
     :language: perl
-    :lines: 28
+    :lines: 10
 
 This time when hex-dumping the file we can see the e-acute character was
 written out as the single byte ``E9`` and the euro symbol which cannot be
 represented directly in Latin-1 was written in numeric character entity form
 ``&#8364;``:
 
-.. literalinclude:: /_output/270-dom-from-scratch.pl-out
+.. literalinclude:: /_output/271-dom-from-scratch-latin1.pl-out
     :language: none
-    :lines: 10-15
+    :lines: 1-6
 
 If you're generating XML from scratch then creating and assembling DOM nodes is
 very fiddly and ``XML::LibXML`` might not be the best tool for the job.
