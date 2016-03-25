@@ -24,6 +24,13 @@ footer a:visited {
   color: inherit;
 }
 
+a.metacpan {
+  padding-left: 14px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAABmJLR0QAyAAiADOkP+v9AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMZBR8BDLcvBAAAAF5JREFUGNPdkDEOgCAMRR/Ek+gRJGGR09tBE67AWeoCSiqDs29p+tI0v3WqyrmEHdgAiSUnKta7Y16baEgsOXWDt/dG0PUv7wExUkx9NteM0kcAGHmnqnxlGl39p29cAMtI1xYxiDcAAAAASUVORK5CYII=);
+  background-repeat: no-repeat;
+  background-position: 2px 5px;
+}
+
 .wy-nav-side .custom-sidebar {
   margin-top: 50px;
   padding: 0.8em 1.6em;
