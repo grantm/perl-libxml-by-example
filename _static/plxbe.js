@@ -12,6 +12,16 @@ jQuery(function($) {
         $img.wrap( $('<a />').attr('href', $img.attr('src')) );
     });
 
+    // Add a class to every metacpan link
+
+    $('a').each(function() {
+        var $this = $(this);
+        var href = $this.attr('href') || '';
+        if(href.match(/^https?:\/\/metacpan.org/)) {
+            $this.addClass('metacpan')
+                 .attr('title', 'View docs for ' + $this.text() + ' on metacpan.org');
+        }
+    });
 
     // Add in the 'Try it!' links to link from XPath expressions to load that
     // expression in the XPath Sandbox

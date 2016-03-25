@@ -388,8 +388,31 @@ constants which you can import when you load the module:</p>
 3: is a XML::LibXML::Element, name = dimensions
 </pre></div>
 </td></tr></table></div>
-<p>But you&#8217;ll generally find that it&#8217;s much easier to just use <tt class="docutils literal"><span class="pre">findnodes()</span></tt>
-and <a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a> to select exactly the elements or other nodes you want.</p>
+<p>That technique is useful for the general case of filtering child nodes by type,
+but if you simply want to exclude text nodes that contain only whitespace, you
+can do that by specifying the <tt class="docutils literal"><span class="pre">no_blanks</span></tt> option when parsing the source
+document.  This causes <tt class="docutils literal"><span class="pre">libxml</span></tt> to discard those &#8216;blank&#8217; text nodes rather
+than adding them into the DOM:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;book.xml&#39;</span><span class="p">,</span> <span class="n">no_blanks</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre>$book has 4 child nodes:
+0: is a XML::LibXML::Element, name = title
+1: is a XML::LibXML::Element, name = authors
+2: is a XML::LibXML::Element, name = isbn
+3: is a XML::LibXML::Element, name = dimensions
+</pre></div>
+</td></tr></table></div>
+<p>Blank text nodes are really only a problem if you use the low-level DOM methods
+for walking through child nodes.  You&#8217;ll generally find that it&#8217;s much easier
+to just use <tt class="docutils literal"><span class="pre">findnodes()</span></tt> and <a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a> to select exactly the elements or
+other nodes you want.  If the blank nodes don&#8217;t match your selector then they
+won&#8217;t be returned in the result set.</p>
 </div>
 <div class="section" id="text-objects">
 <h2>&#8216;Text&#8217; objects<a class="headerlink" href="#text-objects" title="Permalink to this headline">¶</a></h2>
@@ -735,6 +758,8 @@ a non-whitespace character&#8221;</em>.</li>
 we&#8217;re removing, so if the Text node is whitespace-only then we need to
 use <tt class="docutils literal"><span class="pre">parentNode()</span></tt>.</li>
 </ul>
+<p>Of course an even simpler solution in this case would have been to turn on the
+<tt class="docutils literal"><span class="pre">no_blanks</span></tt> option (described earlier) when parsing the initial XML document.</p>
 <p>Another handy method for adding to the DOM is <tt class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></tt>.
 This method takes a string containing a fragment of XML.  It must be well
 balanced - each opening tag must have a matching closing tag and elements must
