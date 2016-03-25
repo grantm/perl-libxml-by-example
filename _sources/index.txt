@@ -20,13 +20,21 @@ topic using the links below:
    basics
    xpath
    dom
+   namespaces
+   html
    installation
 
 
+Corrections and Updates
+-----------------------
 
-Indices and tables
-==================
+If you spot errors in the text of this document, please `raise an issue
+<https://github.com/grantm/perl-libxml-by-example/issues>`_ on GitHub.  You are
+also welcome to `fork the project
+<https://github.com/grantm/perl-libxml-by-example>`_, commit a fix and raise a
+pull request.
 
-* :ref:`genindex`
-* :ref:`search`
+If you find this document useful please link to it from your blogs, tweets,
+Stack Overflow answers etc.  The canonical URL for linking is
+http://grantm.github.io/perl-libxml-by-example/.
 

@@ -87,6 +87,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
 </ul>
 
@@ -261,6 +263,13 @@ therefore matched.</div></blockquote>
 <blockquote>
 <div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element which contains <tt class="docutils literal"><span class="pre">Bill</span></tt> in the <tt class="docutils literal"><span class="pre">name</span></tt>
 attribute <strong>and</strong> contains <tt class="docutils literal"><span class="pre">Fred</span></tt> in the role attribute.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[&#64;name='Kevin</span> <span class="pre">Bacon']/../person[&#64;name!='Kevin</span> <span class="pre">Bacon']</span></tt></p>
+<blockquote>
+<div>Find every person who has played alongside Kevin Bacon.  First find every
+<tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element with a name attribute equal to <tt class="docutils literal"><span class="pre">Kevin</span> <span class="pre">Bacon</span></tt>. Then
+find the parent of each matching element and look for its child
+<tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements with a name attribute which is not equal to <tt class="docutils literal"><span class="pre">Kevin</span>
+<span class="pre">Bacon</span></tt>.</div></blockquote>
 <div class="section" id="xpath-functions">
 <h2>XPath Functions<a class="headerlink" href="#xpath-functions" title="Permalink to this headline">¶</a></h2>
 <p>Some of the examples above used <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/XPath/Functions">XPath functions</a>. It&#8217;s worth

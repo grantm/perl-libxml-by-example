@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Working with HTML &mdash; Perl XML::LibXML by Example  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/plxbe.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Perl XML::LibXML by Example  documentation" href="index.html"/>
+        <link rel="next" title="Installing XML::LibXML" href="installation.html"/>
+        <link rel="prev" title="Working with XML Namespaces" href="namespaces.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Perl XML::LibXML by Example
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="basics.html">A Basic Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Working with HTML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#querying-html-with-xpath">Querying HTML with XPath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#matching-class-names">Matching class names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-css-style-selectors">Using CSS-style selectors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
+</ul>
+
+            
+          
+        </div><div class="custom-sidebar">
+  <h3>Project Source</h3>
+  <ul>
+    <li><a href="https://github.com/grantm/perl-libxml-by-example">Project
+    repository on GitHub</a></li>
+    <li class="cc-img"><a rel="license" title="Creative Commons Attribution-ShareAlike License" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons CC-BY-SA License" style="border-width:0" src="_static/cc-by-sa.png" /></a></li>
+  </ul>
+</div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Perl XML::LibXML by Example</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Working with HTML</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        
+          <a href="_sources/html.txt" rel="nofollow"> View page source</a>
+        
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="working-with-html">
+<h1>Working with HTML<a class="headerlink" href="#working-with-html" title="Permalink to this headline">¶</a></h1>
+<p>If you ever need to extract text and data from HTML documents, the <tt class="docutils literal"><span class="pre">libxml</span></tt>
+parser and DOM provide very useful tools.  You might imagine that <tt class="docutils literal"><span class="pre">libxml</span></tt>
+would only work with XHTML and even then only strictly well-formed documents.
+In fact, the parser has an HTML mode that handles unclosed tags like <tt class="docutils literal"><span class="pre">&lt;img&gt;</span></tt>
+and <tt class="docutils literal"><span class="pre">&lt;br&gt;</span></tt> and is even able to recover from parse errors caused by poorly
+formed HTML.</p>
+<p>Let&#8217;s start with this mess of HTML tag soup:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;html&gt;&lt;head&gt;&lt;title&gt;Example (Untidy) HTML Doc&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;&lt;p&gt;Here&#39;s a paragraph with &lt;i&gt;poorly &lt;b&gt;nested&lt;/i&gt;&lt;/b&gt;
+tags.  Followed by a list of items &amp;mdash; with unclosed tags&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;red&lt;/li&gt;&lt;li&gt;orange&lt;li&gt;yellow&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;
+</pre></div>
+</td></tr></table></div>
+<p>To read the file in, you&#8217;d use the <tt class="docutils literal"><span class="pre">load_html()</span></tt> method rather than
+<tt class="docutils literal"><span class="pre">load_xml()</span></tt>.  You&#8217;ll almost certainly want to use the <tt class="docutils literal"><span class="pre">recover</span> <span class="pre">=&gt;</span> <span class="pre">1</span></tt>
+option to tell the parser to try to recover from parse errors and carry on to
+produce a DOM.</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">#!/usr/bin/perl</span>
+
+<span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;untidy.html&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_html</span><span class="p">(</span>
+    <span class="n">location</span>  <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">,</span>
+    <span class="n">recover</span>   <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toStringHTML</span><span class="p">();</span>
+</pre></div>
+</td></tr></table></div>
+<p>When the DOM is serialised with <tt class="docutils literal"><span class="pre">toStringHTML()</span></tt>, some rudimentary formatting
+is applied automatically.  Unfortunately there is no option to add indenting
+to the HTML output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre>&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Example (Untidy) HTML Doc&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;p&gt;Here&#39;s a paragraph with &lt;i&gt;poorly &lt;b&gt;nested&lt;/b&gt;&lt;/i&gt;
+tags.  Followed by a list of items &amp;mdash; with unclosed tags&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;red&lt;/li&gt;
+&lt;li&gt;orange&lt;/li&gt;
+&lt;li&gt;yellow&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</td></tr></table></div>
+<p>While the document is being parsed, you&#8217;ll see messages like this on STDERR:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre>untidy.html:2: HTML parser error : Opening and ending tag mismatch: i and b
+&lt;body&gt;&lt;p&gt;Here&#39;s a paragraph with &lt;i&gt;poorly &lt;b&gt;nested&lt;/i&gt;&lt;/b&gt;
+                                                        ^
+untidy.html:2: HTML parser error : Unexpected end tag : b
+&lt;body&gt;&lt;p&gt;Here&#39;s a paragraph with &lt;i&gt;poorly &lt;b&gt;nested&lt;/i&gt;&lt;/b&gt;
+                                                            ^
+</pre></div>
+</td></tr></table></div>
+<p>You can turn off the error output with the <tt class="docutils literal"><span class="pre">suppress_errors</span></tt> option:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_html</span><span class="p">(</span>
+    <span class="n">location</span>        <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">,</span>
+    <span class="n">recover</span>         <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">suppress_errors</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">);</span>
+</pre></div>
+</td></tr></table></div>
+<p>That option doesn&#8217;t seem to work with all versions of <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> so you
+may want to use a routine like this that sends STDERR to <tt class="docutils literal"><span class="pre">/dev/null</span></tt> during
+parsing, but still allows other output to STDERR when the parse function
+returns:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">File::</span><span class="n">Spec</span><span class="p">;</span>
+
+<span class="k">sub </span><span class="nf">parse_html_file</span> <span class="p">{</span>
+    <span class="k">my</span><span class="p">(</span><span class="nv">$filename</span><span class="p">)</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+
+    <span class="nb">local</span><span class="p">(</span><span class="o">*</span><span class="bp">STDERR</span><span class="p">);</span>
+    <span class="nb">open</span> <span class="bp">STDERR</span><span class="p">,</span> <span class="s">&#39;&gt;&gt;&#39;</span><span class="p">,</span> <span class="nn">File::</span><span class="n">Spec</span><span class="o">-&gt;</span><span class="n">devnull</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_html</span><span class="p">(</span>
+        <span class="n">location</span>        <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">,</span>
+        <span class="n">recover</span>         <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">suppress_errors</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="querying-html-with-xpath">
+<h2>Querying HTML with XPath<a class="headerlink" href="#querying-html-with-xpath" title="Permalink to this headline">¶</a></h2>
+<p>The main tool you&#8217;ll use for extracting data from HTML is the <tt class="docutils literal"><span class="pre">findnodes()</span></tt>
+method that was introduced in <a class="reference internal" href="basics.html"><em>A Basic Example</em></a> and <a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a>.  For these
+examples, the source HTML comes from the <a class="reference external" href="http://csszengarden.com/">CSS Zen Garden Project</a> and is in the file <a class="reference download internal" href="_downloads/css-zen-garden.html"><tt class="xref download docutils literal"><span class="pre">css-zen-garden.html</span></tt></a>.</p>
+<p>This script locates every <tt class="docutils literal"><span class="pre">&lt;h3&gt;</span></tt> element inside the <tt class="docutils literal"><span class="pre">&lt;div&gt;</span></tt> with an <tt class="docutils literal"><span class="pre">id</span></tt>
+attribute value of <tt class="docutils literal"><span class="pre">&quot;zen-supporting&quot;</span></tt>:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;css-zen-garden.html&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_html</span><span class="p">(</span>
+    <span class="n">location</span>        <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">,</span>
+    <span class="n">recover</span>         <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">suppress_errors</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">$xpath</span> <span class="o">=</span> <span class="s">&#39;//div[@id=&quot;zen-supporting&quot;]//h3&#39;</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&quot;$_&quot;</span> <span class="k">foreach</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="nv">$xpath</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">to_literal_list</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>So What is This About?
+Participation
+Benefits
+Requirements
+</pre></div>
+</td></tr></table></div>
+<p>For a more complex example, the next script iterates through each <tt class="docutils literal"><span class="pre">&lt;li&gt;</span></tt> in
+the &#8220;Select a Design&#8221; section and extracts three items of information for each:
+the name of the design, the name of the designer, and a link to view the
+design.  Once the information has been collected, it is dumped out in JSON
+format:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">URI::</span><span class="n">URL</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">JSON</span> <span class="sx">qw(to_json)</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$base_url</span> <span class="o">=</span> <span class="s">&#39;http://csszengarden.com/&#39;</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;css-zen-garden.html&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_html</span><span class="p">(</span>
+    <span class="n">location</span>        <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">,</span>
+    <span class="n">recover</span>         <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">suppress_errors</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">@designs</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$xpath</span> <span class="o">=</span> <span class="s">&#39;//div[@id=&quot;design-selection&quot;]//li&#39;</span><span class="p">;</span>
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$design</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="nv">$xpath</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">my</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$designer</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$design</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./a&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">to_literal_list</span><span class="p">;</span>
+    <span class="k">my</span><span class="p">(</span><span class="nv">$url</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$design</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./a/@href&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">to_literal_list</span><span class="p">;</span>
+    <span class="nv">$url</span> <span class="o">=</span> <span class="nn">URI::</span><span class="n">URL</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="nv">$url</span><span class="p">,</span> <span class="nv">$base_url</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">abs</span><span class="p">;</span>
+    <span class="nb">push</span> <span class="nv">@designs</span><span class="p">,</span> <span class="p">{</span>
+        <span class="n">name</span>      <span class="o">=&gt;</span> <span class="nv">$name</span><span class="p">,</span>
+        <span class="n">designer</span>  <span class="o">=&gt;</span> <span class="nv">$designer</span><span class="p">,</span>
+        <span class="n">url</span>       <span class="o">=&gt;</span> <span class="s">&quot;$url&quot;</span><span class="p">,</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="n">say</span> <span class="n">to_json</span><span class="p">(</span><span class="o">\</span><span class="nv">@designs</span><span class="p">,</span> <span class="p">{</span><span class="n">pretty</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">});</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-json"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42</pre></div></td><td class="code"><div class="highlight"><pre><span class="p">[</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;Andrew Lohman&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/221/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Mid Century Modern&quot;</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Garments&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/220/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;Dan Mall&quot;</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Steel&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/219/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;Steffen Knoeller&quot;</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;Trent Walton&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/218/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Apothecary&quot;</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;Elliot Jay Stocks&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/217/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Screen Filler&quot;</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/216/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;Jeremy Carlson&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Fountain Kiss&quot;</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;meltmedia&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/215/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;A Robot Named Jimmy&quot;</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="nt">&quot;designer&quot;</span> <span class="p">:</span> <span class="s2">&quot;Dave Shea&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;http://csszengarden.com/214/&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;Verde Moderna&quot;</span>
+   <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
+<p>In both these examples we were fortunate to be dealing with &#8216;semantic markup&#8217;
+&#8211; where sections of the document could be readily identified using <tt class="docutils literal"><span class="pre">id</span></tt>
+attributes.  If there were no <tt class="docutils literal"><span class="pre">id</span></tt> attributes, we could change the XPath
+expression to select using element text content instead:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$xpath</span> <span class="o">=</span> <span class="s">&#39;//h3[contains(.,&quot;Select a Design&quot;)]/..//li&#39;</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>This XPath expression first looks for an <tt class="docutils literal"><span class="pre">&lt;h3&gt;</span></tt> element that contains the
+text <tt class="docutils literal"><span class="pre">'Select</span> <span class="pre">a</span> <span class="pre">Design'</span></tt>.  It then uses <tt class="docutils literal"><span class="pre">/..</span></tt> to find that element&#8217;s
+parent (a <tt class="docutils literal"><span class="pre">&lt;div&gt;</span></tt> in the example document) and then uses <tt class="docutils literal"><span class="pre">//li</span></tt> to find
+all <tt class="docutils literal"><span class="pre">&lt;li&gt;</span></tt> elements contained within the parent.</p>
+<p>Another common problem is finding that although your XPath expressions do match
+the content you want, they also match content you don&#8217;t want &#8211; for example
+from a block of navigation links.  In these cases you might identify a block of
+uninteresting content using <tt class="docutils literal"><span class="pre">findnodes()</span></tt> and then use <tt class="docutils literal"><span class="pre">removeChild()</span></tt> to
+remove that whole section from the <a class="reference internal" href="dom.html"><em>DOM</em></a> before running your main
+XPath query.  Because you&#8217;re only removing the nodes from the in-memory copy
+of the document, the original source remains unchanged.</p>
+</div>
+<div class="section" id="matching-class-names">
+<h2>Matching class names<a class="headerlink" href="#matching-class-names" title="Permalink to this headline">¶</a></h2>
+<p>An HTML element can have multiple classes applied to it by using a
+space-separated list in the <tt class="docutils literal"><span class="pre">class</span></tt> attribute.  Some care is needed to ensure
+your XPath expressions always match one whole class name from the list.  For
+example, if you were trying to match <tt class="docutils literal"><span class="pre">&lt;li&gt;</span></tt> elements with the class
+<tt class="docutils literal"><span class="pre">member</span></tt>, you might try something like:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$xpath</span> <span class="o">=</span> <span class="s">&#39;//li[contains(@class, &quot;member&quot;)]&#39;</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>which will match an element like this:</p>
+<div class="highlight-html"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;member&quot;</span><span class="nt">&gt;</span>Catherine Trenton<span class="nt">&lt;/li&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>but it will also match an element like this:</p>
+<div class="highlight-html"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;non-member&quot;</span><span class="nt">&gt;</span>Daniel Ifflehirst<span class="nt">&lt;/li&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>The most common way to solve the problem is to add an extra space to the begining and the end of the <tt class="docutils literal"><span class="pre">class</span></tt> attribute value like this:
+<tt class="docutils literal"><span class="pre">concat(&quot;</span> <span class="pre">&quot;,</span> <span class="pre">&#64;class,</span> <span class="pre">&quot;</span> <span class="pre">&quot;)</span></tt> and then add spaces around the classname we&#8217;re
+looking for: <tt class="docutils literal"><span class="pre">'</span> <span class="pre">member</span> <span class="pre">'</span></tt>.  Giving a expression like this:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$xpath</span> <span class="o">=</span> <span class="s">&#39;//li[contains(concat(&quot; &quot;, @class, &quot; &quot;), &quot; member &quot;)]&#39;</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="using-css-style-selectors">
+<h2>Using CSS-style selectors<a class="headerlink" href="#using-css-style-selectors" title="Permalink to this headline">¶</a></h2>
+<p>The XPath expression in the last example is an effective way to select elements
+by class name, but the syntax is very unwieldy compared to CSS selectors.  For
+example, the CSS selector to match elements with the class name <tt class="docutils literal"><span class="pre">member</span></tt>
+would simply be: <tt class="docutils literal"><span class="pre">.member</span></tt></p>
+<p>Wouldn&#8217;t it be great if there was a way to provide a CSS selector and have it
+converted into an XPath expression that you could pass to <tt class="docutils literal"><span class="pre">findnodes()</span></tt>?
+Well it turns out that&#8217;s exactly what the <a class="reference external" href="https://metacpan.org/pod/HTML::Selector::XPath">HTML::Selector::XPath</a> module does:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">HTML::Selector::</span><span class="n">XPath</span> <span class="sx">qw(selector_to_xpath)</span><span class="p">;</span>
+
+<span class="k">sub </span><span class="nf">find_by_css</span> <span class="p">{</span>
+    <span class="k">my</span><span class="p">(</span><span class="nv">$dom</span><span class="p">,</span> <span class="nv">$selector</span><span class="p">)</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">$xpath</span> <span class="o">=</span> <span class="n">selector_to_xpath</span><span class="p">(</span><span class="nv">$selector</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="nv">$xpath</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Some example inputs (&#8220;Selector&#8221;) and outputs (&#8220;XPath&#8221;):</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre>Selector: #zen-supporting h3
+XPath:    //*[@id=&#39;zen-supporting&#39;]//h3
+
+Selector: .designer-name
+XPath:    //*[contains(concat(&#39; &#39;, @class, &#39; &#39;), &#39; designer-name &#39;)]
+
+Selector: .preamble abbr
+XPath:    //*[contains(concat(&#39; &#39;, @class, &#39; &#39;), &#39; preamble &#39;)]//abbr
+
+Selector: .preamble h3, .requirements h3
+XPath:    //*[contains(concat(&#39; &#39;, @class, &#39; &#39;), &#39; preamble &#39;)]//h3 | //*[contains(concat(&#39; &#39;, @class, &#39; &#39;), &#39; requirements &#39;)]//h3
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installing XML::LibXML" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="namespaces.html" class="btn btn-neutral" title="Working with XML Namespaces" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Grant McLean.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/plxbe.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
