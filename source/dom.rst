@@ -186,8 +186,26 @@ Output:
     :language: none
     :lines: 17-21
 
-But you'll generally find that it's much easier to just use ``findnodes()``
-and :doc:`xpath` to select exactly the elements or other nodes you want.
+That technique is useful for the general case of filtering child nodes by type,
+but if you simply want to exclude text nodes that contain only whitespace, you
+can do that by specifying the ``no_blanks`` option when parsing the source
+document.  This causes ``libxml`` to discard those 'blank' text nodes rather
+than adding them into the DOM:
+
+.. literalinclude:: /code/211-dom-elements-no-blanks.pl
+    :language: perl
+    :lines: 9
+
+Output:
+
+.. literalinclude:: /_output/211-dom-elements-no-blanks.pl-out
+    :language: none
+
+Blank text nodes are really only a problem if you use the low-level DOM methods
+for walking through child nodes.  You'll generally find that it's much easier
+to just use ``findnodes()`` and :doc:`xpath` to select exactly the elements or
+other nodes you want.  If the blank nodes don't match your selector then they
+won't be returned in the result set.
 
 'Text' objects
 --------------
@@ -425,6 +443,9 @@ That code is a little tricky so some explanation is probably in order:
 * the ``removeChild()`` method needs to be called on the *parent* of the node
   we're removing, so if the Text node is whitespace-only then we need to
   use ``parentNode()``.
+
+Of course an even simpler solution in this case would have been to turn on the
+``no_blanks`` option (described earlier) when parsing the initial XML document.
 
 Another handy method for adding to the DOM is ``appendWellBalancedChunk()``.
 This method takes a string containing a fragment of XML.  It must be well
