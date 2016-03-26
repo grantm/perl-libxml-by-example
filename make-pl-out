@@ -38,6 +38,7 @@ foreach my $script (sort glob '*.pl') {
 $rezip ||= zip_is_stale();
 if($rezip) {
     say "Creating perl-libxml-examples.zip";
+    unlink($zip_file);
     system("zip $zip_file *") == 0
         or exit $? >> 8;
 }
