@@ -63,7 +63,7 @@ When an element in a document is associated with a namespace URI it will only
 match an XPath expression that is also associated with the same namespace URI.
 XPath expressions also use namespace prefixes to associate a namespace URI with
 an element.  However it's important to stress that it's not the prefix that is
-being matched, but the URI asscoiated with the prefix.
+being matched, but the URI associated with the prefix.
 
 In order to associate namespace prefixes in XPath expressions with namespace
 URIs, we need to use an `XML::LibXML::XPathContext
