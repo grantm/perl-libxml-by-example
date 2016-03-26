@@ -140,7 +140,201 @@
             
   <div class="section" id="working-with-xml-namespaces">
 <h1>Working with XML Namespaces<a class="headerlink" href="#working-with-xml-namespaces" title="Permalink to this headline">¶</a></h1>
-<p><em>&lt;to be written&gt;</em></p>
+<p>Using the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method as described in the
+<a class="reference internal" href="basics.html"><em>basic examples</em></a> section doesn&#8217;t work when the XML document
+uses &#8216;namespaces&#8217;.  This section describes the extra steps you need to take
+to work with namespaces in XML.</p>
+<p>XML &#8216;namespaces&#8217; allow you to build documents using elements from more than one
+vocabulary.  For example one XML document might include both SVG elements to
+describe a drawing, as well as Dublin Core elements to define metadata <em>about</em>
+the drawing.  The two different vocabularies are defined by separate bodies -
+the <a class="reference external" href="https://www.w3.org/TR/SVG/">W3C</a> and the <a class="reference external" href="http://dublincore.org/specifications/">DCMI</a> respectively.  Associating each
+element in your document with a namespace allows a processor to distinguish
+elements that use the same element names.</p>
+<p>The scripts in this section will use the SVG document:
+<a class="reference download internal" href="_downloads/xml-libxml.svg"><tt class="xref download docutils literal"><span class="pre">xml-libxml.svg</span></tt></a>.  Which starts like this:</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;</span>
+<span class="nt">&lt;svg</span>
+   <span class="na">xmlns=</span><span class="s">&quot;http://www.w3.org/2000/svg&quot;</span>
+   <span class="na">xmlns:svg=</span><span class="s">&quot;http://www.w3.org/2000/svg&quot;</span>
+   <span class="na">xmlns:dc=</span><span class="s">&quot;http://purl.org/dc/elements/1.1/&quot;</span>
+   <span class="na">xmlns:cc=</span><span class="s">&quot;http://creativecommons.org/ns#&quot;</span>
+   <span class="na">xmlns:rdf=</span><span class="s">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;</span>
+   <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+   <span class="na">xmlns:sodipodi=</span><span class="s">&quot;http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd&quot;</span>
+   <span class="na">xmlns:inkscape=</span><span class="s">&quot;http://www.inkscape.org/namespaces/inkscape&quot;</span>
+   <span class="na">width=</span><span class="s">&quot;1031.3961&quot;</span>
+   <span class="na">height=</span><span class="s">&quot;278.02112&quot;</span>
+   <span class="na">id=</span><span class="s">&quot;svg2&quot;</span>
+   <span class="na">sodipodi:version=</span><span class="s">&quot;0.32&quot;</span>
+   <span class="na">inkscape:version=</span><span class="s">&quot;0.48.4 r9939&quot;</span>
+   <span class="na">sodipodi:docname=</span><span class="s">&quot;xml-libxml.svg&quot;</span>
+   <span class="na">inkscape:output_extension=</span><span class="s">&quot;org.inkscape.output.svg.inkscape&quot;</span>
+   <span class="na">version=</span><span class="s">&quot;1.0&quot;</span>
+   <span class="na">inkscape:export-filename=</span><span class="s">&quot;/home/grant/Desktop/xml-libxml.png&quot;</span>
+   <span class="na">inkscape:export-xdpi=</span><span class="s">&quot;79.860001&quot;</span>
+   <span class="na">inkscape:export-ydpi=</span><span class="s">&quot;79.860001&quot;</span><span class="nt">&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Because the top-level <tt class="docutils literal"><span class="pre">&lt;svg&gt;</span></tt> element uses
+<tt class="docutils literal"><span class="pre">xmlns=&quot;http://www.w3.org/2000/svg&quot;</span></tt> to declare a <strong>default namespace</strong> ,
+every other element will be in that namespace unless the element name includes
+a prefix for a different namespace.</p>
+<p>The first child element in the document is a <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element with no
+namespace prefix, so it is associated with the default namespace URI:
+<tt class="docutils literal"><span class="pre">http://www.w3.org/2000/svg</span></tt>.</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>  <span class="nt">&lt;title</span> <span class="na">id=</span><span class="s">&quot;title5798&quot;</span><span class="nt">&gt;</span>Example SVG File<span class="nt">&lt;/title&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>A later section of the document includes a <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element with the <cite>dc:</cite>
+namespace prefix, so it is associated with the URI:
+<tt class="docutils literal"><span class="pre">http://purl.org/dc/elements/1.1/</span></tt>.</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>        <span class="nt">&lt;dc:title&gt;</span>XML::LibXML Logo<span class="nt">&lt;/dc:title&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Using <tt class="docutils literal"><span class="pre">findnodes()</span></tt> to match nodes against the XPath expression <tt class="docutils literal"><span class="pre">//title</span></tt>
+returns no matches:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$match_count</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//title&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&quot;XPath: //title  Matching node count: $match_count&quot;</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>XPath: //title  Matching node count: 0
+</pre></div>
+</td></tr></table></div>
+<p>When an element in a document is associated with a namespace URI it will only
+match an XPath expression that is also associated with the same namespace URI.
+XPath expressions also use namespace prefixes to associate a namespace URI with
+an element.  However it&#8217;s important to stress that it&#8217;s not the prefix that is
+being matched, but the URI asscoiated with the prefix.</p>
+<p>In order to associate namespace prefixes in XPath expressions with namespace
+URIs, we need to use an <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::XPathContext">XML::LibXML::XPathContext</a> object.  This is a
+multi step process:</p>
+<ol class="arabic simple">
+<li>create an XPathContext object associated with the document you want to search</li>
+<li>register a prefix and associated URI for each namespace you want to include
+in your query</li>
+<li>call the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method on the XPathContext object rather than
+directly on the DOM object</li>
+</ol>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">XML::LibXML::</span><span class="n">XPathContext</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;xml-libxml.svg&#39;</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">$xpc</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">XPathContext</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="nv">$dom</span><span class="p">);</span>
+<span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">registerNs</span><span class="p">(</span><span class="s">&#39;vg&#39;</span><span class="p">,</span>  <span class="s">&#39;http://www.w3.org/2000/svg&#39;</span><span class="p">);</span>
+<span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">registerNs</span><span class="p">(</span><span class="s">&#39;dub&#39;</span><span class="p">,</span> <span class="s">&#39;http://purl.org/dc/elements/1.1/&#39;</span><span class="p">);</span>
+
+<span class="k">my</span><span class="p">(</span><span class="nv">$match1</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//vg:title&#39;</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;XPath: //vg:title   Matched: &#39;</span><span class="p">,</span> <span class="nv">$match1</span><span class="p">;</span>
+
+<span class="k">my</span><span class="p">(</span><span class="nv">$match2</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//dub:title&#39;</span><span class="p">);</span>
+<span class="n">say</span> <span class="s">&#39;XPath: //dub:title  Matched: &#39;</span><span class="p">,</span> <span class="nv">$match2</span><span class="p">;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre>XPath: //vg:title   Matched: &lt;title id=&quot;title5798&quot;&gt;Example SVG File&lt;/title&gt;
+XPath: //dub:title  Matched: &lt;dc:title&gt;XML::LibXML Logo&lt;/dc:title&gt;
+</pre></div>
+</td></tr></table></div>
+<p>You&#8217;ll recall from earlier examples that you can search within a node by
+calling <tt class="docutils literal"><span class="pre">findnodes()</span></tt> on the element node (rather than the document) and
+using an XPath expression like <tt class="docutils literal"><span class="pre">./child</span></tt> where the dot refers to the
+<em>context</em> node.  However when you&#8217;re dealing with namespaces that won&#8217;t work,
+because you need to call <tt class="docutils literal"><span class="pre">findnodes()</span></tt> on the XPathContext object.  The
+solution is to pass <tt class="docutils literal"><span class="pre">findnodes()</span></tt> a second argument, after the XPath
+expression.  The additional argument is the element to use as a context node:</p>
+<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">XML::LibXML::</span><span class="n">XPathContext</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;xml-libxml.svg&#39;</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">,</span> <span class="n">no_blanks</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">$xpc</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">XPathContext</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="nv">$dom</span><span class="p">);</span>
+<span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">registerNs</span><span class="p">(</span><span class="s">&#39;svg&#39;</span><span class="p">,</span> <span class="s">&#39;http://www.w3.org/2000/svg&#39;</span><span class="p">);</span>
+<span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">registerNs</span><span class="p">(</span><span class="s">&#39;dc&#39;</span><span class="p">,</span>  <span class="s">&#39;http://purl.org/dc/elements/1.1/&#39;</span><span class="p">);</span>
+
+<span class="k">my</span><span class="p">(</span><span class="nv">$metadata</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//svg:metadata&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">die</span> <span class="s">&quot;No metadata&quot;</span><span class="p">;</span>
+
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$el</span> <span class="p">(</span><span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;.//dc:*&#39;</span><span class="p">,</span> <span class="nv">$metadata</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">my</span> <span class="nv">$name</span>  <span class="o">=</span> <span class="nv">$el</span><span class="o">-&gt;</span><span class="n">localname</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">$value</span> <span class="o">=</span> <span class="nv">$el</span><span class="o">-&gt;</span><span class="n">to_literal</span> <span class="ow">or</span> <span class="k">next</span><span class="p">;</span>
+    <span class="n">say</span> <span class="s">&quot;$name=$value&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Output:</p>
+<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre>format=image/svg+xml
+title=XML::LibXML Logo
+creator=Grant McLean
+date=2016-03-26
+subject=perlxmllibxml
+description=An SVG file created as an example for parsing XML with namespaces.
+</pre></div>
+</td></tr></table></div>
+<p>One small feature of that script which is worth noting is the use of
+<tt class="docutils literal"><span class="pre">$el-&gt;localname</span></tt> to get the name of the element <em>without</em> the namespace
+prefix.  The more commonly used <tt class="docutils literal"><span class="pre">$el-&gt;nodeName</span></tt> method does include the
+namespace prefix as it appears in the document.</p>
 </div>
 
 
