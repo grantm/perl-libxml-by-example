@@ -1,13 +1,8 @@
-* Basics
-  - handling parse errors
-* working with namespaces
-* working with HTML
 * validating XML ?
-* installing XML::LibXML
-  - dependency - iconv
+  - handling parse errors
 * working with huge XML files
 
-* customise the sphinx theme
+* customise the sphinx theme for larger font
 * add an index:
   - http://www.sphinx-doc.org/en/stable/markup/misc.html#index-generating-markup
 
