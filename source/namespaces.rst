@@ -68,7 +68,7 @@ being matched, but the URI associated with the prefix.
 In order to associate namespace prefixes in XPath expressions with namespace
 URIs, we need to use an `XML::LibXML::XPathContext
 <https://metacpan.org/pod/XML::LibXML::XPathContext>`_ object.  This is a
-multi step process:
+multi-step process:
 
 #. create an XPathContext object associated with the document you want to search
 

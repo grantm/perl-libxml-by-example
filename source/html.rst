@@ -107,7 +107,9 @@ from a block of navigation links.  In these cases you might identify a block of
 uninteresting content using ``findnodes()`` and then use ``removeChild()`` to
 remove that whole section from the :doc:`DOM <dom>` before running your main
 XPath query.  Because you're only removing the nodes from the in-memory copy
-of the document, the original source remains unchanged.
+of the document, the original source remains unchanged.  This technique is
+used in the :download:`spell-check script </code/590-spell-check.pl>` used
+to find typos in this document.
 
 Matching class names
 --------------------
@@ -134,9 +136,10 @@ but it will also match an element like this:
     :language: html
     :lines: 10
 
-The most common way to solve the problem is to add an extra space to the begining and the end of the ``class`` attribute value like this:  
-``concat(" ", @class, " ")`` and then add spaces around the classname we're
-looking for: ``' member '``.  Giving a expression like this:
+The most common way to solve the problem is to add an extra space to the
+beginning and the end of the ``class`` attribute value like this:  ``concat("
+", @class, " ")`` and then add spaces around the classname we're looking for:
+``' member '``.  Giving a expression like this:
 
 .. literalinclude:: /code/540-html-xpath-classes.pl
     :language: perl
