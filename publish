@@ -84,6 +84,7 @@ sub publish_to_gh_pages {
         '--exclude=.git',
         '--exclude=.nojekyll',
         '--exclude=.buildinfo',
+        '--exclude=.*.swp',
         $generated_dir . '/',
         $target_dir . '/',
     ) == 0 or die "Failed to sync files to gh-pages repo\n";
