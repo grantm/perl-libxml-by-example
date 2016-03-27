@@ -1,10 +1,12 @@
+Read the HTML version at: [Perl XML::LibXML by
+Example](http://grantm.github.io/perl-libxml-by-example/)
+
 This is a documentation project to introduce the Perl
 [XML::LibXML](https://metacpan.org/release/XML-LibXML) module through example
-scripts.  The project is a work in progress and you can [view the latest
-version here](http://grantm.github.io/perl-libxml-by-example/).
+scripts and line-by-line explanations.
 
 One of the features of this project is an [interactive XPath
-sandbox](http://grantm.github.io/perl-libxml-by-example/_static/xpath-sandbox/xpath-sandbox.html)
+sandbox](http://grantm.github.io/perl-libxml-by-example/_static/xpath-sandbox/xpath-sandbox.html?q=%2F%2Fmovie[%40id%3D%22tt0307479%22]%2F%2Fsynopsis)
 which you can use to try out different XPath expressions and see which parts of
 the XML document are matched.
 
