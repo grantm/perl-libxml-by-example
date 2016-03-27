@@ -486,7 +486,9 @@ from a block of navigation links.  In these cases you might identify a block of
 uninteresting content using <tt class="docutils literal"><span class="pre">findnodes()</span></tt> and then use <tt class="docutils literal"><span class="pre">removeChild()</span></tt> to
 remove that whole section from the <a class="reference internal" href="dom.html"><em>DOM</em></a> before running your main
 XPath query.  Because you&#8217;re only removing the nodes from the in-memory copy
-of the document, the original source remains unchanged.</p>
+of the document, the original source remains unchanged.  This technique is
+used in the <a class="reference download internal" href="_downloads/590-spell-check.pl"><tt class="xref download docutils literal"><span class="pre">spell-check</span> <span class="pre">script</span></tt></a> used
+to find typos in this document.</p>
 </div>
 <div class="section" id="matching-class-names">
 <h2>Matching class names<a class="headerlink" href="#matching-class-names" title="Permalink to this headline">¶</a></h2>
@@ -506,9 +508,10 @@ example, if you were trying to match <tt class="docutils literal"><span class="p
 <div class="highlight-html"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;non-member&quot;</span><span class="nt">&gt;</span>Daniel Ifflehirst<span class="nt">&lt;/li&gt;</span>
 </pre></div>
 </td></tr></table></div>
-<p>The most common way to solve the problem is to add an extra space to the begining and the end of the <tt class="docutils literal"><span class="pre">class</span></tt> attribute value like this:
-<tt class="docutils literal"><span class="pre">concat(&quot;</span> <span class="pre">&quot;,</span> <span class="pre">&#64;class,</span> <span class="pre">&quot;</span> <span class="pre">&quot;)</span></tt> and then add spaces around the classname we&#8217;re
-looking for: <tt class="docutils literal"><span class="pre">'</span> <span class="pre">member</span> <span class="pre">'</span></tt>.  Giving a expression like this:</p>
+<p>The most common way to solve the problem is to add an extra space to the
+beginning and the end of the <tt class="docutils literal"><span class="pre">class</span></tt> attribute value like this:  <tt class="docutils literal"><span class="pre">concat(&quot;</span>
+<span class="pre">&quot;,</span> <span class="pre">&#64;class,</span> <span class="pre">&quot;</span> <span class="pre">&quot;)</span></tt> and then add spaces around the classname we&#8217;re looking for:
+<tt class="docutils literal"><span class="pre">'</span> <span class="pre">member</span> <span class="pre">'</span></tt>.  Giving a expression like this:</p>
 <div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$xpath</span> <span class="o">=</span> <span class="s">&#39;//li[contains(concat(&quot; &quot;, @class, &quot; &quot;), &quot; member &quot;)]&#39;</span><span class="p">;</span>
 </pre></div>
 </td></tr></table></div>

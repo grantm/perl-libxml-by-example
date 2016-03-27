@@ -58,7 +58,7 @@ directly from CPAN, you must first install both the ``libxml2`` library and
 the header files for linking against the library.  The easiest way to do this
 is to use your distribution's packages.  For example on Debian::
 
-  sudo apt-get install libxml2 libxml2-dev
+    sudo apt-get install libxml2 libxml2-dev
 
 You can test that the library is correctly installed and your PATH is set up
 correctly  with this command::
