@@ -23,7 +23,7 @@ my $target_dir = '../perl-libxml-by-example-pages';
 
 my(%opt);
 
-if(!GetOptions(\%opt, 'help|?', 'message|m=s')) {
+if(!GetOptions(\%opt, 'help|?', 'message|m=s', 'dryrun|dry-run')) {
     pod2usage(-exitval => 1,  -verbose => 0);
 }
 
@@ -31,6 +31,7 @@ pod2usage(-exitstatus => 0, -verbose => 2) if $opt{help};
 
 my $message = commit_message();
 check_uncommitted();
+build_all();
 publish_to_gh_pages($message);
 
 exit;
@@ -41,6 +42,9 @@ sub commit_message {
         my $log = `git log --pretty=oneline -1`;
         my($commit_id) = $log =~ m{\A(\w{12})};
         return "$message\n\n  Source commit: $commit_id";
+    }
+    elsif($opt{dryrun}) {
+        return;
     }
     else {
         say "You must specify a commit message with -m";
@@ -73,11 +77,14 @@ sub check_uncommitted {
 }
 
 
-sub publish_to_gh_pages {
-    my($commit_message) = @_;
-
+sub build_all {
     system('make', 'html') == 0
         or die "Failed to generate HTML from source\n";
+}
+
+
+sub publish_to_gh_pages {
+    my($commit_message) = @_;
 
     system(
         'rsync', '-rav', '--checksum', '--delete',
@@ -88,6 +95,13 @@ sub publish_to_gh_pages {
         $generated_dir . '/',
         $target_dir . '/',
     ) == 0 or die "Failed to sync files to gh-pages repo\n";
+
+    # Don't commit/push to GitHub pages if --dry-run was specified
+
+    if($opt{dryrun}) {
+        warn "Bailing out before publishing to GitHub pages due to --dry-run option\n";
+        return;
+    }
 
     chdir($target_dir);
 
@@ -116,6 +130,7 @@ publish - Push current version of Perl XML::LibXML by Example site to gh-pages
   Options:
 
    -m <msg>   set the commit message to be used
+   --dry-run  do everything except commit and push to GitHub pages
    -?         detailed help message
 
 =head1 DESCRIPTION
@@ -154,6 +169,10 @@ push to GitHub
 =item B<< --message <msg> >> (alias: -m)
 
 Set the text of the commit message to use on the gh-pages branch.
+
+=item B<--dry-run>
+
+Do everything except commit and push to GitHub pages.
 
 =item B<--help> (alias: -?)
 
