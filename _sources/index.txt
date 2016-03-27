@@ -12,7 +12,7 @@ scripts and XML documents are available as a :download:`ZIP file download
 </_output/perl-libxml-examples.zip>`.
 
 Get started with :doc:`a basic example <basics>` or jump directly to a specific
-topic using the links below:
+topic using the Table of Contents.
 
 .. toctree::
    :maxdepth: 2
@@ -24,6 +24,15 @@ topic using the links below:
    html
    installation
 
+
+Alternate Formats
+-----------------
+
+The primary target for this project is the set of HTML pages.  Alternate
+formats are available but may be missing some elements or features which are
+present in the HTML:
+
+* :download:`PDF version </_static/PerlXMLLibXMLbyExample.pdf>`
 
 Corrections and Updates
 -----------------------
