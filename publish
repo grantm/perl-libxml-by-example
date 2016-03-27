@@ -80,6 +80,16 @@ sub check_uncommitted {
 sub build_all {
     system('make', 'html') == 0
         or die "Failed to generate HTML from source\n";
+
+    local($ENV{SPHINXOPTS}) = '-a';
+    system('make', '-e', 'latexpdf') == 0
+        or die "Failed to generate PDF from source\n";
+
+    system(
+        'cp', 'build/latex/PerlXMLLibXMLbyExample.pdf',
+        'build/html/_downloads/'
+    ) == 0
+        or die "Failed to copy PDF into _downloads\n";
 }
 
 
