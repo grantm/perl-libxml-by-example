@@ -198,16 +198,31 @@ element, e.g.:</p>
 <p><tt class="code xpath-try docutils literal"><span class="pre">//person/&#64;role</span></tt></p>
 <blockquote>
 <div>Match the attribute named <tt class="docutils literal"><span class="pre">role</span></tt> on every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person/&#64;*</span></tt></p>
+<blockquote>
+<div>Match every attribute on every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element.</div></blockquote>
 <p><tt class="code xpath-try docutils literal"><span class="pre">//person[&#64;role]</span></tt></p>
 <blockquote>
 <div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element <em>that has an attribute</em> named <tt class="docutils literal"><span class="pre">role</span></tt>.</div></blockquote>
 <p><tt class="code xpath-try docutils literal"><span class="pre">//*[&#64;url]</span></tt></p>
 <blockquote>
 <div>Match every element that has an attribute named <tt class="docutils literal"><span class="pre">url</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//*[&#64;*]</span></tt></p>
+<blockquote>
+<div>Match every element that has an attribute of any name.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">/playlist//*[not(&#64;*)]</span></tt></p>
+<blockquote>
+<div>Match every element that is a descendant of the top-level <tt class="docutils literal"><span class="pre">&lt;playlist&gt;</span></tt>
+element and which does not have any attributes.</div></blockquote>
 <p><tt class="code xpath-try docutils literal"><span class="pre">//movie[&#64;id=&quot;tt0307479&quot;]</span></tt></p>
 <blockquote>
 <div>Match every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element that has an attribute named <tt class="docutils literal"><span class="pre">id</span></tt> with the
 value <tt class="docutils literal"><span class="pre">tt0307479</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//movie[not(&#64;id=&quot;tt0307479&quot;)]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element that does not have an attribute named
+<tt class="docutils literal"><span class="pre">id</span></tt> with the value <tt class="docutils literal"><span class="pre">tt0307479</span></tt> (including elements that do not have
+an <tt class="docutils literal"><span class="pre">id</span></tt> attribute at all).</div></blockquote>
 <p><tt class="code xpath-try docutils literal"><span class="pre">//*[&#64;id=&quot;tt0307479&quot;]</span></tt></p>
 <blockquote>
 <div>Match every element that has an attribute named <tt class="docutils literal"><span class="pre">id</span></tt> with the value
@@ -228,6 +243,21 @@ position 1 not 0.</div></blockquote>
 <blockquote>
 <div>Match the first two <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements in each sequence of adjacent
 <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[last()]</span></tt></p>
+<blockquote>
+<div>Match the last <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element in each sequence of adjacent
+<tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> elements.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//cast[count(person)=3]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;cast&gt;</span></tt> element which contains exactly 3 <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt>
+elements.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//*[name()='genre']</span></tt></p>
+<blockquote>
+<div>Match every element with the name <tt class="docutils literal"><span class="pre">genre</span></tt> - exactly equivalent to
+<tt class="docutils literal"><span class="pre">//genre</span></tt>.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//*[starts-with(name(),</span> <span class="pre">'running')]</span></tt></p>
+<blockquote>
+<div>Match every element with a name starting with the word <tt class="docutils literal"><span class="pre">running</span></tt>.</div></blockquote>
 <p><tt class="code xpath-try docutils literal"><span class="pre">//person[contains(&#64;name,</span> <span class="pre">'Matt')]</span></tt></p>
 <blockquote>
 <div>Match every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element that has an attribute named <tt class="docutils literal"><span class="pre">name</span></tt>
@@ -256,6 +286,46 @@ if you look carefully, you&#8217;ll see that in between each <tt class="docutils
 there is some whitespace - a newline after the preceding element and then
 some spaces at the start of the next line.  This whitespace is text and is
 therefore matched.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[contains(&#64;name,'Matt')]/parent::*</span></tt></p>
+<blockquote>
+<div>Match the parent of every <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element which contains <tt class="docutils literal"><span class="pre">Matt</span></tt> in
+the <tt class="docutils literal"><span class="pre">name</span></tt> attribute.  (You could also use <tt class="docutils literal"><span class="pre">/..</span></tt> for the parent).  The
+syntax <tt class="docutils literal"><span class="pre">parent::*</span></tt> means any element on the parent axis.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//person[contains(&#64;name,'Matt')]/ancestor::movie</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element which is an ancestor of a <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt>
+element which contains <tt class="docutils literal"><span class="pre">Matt</span></tt> in the <tt class="docutils literal"><span class="pre">name</span></tt> attribute.  The syntax
+<tt class="docutils literal"><span class="pre">ancestor::*</span></tt> means any element on the ancestor axis.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//genre[text()='drama']/following-sibling::*</span></tt></p>
+<blockquote>
+<div>Match every element of any name, which is a sibling of a <tt class="docutils literal"><span class="pre">&lt;genre&gt;</span></tt>
+element whose complete text content is <tt class="docutils literal"><span class="pre">drama</span></tt> and which follows that
+element in document order.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//genre[text()='drama']/following-sibling::genre</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;genre&gt;</span></tt> element, which is a sibling of a <tt class="docutils literal"><span class="pre">&lt;genre&gt;</span></tt>
+element whose complete text content is <tt class="docutils literal"><span class="pre">drama</span></tt> and which follows that
+element in document order.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//genre[text()='drama']/preceding-sibling::genre</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;genre&gt;</span></tt> element, which is a sibling of a <tt class="docutils literal"><span class="pre">&lt;genre&gt;</span></tt>
+element whose complete text content is <tt class="docutils literal"><span class="pre">drama</span></tt> and which comes before
+that element in document order.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//movie[&#64;id=&quot;tt0112384&quot;]/following::title</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element, which comes after a <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element
+with <tt class="docutils literal"><span class="pre">tt0112384</span></tt> as the value of the <tt class="docutils literal"><span class="pre">id</span></tt> attribute.  Note that &#8216;after&#8217;
+means after the closing tag so a <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element <em>inside</em> the matching
+<tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> would not be included.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//movie[.//score/text()</span> <span class="pre">&lt;</span> <span class="pre">7.5]</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element which contains a <tt class="docutils literal"><span class="pre">&lt;score&gt;</span></tt> element with
+text content numerically less than 7.5.</div></blockquote>
+<p><tt class="code xpath-try docutils literal"><span class="pre">//movie[.//score/text()</span> <span class="pre">&gt;</span> <span class="pre">8.0]//synopsis</span></tt></p>
+<blockquote>
+<div>Match every <tt class="docutils literal"><span class="pre">&lt;synopsis&gt;</span></tt> element in every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element which
+contains a <tt class="docutils literal"><span class="pre">&lt;score&gt;</span></tt> element with text content numerically greater than
+8.0.</div></blockquote>
 <p><tt class="code xpath-try docutils literal"><span class="pre">//director</span> <span class="pre">or</span> <span class="pre">//genre</span></tt></p>
 <blockquote>
 <div>Match every element which is a <tt class="docutils literal"><span class="pre">&lt;director&gt;</span></tt> or a <tt class="docutils literal"><span class="pre">&lt;genre&gt;</span></tt>.</div></blockquote>

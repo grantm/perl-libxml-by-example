@@ -8,8 +8,8 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+  box-sizing: border-box;
   width: 100%;
-  height: 3.0em;
   color: #eeeeee;
   background-color: #333333;
   padding: 0.5em 3em;
@@ -28,6 +28,26 @@ body {
 
 #navbar:hover h1 {
   opacity: 1.0;
+}
+
+#links {
+  position: absolute;
+  right: 3em;
+  list-style: none;
+}
+
+#links a {
+  display: block;
+  padding: 3px 6px;
+  border-radius: 3px;
+  color: #888888;
+  text-decoration: none;
+  outline: none;
+}
+
+#links a:hover {
+  background-color: #4080b0;
+  color: #eeeeee;
 }
 
 #query-xpath {
