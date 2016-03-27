@@ -71,6 +71,10 @@ descriptions of what they match.
 
     Match the attribute named ``role`` on every ``<person>`` element.
 
+:xpath_try:`//person/@*`
+
+    Match every attribute on every ``<person>`` element.
+
 :xpath_try:`//person[@role]`
 
     Match every ``<person>`` element *that has an attribute* named ``role``.
@@ -79,10 +83,25 @@ descriptions of what they match.
 
     Match every element that has an attribute named ``url``.
 
+:xpath_try:`//*[@*]`
+
+    Match every element that has an attribute of any name.
+
+:xpath_try:`/playlist//*[not(@*)]`
+
+    Match every element that is a descendant of the top-level ``<playlist>``
+    element and which does not have any attributes.
+
 :xpath_try:`//movie[@id="tt0307479"]`
 
     Match every ``<movie>`` element that has an attribute named ``id`` with the
     value ``tt0307479``.
+
+:xpath_try:`//movie[not(@id="tt0307479")]`
+
+    Match every ``<movie>`` element that does not have an attribute named
+    ``id`` with the value ``tt0307479`` (including elements that do not have
+    an ``id`` attribute at all).
 
 :xpath_try:`//*[@id="tt0307479"]`
 
@@ -108,6 +127,25 @@ descriptions of what they match.
 
     Match the first two ``<person>`` elements in each sequence of adjacent
     ``<person>`` elements.
+
+:xpath_try:`//person[last()]`
+
+    Match the last ``<person>`` element in each sequence of adjacent
+    ``<person>`` elements.
+
+:xpath_try:`//cast[count(person)=3]`
+
+    Match every ``<cast>`` element which contains exactly 3 ``<person>``
+    elements.
+
+:xpath_try:`//*[name()='genre']`
+
+    Match every element with the name ``genre`` - exactly equivalent to
+    ``//genre``.
+
+:xpath_try:`//*[starts-with(name(), 'running')]`
+
+    Match every element with a name starting with the word ``running``.
 
 :xpath_try:`//person[contains(@name, 'Matt')]`
 
@@ -142,6 +180,54 @@ descriptions of what they match.
     there is some whitespace - a newline after the preceding element and then
     some spaces at the start of the next line.  This whitespace is text and is
     therefore matched.
+
+:xpath_try:`//person[contains(@name,'Matt')]/parent::*`
+
+    Match the parent of every ``<person>`` element which contains ``Matt`` in
+    the ``name`` attribute.  (You could also use ``/..`` for the parent).  The
+    syntax ``parent::*`` means any element on the parent axis.
+
+:xpath_try:`//person[contains(@name,'Matt')]/ancestor::movie`
+
+    Match every ``<movie>`` element which is an ancestor of a ``<person>``
+    element which contains ``Matt`` in the ``name`` attribute.  The syntax
+    ``ancestor::*`` means any element on the ancestor axis.
+
+:xpath_try:`//genre[text()='drama']/following-sibling::*`
+
+    Match every element of any name, which is a sibling of a ``<genre>``
+    element whose complete text content is ``drama`` and which follows that
+    element in document order.
+
+:xpath_try:`//genre[text()='drama']/following-sibling::genre`
+
+    Match every ``<genre>`` element, which is a sibling of a ``<genre>``
+    element whose complete text content is ``drama`` and which follows that
+    element in document order.
+
+:xpath_try:`//genre[text()='drama']/preceding-sibling::genre`
+
+    Match every ``<genre>`` element, which is a sibling of a ``<genre>``
+    element whose complete text content is ``drama`` and which comes before
+    that element in document order.
+
+:xpath_try:`//movie[@id="tt0112384"]/following::title`
+
+    Match every ``<title>`` element, which comes after a ``<movie>`` element
+    with ``tt0112384`` as the value of the ``id`` attribute.  Note that 'after'
+    means after the closing tag so a ``<title>`` element *inside* the matching
+    ``<movie>`` would not be included.
+
+:xpath_try:`//movie[.//score/text() < 7.5]`
+
+    Match every ``<movie>`` element which contains a ``<score>`` element with
+    text content numerically less than 7.5.
+
+:xpath_try:`//movie[.//score/text() > 8.0]//synopsis`
+
+    Match every ``<synopsis>`` element in every ``<movie>`` element which
+    contains a ``<score>`` element with text content numerically greater than
+    8.0.
 
 :xpath_try:`//director or //genre`
 
