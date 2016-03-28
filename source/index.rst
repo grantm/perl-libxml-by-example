@@ -32,7 +32,8 @@ The primary target for this project is the set of HTML pages.  Alternate
 formats are available but may be missing some elements or features which are
 present in the HTML:
 
-* :download:`PDF version </_static/PerlXMLLibXMLbyExample.pdf>`
+* :download:`.pdf version </_static/PerlXMLLibXMLbyExample.pdf>`
+* :download:`.epub version </_static/PerlXMLLibXMLbyExample.epub>`
 
 Corrections and Updates
 -----------------------

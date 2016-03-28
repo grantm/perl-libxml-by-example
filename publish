@@ -90,6 +90,16 @@ sub build_all {
         'build/html/_downloads/'
     ) == 0
         or die "Failed to copy PDF into _downloads\n";
+
+    local($ENV{SPHINXOPTS}) = '-a';
+    system('make', '-e', 'epub') == 0
+        or die "Failed to generate epub from source\n";
+
+    system(
+        'cp', 'build/epub/PerlXMLLibXMLbyExample.epub',
+        'build/html/_downloads/'
+    ) == 0
+        or die "Failed to copy PDF into _downloads\n";
 }
 
 
