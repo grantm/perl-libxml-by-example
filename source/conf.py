@@ -289,13 +289,13 @@ epub_copyright = '2016, Grant McLean'
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.
-#epub_identifier = ''
+epub_identifier = 'http://grantm.github.io/perl-libxml-by-example/'
 
 # A unique identification for the text.
 #epub_uid = ''
 
 # A tuple containing the cover image and cover page html template filenames.
-#epub_cover = ()
+epub_cover = ('_static/cover.jpg', 'epub-cover.html')
 
 # A sequence of (type, uri, title) tuples for the guide element of content.opf.
 #epub_guide = ()
@@ -312,7 +312,7 @@ epub_copyright = '2016, Grant McLean'
 epub_exclude_files = ['search.html']
 
 # The depth of the table of contents in toc.ncx.
-#epub_tocdepth = 3
+epub_tocdepth = 2
 
 # Allow duplicate toc entries.
 #epub_tocdup = True
