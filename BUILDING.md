@@ -27,3 +27,9 @@ To generate the HTML, run the command:
 
 You can then view the resulting generated files under `build/html`.
 
+The PDF and EPUB formats are both very rough.  The formatter doesn't handle
+the links to static files so different build options are required:
+
+    SPHINXOPTS="-a" make -e latexpdf
+    SPHINXOPTS="-a" make -e epub
+
