@@ -172,8 +172,8 @@ describes <a class="reference external" href="http://www.bookdepository.com/isbn
  8
  9
 10</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39; standalone=&quot;yes&quot; ?&gt;</span>
-<span class="nt">&lt;book&gt;</span>
-  <span class="nt">&lt;title</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>Training Your Pet Ferret<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;book</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;title&gt;</span>Training Your Pet Ferret<span class="nt">&lt;/title&gt;</span>
   <span class="nt">&lt;authors&gt;</span>
     <span class="nt">&lt;author&gt;</span>Gerry Bucsis<span class="nt">&lt;/author&gt;</span>
     <span class="nt">&lt;author&gt;</span>Barbara Somerville<span class="nt">&lt;/author&gt;</span>
@@ -344,8 +344,8 @@ a little surprised to see <tt class="docutils literal"><span class="pre">childNo
 <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> tag and before the <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> tag there is some whitespace: a
 line-feed character followed by two spaces at the start of the next line:</p>
 <div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;book&gt;</span>
-  <span class="nt">&lt;title</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>Training Your Pet Ferret<span class="nt">&lt;/title&gt;</span>
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;book</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;title&gt;</span>Training Your Pet Ferret<span class="nt">&lt;/title&gt;</span>
 </pre></div>
 </td></tr></table></div>
 <p>These strings of whitespace are represented in the DOM by &#8216;Text&#8217; nodes, which
@@ -918,7 +918,7 @@ module for generating XML - especially if you need to deal with namespaces.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-03-28.
+      Last updated on 2016-03-29.
 
     </p>
   </div>
