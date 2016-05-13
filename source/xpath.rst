@@ -5,7 +5,7 @@ XPath Expressions
 =================
 
 As you saw in the :doc:`basic examples <basics>` section, the ``findnodes()``
-method takes an XPath expression and finds nodes in the :doc:`DOM <xpath>` that
+method takes an XPath expression and finds nodes in the :doc:`DOM <dom>` that
 match the expression.  There are two ways to call calling the ``findnodes()``
 method:
 
