@@ -472,9 +472,8 @@ want to print an object out for debugging purposes.</p>
 <p>The red boxes in the picture represent attributes.  You&#8217;re unlikely to ever
 need to deal with attribute <strong>objects</strong> since it&#8217;s easier to get and set
 attribute values by calling methods on an Element object and passing in plain
-string values.  An even easier approach is to use the tied hash interface that
-allows you to treat each element as if it were a hashref and access attribute
-values via hash keys:</p>
+string values.  An even easier approach is to use the <a class="reference internal" href="basics.html#tied-attribute-hash"><em>tied hash interface</em></a> that allows you to treat each element as if it were a
+hashref and access attribute values via hash keys:</p>
 <div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -483,7 +482,7 @@ values via hash keys:</p>
 <span class="k">my</span><span class="p">(</span><span class="nv">$dim</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;dimensions&#39;</span><span class="p">);</span>
 
 <span class="n">say</span> <span class="s">&#39;$dim-&gt;getAttribute(&quot;width&quot;) = &#39;</span><span class="p">,</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="n">getAttribute</span><span class="p">(</span><span class="s">&quot;width&quot;</span><span class="p">);</span>
-<span class="n">say</span> <span class="s">&#39;$dim-&gt;{width} = &#39;</span><span class="p">,</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">width</span><span class="p">};</span>
+<span class="n">say</span> <span class="s">&quot;\$dim-&gt;{width} = $dim-&gt;{width}&quot;</span><span class="p">;</span>
 </pre></div>
 </td></tr></table></div>
 <p>Output:</p>
@@ -918,7 +917,7 @@ module for generating XML - especially if you need to deal with namespaces.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-05-13.
+      Last updated on 2016-09-11.
 
     </p>
   </div>

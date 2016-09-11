@@ -85,6 +85,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#other-xml-sources">Other XML sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#a-more-complex-example">A more complex example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#accessing-attributes">Accessing attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attributes-via-tied-hash">Attributes via tied hash</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
@@ -756,6 +757,9 @@ method on the element node to get the attribute value:</p>
     <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
 </pre></div>
 </td></tr></table></div>
+</div>
+<div class="section" id="attributes-via-tied-hash">
+<span id="tied-attribute-hash"></span><h2>Attributes via tied hash<a class="headerlink" href="#attributes-via-tied-hash" title="Permalink to this headline">¶</a></h2>
 <p>There&#8217;s a shortcut syntax you can use to make this even easier, simply treat
 the element node as a hashref:</p>
 <div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -773,9 +777,9 @@ shortcut syntax is doing.  Instead, every <a class="reference external" href="ht
 XPath query has been <a class="reference external" href="https://metacpan.org/pod/distribution/perl/pod/perltie.pod">&#8216;tied&#8217;</a> using
 <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::AttributeHash">XML::LibXML::AttributeHash</a> so that hash lookups
 &#8216;inside&#8217; the object actually get proxied to <tt class="docutils literal"><span class="pre">getAttribute()</span></tt> method calls.</p>
-<p>This method really comes into its own when you want to access more than one
-attribute of an element and when you want to interpolate an attribute value
-into a string:</p>
+<p>This technique is less efficient than calling <tt class="docutils literal"><span class="pre">getAttribute()</span></tt> directly but
+it is very convenient when you want to access more than one attribute of an
+element or when you want to interpolate an attribute value into a string:</p>
 <div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -795,6 +799,12 @@ into a string:</p>
  * Kristen Wiig (as Annie Montrose)
 </pre></div>
 </td></tr></table></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Overloading &#8216;Element&#8217; nodes to support tied hash access to attribute values
+was added in version 1.91 of XML::LibXML.  If the examples above don&#8217;t work
+for you then it may be because you have a very old version installed.</p>
+</div>
 <p>That&#8217;s it for the basic examples.  The next topic will look more closely at
 <a class="reference internal" href="xpath.html"><em>XPath expressions</em></a>.</p>
 </div>
@@ -820,7 +830,7 @@ into a string:</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-05-13.
+      Last updated on 2016-09-11.
 
     </p>
   </div>
