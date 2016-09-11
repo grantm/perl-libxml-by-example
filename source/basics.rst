@@ -253,6 +253,11 @@ method on the element node to get the attribute value:
     :language: perl
     :lines: 31-34
 
+.. _tied-attribute-hash:
+
+Attributes via tied hash
+------------------------
+
 There's a shortcut syntax you can use to make this even easier, simply treat
 the element node as a hashref:
 
@@ -270,9 +275,9 @@ XPath query has been `'tied'
 <https://metacpan.org/pod/XML::LibXML::AttributeHash>`_ so that hash lookups
 'inside' the object actually get proxied to ``getAttribute()`` method calls.
 
-This method really comes into its own when you want to access more than one
-attribute of an element and when you want to interpolate an attribute value
-into a string:
+This technique is less efficient than calling ``getAttribute()`` directly but
+it is very convenient when you want to access more than one attribute of an
+element or when you want to interpolate an attribute value into a string:
 
 .. literalinclude:: /code/050-attributes.pl
     :language: perl
@@ -283,6 +288,12 @@ Which will produce this output:
 .. literalinclude:: /_output/050-attributes.pl-out
     :language: none
     :lines: 5-8
+
+.. note::
+
+  Overloading 'Element' nodes to support tied hash access to attribute values
+  was added in version 1.91 of XML::LibXML.  If the examples above don't work
+  for you then it may be because you have a very old version installed.
 
 That's it for the basic examples.  The next topic will look more closely at
 :doc:`XPath expressions <xpath>`.

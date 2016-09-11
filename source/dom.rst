@@ -251,9 +251,9 @@ want to print an object out for debugging purposes.
 The red boxes in the picture represent attributes.  You're unlikely to ever
 need to deal with attribute **objects** since it's easier to get and set
 attribute values by calling methods on an Element object and passing in plain
-string values.  An even easier approach is to use the tied hash interface that
-allows you to treat each element as if it were a hashref and access attribute
-values via hash keys:
+string values.  An even easier approach is to use the :ref:`tied hash interface
+<tied-attribute-hash>` that allows you to treat each element as if it were a
+hashref and access attribute values via hash keys:
 
 .. literalinclude:: /code/230-dom-attributes.pl
     :language: perl
