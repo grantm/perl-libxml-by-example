@@ -1,7 +1,11 @@
 #!/usr/bin/perl
 ##############################################################################
 #
-# Publish latest version to GitHub pages site:
+# Publish latest version to GitHub pages site.
+#
+# Note: To generate the HTML locally and proofread the changes, just use:
+#
+#   make html
 #
 # Use --help option for more details
 #
