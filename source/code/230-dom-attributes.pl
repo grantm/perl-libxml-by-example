@@ -12,4 +12,4 @@ my $book = $dom->documentElement;
 my($dim) = $book->getChildrenByTagName('dimensions');
 
 say '$dim->getAttribute("width") = ', $dim->getAttribute("width");
-say '$dim->{width} = ', $dim->{width};
+say "\$dim->{width} = $dim->{width}";
