@@ -12,7 +12,9 @@ system I installed the dependencies with:
     sudo apt-get install python3-sphinx docutils-doc python-pil-doc python3-pil-dbg sphinx-doc build-essential
 
 Some texlive dependencies will also be required in order to make the 'latexpdf'
-build target work but there are other issues blocking that currently.
+build target work:
+
+    sudo apt-get install texlive-latex-recommended texlive-latex-extra
 
 If you're not using a Debian/Ubuntu system, refer to those projects for manual
 installation instructions.
