@@ -84,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-docs.html">Working With Large Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Installing XML::LibXML</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installing-on-windows">Installing on Windows</a><ul>
@@ -127,7 +128,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -154,7 +155,7 @@
 <p>You <em>can</em> install the XML::LibXML module using standard tools like <a class="reference external" href="https://metacpan.org/pod/distribution/App-cpanminus/bin/cpanm">cpanm</a>, but there
 are a couple of factors to consider first.  Because the module wraps a C
 library, to install this way you must have a C compiler installed and you must
-have already installed the <tt class="docutils literal"><span class="pre">libxml2</span></tt> library along with its development
+have already installed the <code class="docutils literal"><span class="pre">libxml2</span></code> library along with its development
 header files.</p>
 <p>There may be easier install options for your platform.</p>
 <div class="section" id="installing-on-windows">
@@ -193,7 +194,7 @@ package archive.</p>
 <div class="section" id="manual-installation">
 <h3>Manual installation<a class="headerlink" href="#manual-installation" title="Permalink to this headline">¶</a></h3>
 <p>If for some reason you want to compile and install a version of XML::LibXML
-directly from CPAN, you must first install both the <tt class="docutils literal"><span class="pre">libxml2</span></tt> library and
+directly from CPAN, you must first install both the <code class="docutils literal"><span class="pre">libxml2</span></code> library and
 the header files for linking against the library.  The easiest way to do this
 is to use your distribution&#8217;s packages.  For example on Debian:</p>
 <div class="highlight-python"><div class="highlight"><pre>sudo apt-get install libxml2 libxml2-dev
@@ -231,8 +232,8 @@ correctly  with this command:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-09-11.
+        &copy; Copyright 2016-2018, Grant McLean.
+      Last updated on 2018-03-24.
 
     </p>
   </div>

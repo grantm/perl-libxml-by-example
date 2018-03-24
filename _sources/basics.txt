@@ -295,5 +295,50 @@ Which will produce this output:
   was added in version 1.91 of XML::LibXML.  If the examples above don't work
   for you then it may be because you have a very old version installed.
 
+Parsing Errors
+--------------
+
+One of the advantages of XML is that it has a few strict rules that every
+document must comply with to be considered "well-formed".  If a document is not
+well-formed, it should be rejected in its entirety and no part of the XML
+document content should be used.  Examples of things that would cause a
+document to be not well-formed include:
+
+* missing or mismatched closing tag
+* missing or mismatched quotes around attribute values
+* whitespace before the initial XML declaration section
+* byte sequences that do not match the document's declared character encoding
+* any non-whitespace characters after the closing tag for the first top-level
+  element
+
+Like pretty much all XML parser modules, ``libxml`` will throw an exception
+if it encounters any violations of these rules.  Since the whole of the XML
+document is processed when ``load_xml`` is called, an error at any point in
+the document will cause an exception to be raised.
+
+If you wish to handle exceptions gracefully use must use an ``eval`` block or
+one of the "try/catch" syntax extension modules to catch the error.  For
+example, this document contains an error:
+
+.. literalinclude:: /code/book-borkened.xml
+    :language: xml
+    :linenos:
+
+This script will attempt to parse the bad input:
+
+.. literalinclude:: /code/060-parse-error.pl
+    :language: perl
+    :lines: 9-22
+
+and will instead produce this output:
+
+.. literalinclude:: /_output/060-parse-error.pl-out
+    :language: none
+
+Note that although the script is only looking for ``<author>`` elements and the
+error in the ``<isbn>`` element comes *after* all the ``<author>`` elements, an
+exception is still raised by the ``load_xml`` call inside the eval block,
+before the DOM has been fully constructed.
+
 That's it for the basic examples.  The next topic will look more closely at
 :doc:`XPath expressions <xpath>`.

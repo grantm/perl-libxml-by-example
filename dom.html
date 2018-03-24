@@ -94,6 +94,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-docs.html">Working With Large Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
 </ul>
@@ -125,7 +126,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -149,7 +150,7 @@
             
   <div class="section" id="the-document-object-model">
 <h1>The Document Object Model<a class="headerlink" href="#the-document-object-model" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="basics.html"><em>basic examples</em></a> section introduced the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method
+<p>The <a class="reference internal" href="basics.html"><em>basic examples</em></a> section introduced the <code class="docutils literal"><span class="pre">findnodes()</span></code> method
 and XPath expressions for extracting parts of an XML document.  For most
 applications, that&#8217;s pretty much all you need, but sometimes it&#8217;s necessary to
 use lower-level methods and to understand the relationships between different
@@ -161,7 +162,7 @@ the different parts of an XML (or HTML) document.  In the Perl implementation,
 object properties are exposed via accessor methods.</p>
 <p>Let&#8217;s start our exploration of the DOM with a simple XML document which
 describes <a class="reference external" href="http://www.bookdepository.com/isbn/9780764142239">a book</a> -
-<a class="reference download internal" href="_downloads/book.xml"><tt class="xref download docutils literal"><span class="pre">book.xml</span></tt></a></p>
+<a class="reference download internal" href="_downloads/book.xml" download=""><code class="xref download docutils literal"><span class="pre">book.xml</span></code></a></p>
 <div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -186,16 +187,16 @@ describes <a class="reference external" href="http://www.bookdepository.com/isbn
 <p>When you ask XML::LibXML to parse the document, it creates an object to
 represent each part of the document and assembles those objects into a
 hierarchy as shown here:</p>
-<div class="figure">
+<div class="figure" id="id2">
 <img alt="An XML document represented as a Document Object Model" class="illustration" src="_images/dom.png" />
-<p class="caption">A simplified representation of the Document Object Model.</p>
+<p class="caption"><span class="caption-text">A simplified representation of the Document Object Model.</span></p>
 </div>
-<p>The source XML document has a <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element which contains four other
-elements: <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;authors&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;isbn&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;dimensions&gt;</span></tt>.  The
-<tt class="docutils literal"><span class="pre">&lt;authors&gt;</span></tt> element in turn contains two <tt class="docutils literal"><span class="pre">&lt;author&gt;</span></tt> elements.</p>
-<p>The hierarchy in the picture shows us that <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> has four &#8220;child&#8221;
-elements.  Similarly, <tt class="docutils literal"><span class="pre">&lt;authors&gt;</span></tt> has two child elements and one &#8220;parent&#8221;
-element (<tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt>).  Five of the elements have no child elements but four of
+<p>The source XML document has a <code class="docutils literal"><span class="pre">&lt;book&gt;</span></code> element which contains four other
+elements: <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code>, <code class="docutils literal"><span class="pre">&lt;authors&gt;</span></code>, <code class="docutils literal"><span class="pre">&lt;isbn&gt;</span></code> and <code class="docutils literal"><span class="pre">&lt;dimensions&gt;</span></code>.  The
+<code class="docutils literal"><span class="pre">&lt;authors&gt;</span></code> element in turn contains two <code class="docutils literal"><span class="pre">&lt;author&gt;</span></code> elements.</p>
+<p>The hierarchy in the picture shows us that <code class="docutils literal"><span class="pre">&lt;book&gt;</span></code> has four &#8220;child&#8221;
+elements.  Similarly, <code class="docutils literal"><span class="pre">&lt;authors&gt;</span></code> has two child elements and one &#8220;parent&#8221;
+element (<code class="docutils literal"><span class="pre">&lt;book&gt;</span></code>).  Five of the elements have no child elements but four of
 them do contain text content and one has some attributes.</p>
 <div class="section" id="the-document-object">
 <h2>The &#8216;Document&#8217; object<a class="headerlink" href="#the-document-object" title="Permalink to this headline">¶</a></h2>
@@ -204,52 +205,43 @@ object - represented in yellow in the picture above.  The reference
 documentation for the <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Document">XML::LibXML::Document</a> class lists methods you can
 use to interact with the document.  The &#8216;Document&#8217; class inherits from the
 &#8216;Node&#8217; class so you&#8217;ll also need to refer to the docs for <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Node">XML::LibXML::Node</a> as well.</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;book.xml&#39;</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;book.xml&#39;</span><span class="p">);</span>
 
 <span class="n">say</span> <span class="s">&#39;$dom is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$dom</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&#39;$dom-&gt;nodeName is: &#39;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre>$dom is a XML::LibXML::Document
+<div class="highlight-none"><div class="highlight"><pre>$dom is a XML::LibXML::Document
 $dom-&gt;nodeName is: #document
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>The document object also provides methods you can use to extract information
 from the XML declaration section - the very first line of the source XML,
-which precedes the <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&#39;XML Version is: &#39;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">version</span><span class="p">;</span>
+which precedes the <code class="docutils literal"><span class="pre">&lt;book&gt;</span></code> element:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="n">say</span> <span class="s">&#39;XML Version is: &#39;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">version</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&#39;Document encoding is: &#39;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">encoding</span><span class="p">;</span>
 <span class="k">my</span> <span class="nv">$is_or_not</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">standalone</span> <span class="p">?</span> <span class="s">&#39;is&#39;</span> <span class="p">:</span> <span class="s">&#39;is not&#39;</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&quot;Document $is_or_not standalone&quot;</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre>XML Version is: 1.0
+<div class="highlight-none"><div class="highlight"><pre>XML Version is: 1.0
 Document encoding is: UTF-8
 Document is standalone
 </pre></div>
-</td></tr></table></div>
-<p>You can serialise a whole DOM back out to XML by calling the <tt class="docutils literal"><span class="pre">toString()</span></tt>
+</div>
+<p>You can serialise a whole DOM back out to XML by calling the <code class="docutils literal"><span class="pre">toString()</span></code>
 method on the document object:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&quot;DOM as XML:\n&quot;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="n">say</span> <span class="s">&quot;DOM as XML:\n&quot;</span><span class="p">,</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>The document class also overrides the stringification operator, so if you
 simply treat the object as a string and print it out you&#8217;ll also get the
 serialised XML:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&quot;DOM as a string:\n&quot;</span><span class="p">,</span> <span class="nv">$dom</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="n">say</span> <span class="s">&quot;DOM as a string:\n&quot;</span><span class="p">,</span> <span class="nv">$dom</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 </div>
 <div class="section" id="element-objects">
 <h2>&#8216;Element&#8217; objects<a class="headerlink" href="#element-objects" title="Permalink to this headline">¶</a></h2>
@@ -259,56 +251,40 @@ methods, but like the &#8216;Document&#8217; class, many more methods are inheri
 <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Node">XML::LibXML::Node</a>.</p>
 <p>Every XML document has one single top-level element known as the &#8220;document
 element&#8221; that encloses all the other elements - in our example it&#8217;s the
-<tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element.  You can retrieve this element by calling the
-<tt class="docutils literal"><span class="pre">documentElement()</span></tt> method on the document object and you can determine
-what type of element it is by calling <tt class="docutils literal"><span class="pre">nodeName()</span></tt>:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$book</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<code class="docutils literal"><span class="pre">&lt;book&gt;</span></code> element.  You can retrieve this element by calling the
+<code class="docutils literal"><span class="pre">documentElement()</span></code> method on the document object and you can determine
+what type of element it is by calling <code class="docutils literal"><span class="pre">nodeName()</span></code>:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$book</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&#39;$book is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$book</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&#39;$book-&gt;nodeName is: &#39;</span><span class="p">,</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre>$book is a XML::LibXML::Element
+<div class="highlight-none"><div class="highlight"><pre>$book is a XML::LibXML::Element
 $book-&gt;nodeName is: book
 </pre></div>
-</td></tr></table></div>
-<p>The <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> element has four child elements.  You can use
-<tt class="docutils literal"><span class="pre">getChildrenByTagName()</span></tt> to get a list of all the child elements with a
+</div>
+<p>The <code class="docutils literal"><span class="pre">&lt;book&gt;</span></code> element has four child elements.  You can use
+<code class="docutils literal"><span class="pre">getChildrenByTagName()</span></code> to get a list of all the child elements with a
 specific element name (this is not a recursive search, it only looks through
 elements which are direct children):</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span><span class="p">(</span><span class="nv">$isbn</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;isbn&#39;</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span><span class="p">(</span><span class="nv">$isbn</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;isbn&#39;</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&#39;$isbn is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$isbn</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&#39;$isbn-&gt;nodeName is: &#39;</span><span class="p">,</span> <span class="nv">$isbn</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&#39;$isbn-&gt;to_literal returns: &#39;</span><span class="p">,</span> <span class="nv">$isbn</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&#39;$isbn stringifies to: &#39;</span><span class="p">,</span> <span class="nv">$isbn</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>$isbn is a XML::LibXML::Element
+<div class="highlight-none"><div class="highlight"><pre>$isbn is a XML::LibXML::Element
 $isbn-&gt;nodeName is: isbn
 $isbn-&gt;to_literal returns: 9780764142239
 $isbn stringifies to: &lt;isbn&gt;9780764142239&lt;/isbn&gt;
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>If you&#8217;re not looking for one specific type of element, you can get all the
-children with <tt class="docutils literal"><span class="pre">childNodes()</span></tt>:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">@children</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
+children with <code class="docutils literal"><span class="pre">childNodes()</span></code>:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">@children</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
 <span class="k">my</span> <span class="nv">$count</span> <span class="o">=</span> <span class="nv">@children</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&quot;\$book has $count child nodes:&quot;</span><span class="p">;</span>
 <span class="k">my</span> <span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -316,19 +292,10 @@ children with <tt class="docutils literal"><span class="pre">childNodes()</span>
     <span class="n">say</span> <span class="nv">$i</span><span class="o">++</span><span class="p">,</span> <span class="s">&quot;: is a &quot;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$child</span><span class="p">),</span> <span class="s">&#39;, name = &#39;</span><span class="p">,</span> <span class="nv">$child</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
-<p>We already know that <tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> contains four child elements, so you may be
-a little surprised to see <tt class="docutils literal"><span class="pre">childNodes()</span></tt> returns a list of nine nodes:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="highlight"><pre>$book has 9 child nodes:
+</div>
+<p>We already know that <code class="docutils literal"><span class="pre">&lt;book&gt;</span></code> contains four child elements, so you may be
+a little surprised to see <code class="docutils literal"><span class="pre">childNodes()</span></code> returns a list of nine nodes:</p>
+<div class="highlight-none"><div class="highlight"><pre>$book has 9 child nodes:
 0: is a XML::LibXML::Text, name = #text
 1: is a XML::LibXML::Element, name = title
 2: is a XML::LibXML::Text, name = #text
@@ -339,9 +306,9 @@ a little surprised to see <tt class="docutils literal"><span class="pre">childNo
 7: is a XML::LibXML::Element, name = dimensions
 8: is a XML::LibXML::Text, name = #text
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>If you refer back to the source XML document, you can see that after the
-<tt class="docutils literal"><span class="pre">&lt;book&gt;</span></tt> tag and before the <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> tag there is some whitespace: a
+<code class="docutils literal"><span class="pre">&lt;book&gt;</span></code> tag and before the <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code> tag there is some whitespace: a
 line-feed character followed by two spaces at the start of the next line:</p>
 <div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;book</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
@@ -351,23 +318,17 @@ line-feed character followed by two spaces at the start of the next line:</p>
 <p>These strings of whitespace are represented in the DOM by &#8216;Text&#8217; nodes, which
 are children of the parent element.  So a more accurate DOM diagram would
 look like this:</p>
-<div class="figure">
+<div class="figure" id="id3">
 <img alt="Document Object Model including whitespace-only text nodes" class="illustration" src="_images/dom-full.png" />
-<p class="caption">Document Object Model including whitespace-only text nodes</p>
+<p class="caption"><span class="caption-text">Document Object Model including whitespace-only text nodes</span></p>
 </div>
 <p>If you want to filter child nodes by type, XML::LibXML provides a number of
 constants which you can import when you load the module:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span> <span class="sx">qw(:libxml)</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span> <span class="sx">qw(:libxml)</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
-<p>And then you can compare <tt class="docutils literal"><span class="pre">$node-&gt;nodeType</span></tt> to these constants:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">@elements</span> <span class="o">=</span> <span class="nb">grep</span> <span class="p">{</span> <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_ELEMENT_NODE</span> <span class="p">}</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
+</div>
+<p>And then you can compare <code class="docutils literal"><span class="pre">$node-&gt;nodeType</span></code> to these constants:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">@elements</span> <span class="o">=</span> <span class="nb">grep</span> <span class="p">{</span> <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_ELEMENT_NODE</span> <span class="p">}</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
 <span class="nv">$count</span> <span class="o">=</span> <span class="nv">@elements</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&quot;\$book has $count child elements:&quot;</span><span class="p">;</span>
 <span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -375,42 +336,34 @@ constants which you can import when you load the module:</p>
     <span class="n">say</span> <span class="nv">$i</span><span class="o">++</span><span class="p">,</span> <span class="s">&quot;: is a &quot;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$child</span><span class="p">),</span> <span class="s">&#39;, name = &#39;</span><span class="p">,</span> <span class="nv">$child</span><span class="o">-&gt;</span><span class="n">nodeName</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre>$book has 4 child elements:
+<div class="highlight-none"><div class="highlight"><pre>$book has 4 child elements:
 0: is a XML::LibXML::Element, name = title
 1: is a XML::LibXML::Element, name = authors
 2: is a XML::LibXML::Element, name = isbn
 3: is a XML::LibXML::Element, name = dimensions
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>That technique is useful for the general case of filtering child nodes by type,
 but if you simply want to exclude text nodes that contain only whitespace, you
-can do that by specifying the <tt class="docutils literal"><span class="pre">no_blanks</span></tt> option when parsing the source
-document.  This causes <tt class="docutils literal"><span class="pre">libxml</span></tt> to discard those &#8216;blank&#8217; text nodes rather
+can do that by specifying the <code class="docutils literal"><span class="pre">no_blanks</span></code> option when parsing the source
+document.  This causes <code class="docutils literal"><span class="pre">libxml</span></code> to discard those &#8216;blank&#8217; text nodes rather
 than adding them into the DOM:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;book.xml&#39;</span><span class="p">,</span> <span class="n">no_blanks</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;book.xml&#39;</span><span class="p">,</span> <span class="n">no_blanks</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">);</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre>$book has 4 child nodes:
+<div class="highlight-none"><div class="highlight"><pre>$book has 4 child nodes:
 0: is a XML::LibXML::Element, name = title
 1: is a XML::LibXML::Element, name = authors
 2: is a XML::LibXML::Element, name = isbn
 3: is a XML::LibXML::Element, name = dimensions
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Blank text nodes are really only a problem if you use the low-level DOM methods
 for walking through child nodes.  You&#8217;ll generally find that it&#8217;s much easier
-to just use <tt class="docutils literal"><span class="pre">findnodes()</span></tt> and <a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a> to select exactly the elements or
+to just use <code class="docutils literal"><span class="pre">findnodes()</span></code> and <a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a> to select exactly the elements or
 other nodes you want.  If the blank nodes don&#8217;t match your selector then they
 won&#8217;t be returned in the result set.</p>
 </div>
@@ -427,15 +380,7 @@ source represents.  Consider this tiny source document:</p>
 </pre></div>
 </td></tr></table></div>
 <p>And these different methods for accessing the text:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$item</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$item</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
 <span class="k">my</span><span class="p">(</span><span class="nv">$text</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$item</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">();</span>
 
 <span class="n">say</span> <span class="s">&#39;$text is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$text</span><span class="p">);</span>
@@ -445,25 +390,20 @@ source represents.  Consider this tiny source document:</p>
 <span class="n">say</span> <span class="s">&#39;$text-&gt;toString = &#39;</span><span class="p">,</span> <span class="nv">$text</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&#39;$text as a string: &#39;</span><span class="p">,</span> <span class="nv">$text</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Producing this output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre>$text is a XML::LibXML::Text
+<div class="highlight-none"><div class="highlight"><pre>$text is a XML::LibXML::Text
 $text-&gt;data = Fish &amp; Chips
 $text-&gt;nodeValue = Fish &amp; Chips
 $text-&gt;to_literal = Fish &amp; Chips
 $text-&gt;toString = Fish &amp;amp; Chips
 $text as a string: Fish &amp;amp; Chips
 </pre></div>
-</td></tr></table></div>
-<p>The <tt class="docutils literal"><span class="pre">data()</span></tt> and <tt class="docutils literal"><span class="pre">nodeValue()</span></tt> methods are essentially aliases.  The
-<tt class="docutils literal"><span class="pre">to_literal()</span></tt> method produces the same output via a more complex route, but
+</div>
+<p>The <code class="docutils literal"><span class="pre">data()</span></code> and <code class="docutils literal"><span class="pre">nodeValue()</span></code> methods are essentially aliases.  The
+<code class="docutils literal"><span class="pre">to_literal()</span></code> method produces the same output via a more complex route, but
 has the advantage that you can call it on any object in the DOM.</p>
-<p>The <tt class="docutils literal"><span class="pre">toString()</span></tt> method is really only useful for serialising a whole DOM or
+<p>The <code class="docutils literal"><span class="pre">toString()</span></code> method is really only useful for serialising a whole DOM or
 a DOM fragment out to XML.  Stringification is particularly handy when you just
 want to print an object out for debugging purposes.</p>
 </div>
@@ -472,42 +412,26 @@ want to print an object out for debugging purposes.</p>
 <p>The red boxes in the picture represent attributes.  You&#8217;re unlikely to ever
 need to deal with attribute <strong>objects</strong> since it&#8217;s easier to get and set
 attribute values by calling methods on an Element object and passing in plain
-string values.  An even easier approach is to use the <a class="reference internal" href="basics.html#tied-attribute-hash"><em>tied hash interface</em></a> that allows you to treat each element as if it were a
+string values.  An even easier approach is to use the <a class="reference internal" href="basics.html#tied-attribute-hash"><span>tied hash interface</span></a> that allows you to treat each element as if it were a
 hashref and access attribute values via hash keys:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$book</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$book</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
 <span class="k">my</span><span class="p">(</span><span class="nv">$dim</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;dimensions&#39;</span><span class="p">);</span>
 
 <span class="n">say</span> <span class="s">&#39;$dim-&gt;getAttribute(&quot;width&quot;) = &#39;</span><span class="p">,</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="n">getAttribute</span><span class="p">(</span><span class="s">&quot;width&quot;</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&quot;\$dim-&gt;{width} = $dim-&gt;{width}&quot;</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre>$dim-&gt;getAttribute(&quot;width&quot;) = 162.56mm
+<div class="highlight-none"><div class="highlight"><pre>$dim-&gt;getAttribute(&quot;width&quot;) = 162.56mm
 $dim-&gt;{width} = 162.56mm
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>The class name for the attribute objects is &#8216;Attr&#8217; - the unfortunate truncation
 of the class name derives from the <a class="reference external" href="https://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-637646024">W3C DOM spec</a>.  The
 reference documentation is at: <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Attr">XML::LibXML::Attr</a>.  Some additional methods are
 inherited from the Node class but not all the Node methods work with Attr
 objects (once again due to behaviour specified by the W3C DOM).</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># You probably don&#39;t need this object interface for attributes at all.</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="c1"># You probably don&#39;t need this object interface for attributes at all.</span>
 <span class="c1"># The previous example showed how to access attributes directly via</span>
 <span class="c1"># the Element object.</span>
 
@@ -520,32 +444,23 @@ objects (once again due to behaviour specified by the W3C DOM).</p>
 <span class="n">say</span> <span class="s">&#39;$width_attr-&gt;value: &#39;</span><span class="p">,</span> <span class="nv">$width_attr</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&#39;$width_attr as a string: &#39;</span><span class="p">,</span> <span class="nv">$width_attr</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>$width_attr is a XML::LibXML::Attr
+<div class="highlight-none"><div class="highlight"><pre>$width_attr is a XML::LibXML::Attr
 $width_attr-&gt;nodeName: width
 $width_attr-&gt;value: 162.56mm
 $width_attr as a string:  width=&quot;162.56mm&quot;
 </pre></div>
-</td></tr></table></div>
+</div>
 </div>
 <div class="section" id="nodelist-objects">
 <h2>&#8216;NodeList&#8217; objects<a class="headerlink" href="#nodelist-objects" title="Permalink to this headline">¶</a></h2>
 <p>The &#8216;NodeList&#8217; object is a part of the DOM that makes sense in DOM
 implementations for other languages (e.g.: Java) but doesn&#8217;t make much sense in
-Perl.  Methods such as <tt class="docutils literal"><span class="pre">childNodes()</span></tt> or <tt class="docutils literal"><span class="pre">findnodes()</span></tt> that may need to
+Perl.  Methods such as <code class="docutils literal"><span class="pre">childNodes()</span></code> or <code class="docutils literal"><span class="pre">findnodes()</span></code> that may need to
 return multiple nodes, return a &#8216;NodeList&#8217; object which contains the matching
 nodes and allows the caller to iterate through the result set:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&#39;$result is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
 <span class="k">my</span> <span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">foreach</span> <span class="k">my</span> <span class="nv">$i</span> <span class="p">(</span><span class="mi">1</span><span class="o">..</span><span class="nv">$result</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span>
@@ -553,120 +468,90 @@ nodes and allows the caller to iterate through the result set:</p>
     <span class="n">say</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeName</span> <span class="k">if</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_ELEMENT_NODE</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre>$result is a XML::LibXML::NodeList
+<div class="highlight-none"><div class="highlight"><pre>$result is a XML::LibXML::NodeList
 title
 authors
 isbn
 dimensions
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>But things don&#8217;t need to be that complicated in Perl - if a method needs to
 return a list of values then it can just return a list of values.  So the Perl
 bindings for DOM methods that would return a NodeList check the calling
 context.  If called in a scalar context, they return a NodeList object (as
 above) but in a list context they just return the list of values - much
 simpler:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$node</span> <span class="p">(</span><span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$node</span> <span class="p">(</span><span class="nv">$book</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">say</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeName</span> <span class="k">if</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_ELEMENT_NODE</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>When you execute a search that you expect should match exactly one node, take
 care to still use list context:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span><span class="p">(</span><span class="nv">$dim</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./dimensions&#39;</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span><span class="p">(</span><span class="nv">$dim</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./dimensions&#39;</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&#39;$dim is a &#39;</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$dim</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&#39;Page count: &#39;</span><span class="p">,</span> <span class="nv">$dim</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">pages</span><span class="p">};</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre>$dim is a XML::LibXML::Element
+<div class="highlight-none"><div class="highlight"><pre>$dim is a XML::LibXML::Element
 Page count: 96
 </pre></div>
-</td></tr></table></div>
-<p>In this example, the assignment <tt class="docutils literal"><span class="pre">my($dim)</span> <span class="pre">=</span> <span class="pre">...</span></tt> uses parentheses to force
-list context, so <tt class="docutils literal"><span class="pre">findnodes()</span></tt> will return a list of Element nodes and the
-first will be assigned to <tt class="docutils literal"><span class="pre">$dim</span></tt>.  Without the parentheses, a NodeList would
-be assigned to <tt class="docutils literal"><span class="pre">$dim</span></tt>.</p>
+</div>
+<p>In this example, the assignment <code class="docutils literal"><span class="pre">my($dim)</span> <span class="pre">=</span> <span class="pre">...</span></code> uses parentheses to force
+list context, so <code class="docutils literal"><span class="pre">findnodes()</span></code> will return a list of Element nodes and the
+first will be assigned to <code class="docutils literal"><span class="pre">$dim</span></code>.  Without the parentheses, a NodeList would
+be assigned to <code class="docutils literal"><span class="pre">$dim</span></code>.</p>
 <p>If for some reason you find yourself with a NodeList object you can extract
-the contents as a simple list with <tt class="docutils literal"><span class="pre">$result-&gt;get_nodelist</span></tt>.</p>
-<p>The NodeList object does implement the <tt class="docutils literal"><span class="pre">to_literal()</span></tt> method, which returns
+the contents as a simple list with <code class="docutils literal"><span class="pre">$result-&gt;get_nodelist</span></code>.</p>
+<p>The NodeList object does implement the <code class="docutils literal"><span class="pre">to_literal()</span></code> method, which returns
 the text content of all the nodes, concatenated together as a single string.
 If you need a list of individual string values, you can use
-<tt class="docutils literal"><span class="pre">$result-&gt;to_literal_list()</span></tt>:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="s">&#39;Authors: &#39;</span><span class="p">,</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;.//author&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">to_literal_list</span><span class="p">;</span>
+<code class="docutils literal"><span class="pre">$result-&gt;to_literal_list()</span></code>:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="n">say</span> <span class="s">&#39;Authors: &#39;</span><span class="p">,</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nv">$book</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;.//author&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">to_literal_list</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>Authors: Gerry Bucsis, Barbara Somerville
+<div class="highlight-none"><div class="highlight"><pre>Authors: Gerry Bucsis, Barbara Somerville
 </pre></div>
-</td></tr></table></div>
+</div>
 </div>
 <div class="section" id="modifying-the-dom">
 <h2>Modifying the DOM<a class="headerlink" href="#modifying-the-dom" title="Permalink to this headline">¶</a></h2>
 <p>If you wish to modify the DOM, you can create new nodes and add them into the
 node hierarchy in the appropriate place.  You can also modify, move and delete
 existing nodes.  Let&#8217;s start with a simple XML document:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$xml</span> <span class="o">=</span> <span class="sx">q{</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$xml</span> <span class="o">=</span> <span class="sx">q{</span>
 <span class="sx">&lt;record&gt;</span>
 <span class="sx">  &lt;event&gt;Men&#39;s 100m&lt;/event&gt;</span>
 <span class="sx">&lt;/record&gt;</span>
 <span class="sx">}</span><span class="p">;</span>
 <span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">string</span> <span class="o">=&gt;</span> <span class="nv">$xml</span><span class="p">);</span>
 </pre></div>
-</td></tr></table></div>
-<p>Navigate to the <tt class="docutils literal"><span class="pre">&lt;event&gt;</span></tt> element; change its text content; add an attribute
+</div>
+<p>Navigate to the <code class="docutils literal"><span class="pre">&lt;event&gt;</span></code> element; change its text content; add an attribute
 and print out the resulting XML:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$record</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$record</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">documentElement</span><span class="p">;</span>
 <span class="k">my</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$record</span><span class="o">-&gt;</span><span class="n">getChildrenByTagName</span><span class="p">(</span><span class="s">&#39;event&#39;</span><span class="p">);</span>
 <span class="k">my</span> <span class="nv">$text</span> <span class="o">=</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="n">firstChild</span><span class="p">;</span>
 <span class="nv">$text</span><span class="o">-&gt;</span><span class="n">setData</span><span class="p">(</span><span class="s">&quot;Men&#39;s 100 metres&quot;</span><span class="p">);</span>
 <span class="nv">$event</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">type</span><span class="p">}</span> <span class="o">=</span> <span class="s">&#39;sprint&#39;</span><span class="p">;</span>
 <span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
 &lt;record&gt;
   &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
 &lt;/record&gt;
 </pre></div>
-</td></tr></table></div>
-<p>You can use <tt class="docutils literal"><span class="pre">$dom-&gt;createElement</span></tt> to create a new element and then add it to
+</div>
+<p>You can use <code class="docutils literal"><span class="pre">$dom-&gt;createElement</span></code> to create a new element and then add it to
 an existing node&#8217;s list of child nodes.  You can append it to the end of the
 list of children or insert it before/after a specific existing child:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">createElement</span><span class="p">(</span><span class="s">&#39;country&#39;</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$country</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">createElement</span><span class="p">(</span><span class="s">&#39;country&#39;</span><span class="p">);</span>
 <span class="nv">$country</span><span class="o">-&gt;</span><span class="n">appendText</span><span class="p">(</span><span class="s">&#39;Jamaica&#39;</span><span class="p">);</span>
 <span class="nv">$record</span><span class="o">-&gt;</span><span class="n">appendChild</span><span class="p">(</span><span class="nv">$country</span><span class="p">);</span>
 
@@ -676,112 +561,87 @@ list of children or insert it before/after a specific existing child:</p>
 
 <span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
 &lt;record&gt;
   &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
 &lt;athlete&gt;Usain Bolt&lt;/athlete&gt;&lt;country&gt;Jamaica&lt;/country&gt;&lt;/record&gt;
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Unfortunately that output is probably messier than you were expecting.  To get
 nicely indented XML output, you&#8217;d need to create text nodes containing a
 newline and the appropriate number of spaces for indentation; and then add
 those text nodes in before each new element.  Or, an easier way would be to
-pass the numeric value <tt class="docutils literal"><span class="pre">1</span></tt> to the <tt class="docutils literal"><span class="pre">toString()</span></tt> method as a flag indicating
+pass the numeric value <code class="docutils literal"><span class="pre">1</span></code> to the <code class="docutils literal"><span class="pre">toString()</span></code> method as a flag indicating
 that you&#8217;d like the output auto-indented:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="n">say</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
 &lt;record&gt;
   &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
 &lt;athlete&gt;Usain Bolt&lt;/athlete&gt;&lt;country&gt;Jamaica&lt;/country&gt;&lt;/record&gt;
 </pre></div>
-</td></tr></table></div>
-<p>But sadly that didn&#8217;t seem to work.  The <tt class="docutils literal"><span class="pre">libxml</span></tt> library won&#8217;t add
+</div>
+<p>But sadly that didn&#8217;t seem to work.  The <code class="docutils literal"><span class="pre">libxml</span></code> library won&#8217;t add
 indentation to <em>&#8216;mixed content&#8217;</em> - an element whose list of child nodes
 contains a mixture of both Element nodes and Text nodes.  In this case the
-<tt class="docutils literal"><span class="pre">&lt;record&gt;</span></tt> element contains mixed content (there&#8217;s a whitespace text node
-before the <tt class="docutils literal"><span class="pre">&lt;event&gt;</span></tt> and another after it) so <tt class="docutils literal"><span class="pre">libxml</span></tt> does not try to
+<code class="docutils literal"><span class="pre">&lt;record&gt;</span></code> element contains mixed content (there&#8217;s a whitespace text node
+before the <code class="docutils literal"><span class="pre">&lt;event&gt;</span></code> and another after it) so <code class="docutils literal"><span class="pre">libxml</span></code> does not try to
 indent its contents.</p>
 <p>If we strip out those extra text nodes then libxml will add indenting:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$node</span> <span class="p">(</span><span class="nv">$record</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">())</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$node</span> <span class="p">(</span><span class="nv">$record</span><span class="o">-&gt;</span><span class="n">childNodes</span><span class="p">())</span> <span class="p">{</span>
     <span class="nv">$record</span><span class="o">-&gt;</span><span class="n">removeChild</span><span class="p">(</span><span class="nv">$node</span><span class="p">)</span> <span class="k">if</span> <span class="nv">$node</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">!=</span> <span class="n">XML_ELEMENT_NODE</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
 &lt;record&gt;
   &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
   &lt;athlete&gt;Usain Bolt&lt;/athlete&gt;
   &lt;country&gt;Jamaica&lt;/country&gt;
 &lt;/record&gt;
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>While that did work, it required some rather specific knowledge of the document
 structure.  We were relying on knowing that all the text children of the
-<tt class="docutils literal"><span class="pre">&lt;record&gt;</span></tt> element were whitespace-only and could be discarded.  Here&#8217;s a
+<code class="docutils literal"><span class="pre">&lt;record&gt;</span></code> element were whitespace-only and could be discarded.  Here&#8217;s a
 more generic approach which searches recursively through the document and
 deletes every text node that contains only whitespace:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//text()&#39;</span><span class="p">))</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">foreach</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//text()&#39;</span><span class="p">))</span> <span class="p">{</span>
     <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">parentNode</span><span class="o">-&gt;</span><span class="n">removeChild</span><span class="p">(</span><span class="nv">$_</span><span class="p">)</span> <span class="k">unless</span> <span class="sr">/\S/</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>That code is a little tricky so some explanation is probably in order:</p>
 <ul class="simple">
-<li>The loop does not declare a loop variable, so <tt class="docutils literal"><span class="pre">$_</span></tt> is used implicitly.</li>
-<li>The trailing <tt class="docutils literal"><span class="pre">unless</span></tt> clause runs a regex comparison against <tt class="docutils literal"><span class="pre">$_</span></tt>
-which implicitly calls <tt class="docutils literal"><span class="pre">toString()</span></tt> on the Text node.</li>
-<li><tt class="docutils literal"><span class="pre">unless</span> <span class="pre">/\S/</span></tt> is a double negative which means <em>&#8220;unless the text contains
+<li>The loop does not declare a loop variable, so <code class="docutils literal"><span class="pre">$_</span></code> is used implicitly.</li>
+<li>The trailing <code class="docutils literal"><span class="pre">unless</span></code> clause runs a regex comparison against <code class="docutils literal"><span class="pre">$_</span></code>
+which implicitly calls <code class="docutils literal"><span class="pre">toString()</span></code> on the Text node.</li>
+<li><code class="docutils literal"><span class="pre">unless</span> <span class="pre">/\S/</span></code> is a double negative which means <em>&#8220;unless the text contains
 a non-whitespace character&#8221;</em>.</li>
-<li>the <tt class="docutils literal"><span class="pre">removeChild()</span></tt> method needs to be called on the <em>parent</em> of the node
+<li>the <code class="docutils literal"><span class="pre">removeChild()</span></code> method needs to be called on the <em>parent</em> of the node
 we&#8217;re removing, so if the Text node is whitespace-only then we need to
-use <tt class="docutils literal"><span class="pre">parentNode()</span></tt>.</li>
+use <code class="docutils literal"><span class="pre">parentNode()</span></code>.</li>
 </ul>
 <p>Of course an even simpler solution in this case would have been to turn on the
-<tt class="docutils literal"><span class="pre">no_blanks</span></tt> option (described earlier) when parsing the initial XML document.</p>
-<p>Another handy method for adding to the DOM is <tt class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></tt>.
+<code class="docutils literal"><span class="pre">no_blanks</span></code> option (described earlier) when parsing the initial XML document.</p>
+<p>Another handy method for adding to the DOM is <code class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></code>.
 This method takes a string containing a fragment of XML.  It must be well
 balanced - each opening tag must have a matching closing tag and elements must
 be properly nested.  The XML fragment is parsed to create a
 <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::DocumentFragment">XML::LibXML::DocumentFragment</a> which is then
 appended to the target element:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="nv">$record</span><span class="o">-&gt;</span><span class="n">appendWellBalancedChunk</span><span class="p">(</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nv">$record</span><span class="o">-&gt;</span><span class="n">appendWellBalancedChunk</span><span class="p">(</span>
     <span class="s">&#39;&lt;time&gt;9.58s&lt;/time&gt;&lt;date&gt;2009-08-16&lt;/date&gt;&lt;location&gt;Berlin, Germany&lt;/location&gt;&#39;</span>
 <span class="p">);</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
 &lt;record&gt;
   &lt;event type=&quot;sprint&quot;&gt;Men&#39;s 100 metres&lt;/event&gt;
   &lt;athlete&gt;Usain Bolt&lt;/athlete&gt;
@@ -791,39 +651,23 @@ appended to the target element:</p>
   &lt;location&gt;Berlin, Germany&lt;/location&gt;
 &lt;/record&gt;
 </pre></div>
-</td></tr></table></div>
-<p>One &#8216;gotcha&#8217; with the <tt class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></tt> method is that the XML
+</div>
+<p>One &#8216;gotcha&#8217; with the <code class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></code> method is that the XML
 parsing phase expects a string of bytes.  So if you have a Perl string that
 might contain non-ASCII characters, you first need to encode the character
 string to a byte string in UTF-8 and then pass the byte string to
-<tt class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></tt>:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$byte_string</span> <span class="o">=</span> <span class="nn">Encode::</span><span class="n">encode_utf8</span><span class="p">(</span><span class="nv">$perl_string</span><span class="p">);</span>
+<code class="docutils literal"><span class="pre">appendWellBalancedChunk()</span></code>:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$byte_string</span> <span class="o">=</span> <span class="nn">Encode::</span><span class="n">encode_utf8</span><span class="p">(</span><span class="nv">$perl_string</span><span class="p">);</span>
 <span class="nv">$record</span><span class="o">-&gt;</span><span class="n">appendWellBalancedChunk</span><span class="p">(</span><span class="nv">$byte_string</span><span class="p">,</span> <span class="s">&#39;UTF-8&#39;</span><span class="p">);</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 </div>
 <div class="section" id="creating-a-new-document">
 <h2>Creating a new Document<a class="headerlink" href="#creating-a-new-document" title="Permalink to this headline">¶</a></h2>
 <p>You can create a document from scratch by calling
-<tt class="docutils literal"><span class="pre">XML::LibXML::Document-&gt;new()</span></tt> rather than parsing from an existing document.
+<code class="docutils literal"><span class="pre">XML::LibXML::Document-&gt;new()</span></code> rather than parsing from an existing document.
 Then use the methods discussed above to add elements and text content:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">#!/usr/bin/perl</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="ch">#!/usr/bin/perl</span>
 
 <span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
 <span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
@@ -840,58 +684,48 @@ Then use the methods discussed above to add elements and text content:</p>
 <span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;temp-utf8.xml&#39;</span><span class="p">;</span>
 <span class="nb">open</span> <span class="k">my</span> <span class="nv">$out</span><span class="p">,</span> <span class="s">&#39;&gt;:raw&#39;</span><span class="p">,</span> <span class="nv">$filename</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>In this example, the document encoding was declared as UTF-8 when the Document
-object was created.  Text content was added by calling <tt class="docutils literal"><span class="pre">appendText()</span></tt> and
+object was created.  Text content was added by calling <code class="docutils literal"><span class="pre">appendText()</span></code> and
 passing it a normal Perl character string - which happened to contain some
 non-ASCII characters.  When opening the file for output it is not necessary to
-use an encoding layer since the output from <tt class="docutils literal"><span class="pre">libxml</span></tt> will already be encoded
+use an encoding layer since the output from <code class="docutils literal"><span class="pre">libxml</span></code> will already be encoded
 as utf-8 bytes.</p>
 <p>The file contents look like this:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;title&gt;Café lunch: €12.50&lt;/title&gt;
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>If we hex-dump the file we can see the <a class="reference external" href="http://www.mclean.net.nz/ucf/?c=U+00E9">e-acute character</a> was written out as the 2-byte UTF-8
-sequence <tt class="docutils literal"><span class="pre">C3</span> <span class="pre">A9</span></tt> and the <a class="reference external" href="http://www.mclean.net.nz/ucf/?c=U+20AC">euro symbol</a> was written as a 3-byte UTF-8
-sequence: <tt class="docutils literal"><span class="pre">E2</span> <span class="pre">82</span> <span class="pre">AC</span></tt>:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre>0000000: 3c3f 786d 6c20 7665 7273 696f 6e3d 2231  &lt;?xml version=&quot;1
+sequence <code class="docutils literal"><span class="pre">C3</span> <span class="pre">A9</span></code> and the <a class="reference external" href="http://www.mclean.net.nz/ucf/?c=U+20AC">euro symbol</a> was written as a 3-byte UTF-8
+sequence: <code class="docutils literal"><span class="pre">E2</span> <span class="pre">82</span> <span class="pre">AC</span></code>:</p>
+<div class="highlight-none"><div class="highlight"><pre>0000000: 3c3f 786d 6c20 7665 7273 696f 6e3d 2231  &lt;?xml version=&quot;1
 0000010: 2e30 2220 656e 636f 6469 6e67 3d22 5554  .0&quot; encoding=&quot;UT
 0000020: 462d 3822 3f3e 0a3c 7469 746c 653e 4361  F-8&quot;?&gt;.&lt;title&gt;Ca
 0000030: 66c3 a920 6c75 6e63 683a 20e2 82ac 3132  f.. lunch: ...12
 0000040: 2e35 303c 2f74 6974 6c65 3e0a            .50&lt;/title&gt;.
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>To output the document in a different encoding all you need to do is change the
-second parameter passed to <tt class="docutils literal"><span class="pre">new()</span></tt> when creating the Document object.  No
+second parameter passed to <code class="docutils literal"><span class="pre">new()</span></code> when creating the Document object.  No
 other code changes are required:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Document</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="s">&#39;1.0&#39;</span><span class="p">,</span> <span class="s">&#39;ISO8859-1&#39;</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Document</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="s">&#39;1.0&#39;</span><span class="p">,</span> <span class="s">&#39;ISO8859-1&#39;</span><span class="p">);</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>This time when hex-dumping the file we can see the e-acute character was
-written out as the single byte <tt class="docutils literal"><span class="pre">E9</span></tt> and the euro symbol which cannot be
+written out as the single byte <code class="docutils literal"><span class="pre">E9</span></code> and the euro symbol which cannot be
 represented directly in Latin-1 was written in numeric character entity form
-<tt class="docutils literal"><span class="pre">&amp;#8364;</span></tt>:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre>0000000: 3c3f 786d 6c20 7665 7273 696f 6e3d 2231  &lt;?xml version=&quot;1
+<code class="docutils literal"><span class="pre">&amp;#8364;</span></code>:</p>
+<div class="highlight-none"><div class="highlight"><pre>0000000: 3c3f 786d 6c20 7665 7273 696f 6e3d 2231  &lt;?xml version=&quot;1
 0000010: 2e30 2220 656e 636f 6469 6e67 3d22 4953  .0&quot; encoding=&quot;IS
 0000020: 4f38 3835 392d 3122 3f3e 0a3c 7469 746c  O8859-1&quot;?&gt;.&lt;titl
 0000030: 653e 4361 66e9 206c 756e 6368 3a20 2623  e&gt;Caf. lunch: &amp;#
 0000040: 3833 3634 3b31 322e 3530 3c2f 7469 746c  8364;12.50&lt;/titl
 0000050: 653e 0a                                  e&gt;.
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>If you&#8217;re generating XML from scratch then creating and assembling DOM nodes is
-very fiddly and <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> might not be the best tool for the job.
+very fiddly and <code class="docutils literal"><span class="pre">XML::LibXML</span></code> might not be the best tool for the job.
 <a class="reference external" href="https://metacpan.org/pod/XML::Generator">XML::Generator</a> is an excellent
 module for generating XML - especially if you need to deal with namespaces.</p>
 </div>
@@ -916,8 +750,8 @@ module for generating XML - especially if you need to deal with namespaces.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-09-11.
+        &copy; Copyright 2016-2018, Grant McLean.
+      Last updated on 2018-03-24.
 
     </p>
   </div>

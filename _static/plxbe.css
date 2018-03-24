@@ -135,3 +135,27 @@ p.caption {
 ol.arabic.simple li {
   padding-left: 8px;
 }
+
+#linked-events pre,
+#linked-nodes pre {
+  background-color: #e0e0ff;
+  font-size: 100%;
+  line-height: 1.2;
+}
+
+#linked-events pre span,
+#linked-nodes pre span {
+  padding: 2px 3px;
+}
+
+.show-event-1 .event-1 { background-color: #ffffcc; }
+.show-event-2 .event-2 { background-color: #ffffcc; }
+.show-event-3 .event-3 { background-color: #ffffcc; }
+.show-event-4 .event-4 { background-color: #ffffcc; }
+.show-event-5 .event-5 { background-color: #ffffcc; }
+.show-event-6 .event-6 { background-color: #ffffcc; }
+.show-event-7 .event-7 { background-color: #ffffcc; }
+.show-event-8 .event-8 { background-color: #ffffcc; }
+.show-event-9 .event-9 { background-color: #ffffcc; }
+.show-event-10 .event-10 { background-color: #ffffcc; }
+.show-event-11 .event-11 { background-color: #ffffcc; }

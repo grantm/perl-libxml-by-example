@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Working With Large Documents &mdash; Perl XML::LibXML by Example  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/plxbe.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Perl XML::LibXML by Example  documentation" href="index.html"/>
+        <link rel="next" title="Working with HTML" href="html.html"/>
+        <link rel="prev" title="Working with XML Namespaces" href="namespaces.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Perl XML::LibXML by Example
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="basics.html">A Basic Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Working With Large Documents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-reader-loop">The Reader Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bring-back-the-dom">Bring Back the DOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#working-with-patterns">Working With Patterns</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
+</ul>
+
+            
+          
+        </div><div class="custom-sidebar">
+  <h3>Project Source</h3>
+  <ul>
+    <li><a href="https://github.com/grantm/perl-libxml-by-example">Project
+    repository on GitHub</a></li>
+    <li class="cc-img"><a rel="license" title="Creative Commons Attribution-ShareAlike License" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons CC-BY-SA License" style="border-width:0" src="_static/cc-by-sa.png" /></a></li>
+  </ul>
+</div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Perl XML::LibXML by Example</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Working With Large Documents</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        
+          <a href="_sources/large-docs.txt" rel="nofollow"> View page source</a>
+        
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="working-with-large-documents">
+<h1>Working With Large Documents<a class="headerlink" href="#working-with-large-documents" title="Permalink to this headline">¶</a></h1>
+<p>The examples so far have all started by creating a data structure called a
+<a class="reference internal" href="dom.html"><em>Document Object Model</em></a> to represent the whole XML document.  Using
+<a class="reference internal" href="xpath.html"><em>XPath expressions</em></a> to navigate the DOM can be both powerful and
+convenient, but the cost in memory consumption can be quite high.  For example,
+parsing a 50MB XML file into a DOM might need 500MB of memory.</p>
+<p>If you routinely work with very large XML documents, you might find that
+<code class="docutils literal"><span class="pre">XML::LibXML</span></code>&#8216;s DOM parser wants to consume more memory than your system has
+installed.  In such cases, you can instead use the &#8216;pull parser&#8217; API which
+is accessed via the <code class="docutils literal"><span class="pre">XML::LibXML::Reader</span></code> interface.</p>
+<div class="section" id="the-reader-loop">
+<h2>The Reader Loop<a class="headerlink" href="#the-reader-loop" title="Permalink to this headline">¶</a></h2>
+<p>To gain a better understanding of how the reader API is used, let&#8217;s start by
+seeing what happens when we parse this very simple XML document:</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;country</span> <span class="na">code=</span><span class="s">&quot;IE&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;name&gt;</span>Ireland<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;population&gt;</span>4761657<span class="nt">&lt;/population&gt;</span>
+<span class="nt">&lt;/country&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>This script loads the reader API and parses the XML file:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="ch">#!/usr/bin/perl</span>
+
+<span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;country.xml&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$reader</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">)</span>
+    <span class="ow">or</span> <span class="nb">die</span> <span class="s">&quot;cannot read file &#39;$filename&#39;: $!\n&quot;</span><span class="p">;</span>
+
+<span class="k">while</span><span class="p">(</span><span class="nv">$reader</span><span class="o">-&gt;</span><span class="nb">read</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">printf</span><span class="p">(</span>
+        <span class="s">&quot;Node type: %2u  Depth: %2u  Name: %s\n&quot;</span><span class="p">,</span>
+        <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">nodeType</span><span class="p">,</span>
+        <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">depth</span><span class="p">,</span>
+        <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">name</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>and produces the following output:</p>
+<div class="highlight-none"><div class="highlight"><pre>Node type:  1  Depth:  0  Name: country
+Node type: 14  Depth:  1  Name: #text
+Node type:  1  Depth:  1  Name: name
+Node type:  3  Depth:  2  Name: #text
+Node type: 15  Depth:  1  Name: name
+Node type: 14  Depth:  1  Name: #text
+Node type:  1  Depth:  1  Name: population
+Node type:  3  Depth:  2  Name: #text
+Node type: 15  Depth:  1  Name: population
+Node type: 14  Depth:  1  Name: #text
+Node type: 15  Depth:  0  Name: country
+</pre></div>
+</div>
+<p>We can see from the output that the <code class="docutils literal"><span class="pre">while</span></code> loop executes 11 times.  As the
+XML document is parsed, the <code class="docutils literal"><span class="pre">$reader</span></code> object acts as a cursor advancing
+through the document.  Each time a &#8216;node&#8217; has been parsed, the <code class="docutils literal"><span class="pre">read</span></code>
+method returns to allow the state of the parse and the current node to be
+interrogated.</p>
+<p>To make sense of it we really need to turn those &#8216;Node Type&#8217; numbers into
+something a bit more readable.  The <code class="docutils literal"><span class="pre">XML::LibXML::Reader</span></code> module exports a
+set of constants for this purpose.  Here&#8217;s a modified version of the script:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="ch">#!/usr/bin/perl</span>
+
+<span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;country.xml&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$reader</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">)</span>
+    <span class="ow">or</span> <span class="nb">die</span> <span class="s">&quot;cannot read file &#39;$filename&#39;: $!\n&quot;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">%type_name</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_ELEMENT</span>                 <span class="o">=&gt;</span> <span class="s">&#39;ELEMENT&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_ATTRIBUTE</span>               <span class="o">=&gt;</span> <span class="s">&#39;ATTRIBUTE&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_TEXT</span>                    <span class="o">=&gt;</span> <span class="s">&#39;TEXT&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_CDATA</span>                   <span class="o">=&gt;</span> <span class="s">&#39;CDATA&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_ENTITY_REFERENCE</span>        <span class="o">=&gt;</span> <span class="s">&#39;ENTITY_REFERENCE&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_ENTITY</span>                  <span class="o">=&gt;</span> <span class="s">&#39;ENTITY&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_PROCESSING_INSTRUCTION</span>  <span class="o">=&gt;</span> <span class="s">&#39;PROCESSING_INSTRUCTION&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_COMMENT</span>                 <span class="o">=&gt;</span> <span class="s">&#39;COMMENT&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_DOCUMENT</span>                <span class="o">=&gt;</span> <span class="s">&#39;DOCUMENT&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_DOCUMENT_TYPE</span>           <span class="o">=&gt;</span> <span class="s">&#39;DOCUMENT_TYPE&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_DOCUMENT_FRAGMENT</span>       <span class="o">=&gt;</span> <span class="s">&#39;DOCUMENT_FRAGMENT&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_NOTATION</span>                <span class="o">=&gt;</span> <span class="s">&#39;NOTATION&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_WHITESPACE</span>              <span class="o">=&gt;</span> <span class="s">&#39;WHITESPACE&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_SIGNIFICANT_WHITESPACE</span>  <span class="o">=&gt;</span> <span class="s">&#39;SIGNIFICANT_WHITESPACE&#39;</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">XML_READER_TYPE_END_ELEMENT</span>             <span class="o">=&gt;</span> <span class="s">&#39;END_ELEMENT&#39;</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="n">say</span> <span class="s">&quot; Step | Node Type               | Depth | Name&quot;</span><span class="p">;</span>
+<span class="n">say</span> <span class="s">&quot;------+-------------------------+-------+-------&quot;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$step</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">while</span><span class="p">(</span><span class="nv">$reader</span><span class="o">-&gt;</span><span class="nb">read</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">printf</span><span class="p">(</span>
+        <span class="s">&quot; %3u  | %-22s  | %4u  | %s\n&quot;</span><span class="p">,</span>
+        <span class="nv">$step</span><span class="o">++</span><span class="p">,</span>
+        <span class="nv">$type_name</span><span class="p">{</span><span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">nodeType</span><span class="p">},</span>
+        <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">depth</span><span class="p">,</span>
+        <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">name</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>that produces the following tidier output:</p>
+<div class="highlight-none" id="linked-events"><div class="highlight"><pre> Step | Node Type               | Depth | Name
+------+-------------------------+-------+-------
+   1  | ELEMENT                 |    0  | country
+   2  | SIGNIFICANT_WHITESPACE  |    1  | #text
+   3  | ELEMENT                 |    1  | name
+   4  | TEXT                    |    2  | #text
+   5  | END_ELEMENT             |    1  | name
+   6  | SIGNIFICANT_WHITESPACE  |    1  | #text
+   7  | ELEMENT                 |    1  | population
+   8  | TEXT                    |    2  | #text
+   9  | END_ELEMENT             |    1  | population
+  10  | SIGNIFICANT_WHITESPACE  |    1  | #text
+  11  | END_ELEMENT             |    0  | country
+</pre></div>
+</div>
+<p>from the same XML <span class="linked-prompt"></span> :</p>
+<div class="highlight-none" id="linked-nodes"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre>&lt;country code=&quot;IE&quot;&gt;
+  &lt;name&gt;Ireland&lt;/name&gt;
+  &lt;population&gt;4761657&lt;/population&gt;
+&lt;/country&gt;
+</pre></div>
+</td></tr></table></div>
+<p>Some things to note:</p>
+<ul class="simple">
+<li>At step 1, when the <code class="docutils literal"><span class="pre">read</span></code> method returns for the first time, the cursor
+has advanced to the closing &#8216;&gt;&#8217; of the <code class="docutils literal"><span class="pre">&lt;country&gt;</span></code> start tag.  We could
+retrieve an attribute value by calling <code class="docutils literal"><span class="pre">$reader-&gt;getAttribute('code')</span></code> but
+we can&#8217;t examine child elements or text nodes because the parser has not seen
+them yet.</li>
+<li>At step 2, the parser has processed a chunk of text and found that it
+contains only whitespace (side note: all whitespace is considered to be
+&#8216;significant&#8217; unless a DTD is loaded and defines which whitespace is
+insignificant).  Although we can get access to the text, the <code class="docutils literal"><span class="pre">$reader</span></code>
+object can no longer tell us that it is a child of a <code class="docutils literal"><span class="pre">&lt;country&gt;</span></code> element -
+the parser has discarded that information already.</li>
+<li>At step 3, the parser can tell us the current node is a <code class="docutils literal"><span class="pre">&lt;name&gt;</span></code> element,
+and the <code class="docutils literal"><span class="pre">depth</span></code> method can tell us that there is one ancestor element.
+However there is no way to determine the name of the parent element.</li>
+<li>At step 4 a text node has been identified and we can call <code class="docutils literal"><span class="pre">$reader-&gt;value</span></code>
+to get the text string <code class="docutils literal"><span class="pre">&quot;Ireland&quot;</span></code>, but the parser can no longer tell us
+the name of the element it belongs to.</li>
+<li>At step 5 we have reached the end of the <code class="docutils literal"><span class="pre">&lt;name&gt;</span></code> element, but we no longer
+have access to the text it contained.</li>
+</ul>
+<p>But now you surely get the idea - the <code class="docutils literal"><span class="pre">XML::LibXML::Reader</span></code> API is able to
+keep its memory requirements low by discarding data from one parse step before
+proceeding to the next.  The vastly lowered memory demands come at the cost of
+significantly lowered convenience for the programmer.  However, as we&#8217;ll see in
+the next section, there is a middle ground that can provide the convenience of
+the DOM API combined with the reduced memory usage of the Reader API.</p>
+</div>
+<div class="section" id="bring-back-the-dom">
+<h2>Bring Back the DOM<a class="headerlink" href="#bring-back-the-dom" title="Permalink to this headline">¶</a></h2>
+<p>Huge XML documents usually contain a long list of similar elements.  For
+example Wikipedia make XML &#8216;dumps&#8217; available
+<a class="reference external" href="https://dumps.wikimedia.org/enwiki/latest/">for download</a>.</p>
+<p>At the time of writing, the <code class="docutils literal"><span class="pre">enwiki-latest-abstract1.xml.gz</span></code> file was about
+100MB in size - about 800MB uncompressed.  However it contained information
+summarising over half a million Wikipedia articles.  So whilst the file is very
+large, the <code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code> elements describing each article are, on average, less
+than 1.5KB.  The following extract is reformatted for clarity to illustrate
+the file structure:</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;feed&gt;</span>
+  <span class="nt">&lt;doc&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Wikipedia: Anarchism<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;url&gt;</span>https://en.wikipedia.org/wiki/Anarchism<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;abstract&gt;</span>Anarchism is a political philosophy that advocates
+    self-governed societies based on voluntary institutions.
+    These are often described as stateless societies …<span class="nt">&lt;/abstract&gt;</span>
+    <span class="nt">&lt;links&gt;</span>
+      <span class="nt">&lt;sublink</span> <span class="na">linktype=</span><span class="s">&quot;nav&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;anchor&gt;</span>History<span class="nt">&lt;/anchor&gt;</span>
+        <span class="nt">&lt;link&gt;</span>https://en.wikipedia.org/wiki/Anarchism#History<span class="nt">&lt;/link&gt;</span>
+      <span class="nt">&lt;/sublink&gt;</span>
+      <span class="nt">&lt;sublink</span> <span class="na">linktype=</span><span class="s">&quot;nav&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;anchor&gt;</span>Origins<span class="nt">&lt;/anchor&gt;</span>
+        <span class="nt">&lt;link&gt;</span>https://en.wikipedia.org/wiki/Anarchism#Origins<span class="nt">&lt;/link&gt;</span>
+      <span class="nt">&lt;/sublink&gt;</span>
+      <span class="c">&lt;!-- more sublink elements --&gt;</span>
+    <span class="nt">&lt;/links&gt;</span>
+  <span class="nt">&lt;/doc&gt;</span>
+  <span class="nt">&lt;doc&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Wikipedia: Autism<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;url&gt;</span>https://en.wikipedia.org/wiki/Autism<span class="nt">&lt;/url&gt;</span>
+    <span class="nt">&lt;abstract&gt;</span>…<span class="nt">&lt;/abstract&gt;</span>
+    <span class="nt">&lt;links&gt;</span>
+      <span class="c">&lt;!-- sublink elements --&gt;</span>
+    <span class="nt">&lt;/links&gt;</span>
+  <span class="nt">&lt;/doc&gt;</span>
+  <span class="c">&lt;!-- (many) more doc elements --&gt;</span>
+<span class="nt">&lt;/feed&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>To process this file, we can use the Reader API to locate each <code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code>
+element and then parse that element <em>and all its children</em> into a DOM fragment.
+We can then use the familiar and convenient XPath tools and DOM methods to
+process each fragment.</p>
+<p>Another useful technique when working with large files is to leave the files in
+their compressed form and use a Perl IO layer to decompress them on the fly.
+You can achieve this using the <a class="reference external" href="https://metacpan.org/pod/PerlIO::gzip">PerlIO::gzip</a> module from CPAN.</p>
+<p>To illustrate these techniques, the following script uses the Reader API to
+pick out each <code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code> element and slurp it into a DOM fragment.  Then XPath
+queries are used to examine the child nodes and determine if the <code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code> is
+&#8216;interesting&#8217; - does it have a sub-heading that contains variant of the word
+&#8220;controversy&#8221;?  Uninteresting elements are skipped, interesting elements are
+reported in summary form: article title, interesting subheading, URL.</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="ch">#!/usr/bin/perl</span>
+
+<span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">warnings</span><span class="p">;</span>
+<span class="k">use</span> <span class="n">autodie</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nn">PerlIO::</span><span class="n">gzip</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="p">;</span>
+
+<span class="nb">binmode</span><span class="p">(</span><span class="bp">STDOUT</span><span class="p">,</span> <span class="s">&#39;:utf8&#39;</span><span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;enwiki-latest-abstract1-abridged.xml.gz&#39;</span><span class="p">;</span>
+<span class="nb">open</span> <span class="k">my</span> <span class="nv">$fh</span><span class="p">,</span> <span class="s">&#39;&lt;:gzip&#39;</span><span class="p">,</span> <span class="nv">$filename</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$reader</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="n">IO</span> <span class="o">=&gt;</span> <span class="nv">$fh</span><span class="p">);</span>
+
+<span class="k">my</span> <span class="nv">$controversy_xpath</span> <span class="o">=</span> <span class="sx">q{./links/sublink[contains(./anchor, &#39;Controvers&#39;)]}</span><span class="p">;</span>
+
+<span class="k">while</span><span class="p">(</span><span class="nv">$reader</span><span class="o">-&gt;</span><span class="nb">read</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_READER_TYPE_ELEMENT</span><span class="p">;</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">name</span> <span class="ow">eq</span> <span class="s">&#39;doc&#39;</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">$doc</span> <span class="o">=</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">copyCurrentNode</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="k">my</span><span class="p">(</span><span class="nv">$target</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="nv">$controversy_xpath</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">say</span> <span class="s">&#39;Title: &#39;</span><span class="p">,</span> <span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">);</span>
+        <span class="n">say</span> <span class="s">&#39;  &#39;</span><span class="p">,</span> <span class="nv">$target</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./anchor&#39;</span><span class="p">);</span>
+        <span class="n">say</span> <span class="s">&#39;  &#39;</span><span class="p">,</span> <span class="nv">$target</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./link&#39;</span><span class="p">);</span>
+        <span class="n">say</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$reader</span><span class="o">-&gt;</span><span class="k">next</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the script above, <code class="docutils literal"><span class="pre">$doc</span></code> is a DOM fragment that can be queried and
+manipulated using the DOM methods described in earlier chapters.</p>
+<p>At the start of the <code class="docutils literal"><span class="pre">while</span></code> loop, a couple of conditional <code class="docutils literal"><span class="pre">next</span></code> statements
+allow skipping quickly to the start of the next <code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code> element.  Depending
+on the document you&#8217;re dealing with, you might need to also use the <code class="docutils literal"><span class="pre">depth</span></code>
+method to avoid deeply nested elements that also happened to be named &#8220;doc&#8221;.</p>
+<p>The call to <code class="docutils literal"><span class="pre">$reader-&gt;copyCurrentNode(1)</span></code> creates a DOM fragment from the
+current element.  The <code class="docutils literal"><span class="pre">1</span></code> passed as an argument is a boolean flag that causes
+all child elements to be included.</p>
+<p>In order to build the DOM fragment, the <code class="docutils literal"><span class="pre">$reader</span></code> has to process all content
+up to the matching <code class="docutils literal"><span class="pre">XML_READER_TYPE_END_ELEMENT</span></code> node.  You may be surprised
+to learn that this does not advance the cursor.  So the next call to
+<code class="docutils literal"><span class="pre">$reader-&gt;read</span></code> will advance to the first child node of the current
+<code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code>.  In our case, that would be a waste of time - there is no need to
+use the Reader API to re-process the child nodes that we already processed with
+the DOM API.  Therefore after processing a <code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code>, we call <code class="docutils literal"><span class="pre">$reader-&gt;next</span></code>
+to skip directly to the node following the matching <code class="docutils literal"><span class="pre">&lt;/doc&gt;</span></code> end tag.  When
+this script was used to process the full-sized file, adding this call to
+<code class="docutils literal"><span class="pre">next</span></code> reduced the run time by almost 50%.</p>
+<p>When processing files with millions of elements, a small optimisation in the
+main loop can make a noticeable difference to the run time.  For example,
+building the DOM fragment is a relatively expensive operation.  The call to
+<code class="docutils literal"><span class="pre">$reader-&gt;copyCurrentNode(1)</span></code> is equivalent to:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$xml</span> <span class="o">=</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">readOuterXml</span><span class="p">;</span>
+<span class="k">my</span> <span class="nv">$doc</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">string</span> <span class="o">=&gt;</span> <span class="nv">$xml</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>As an optimisation, we can avoid the step of building the DOM fragment if a
+quick regex check of the source XML tells us that it doesn&#8217;t contain the word
+we&#8217;re going to look for with the XPath query.  This rewritten main loop shave
+about 20% off the run time:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$controversy_xpath</span> <span class="o">=</span> <span class="sx">q{/doc/links/sublink[contains(./anchor, &#39;Controvers&#39;)]}</span><span class="p">;</span>
+
+<span class="k">while</span><span class="p">(</span><span class="nv">$reader</span><span class="o">-&gt;</span><span class="nb">read</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_READER_TYPE_ELEMENT</span><span class="p">;</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">name</span> <span class="ow">eq</span> <span class="s">&#39;doc&#39;</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">$xml</span> <span class="o">=</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">readOuterXml</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nv">$xml</span> <span class="o">=~</span><span class="sr"> /Controvers/</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">my</span> <span class="nv">$doc</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">string</span> <span class="o">=&gt;</span> <span class="nv">$xml</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="k">my</span><span class="p">(</span><span class="nv">$target</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="nv">$controversy_xpath</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">say</span> <span class="s">&#39;Title: &#39;</span><span class="p">,</span> <span class="nv">$doc</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;/doc/title&#39;</span><span class="p">);</span>
+            <span class="n">say</span> <span class="s">&#39;  &#39;</span><span class="p">,</span> <span class="nv">$target</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./anchor&#39;</span><span class="p">);</span>
+            <span class="n">say</span> <span class="s">&#39;  &#39;</span><span class="p">,</span> <span class="nv">$target</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./link&#39;</span><span class="p">);</span>
+            <span class="n">say</span> <span class="s">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nv">$reader</span><span class="o">-&gt;</span><span class="k">next</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h2>
+<p>Error handling is a little different with the Reader API vs the DOM API.  The
+DOM API will parse the whole document and throw an exception immediately if it
+encounters and error in the XML.  So if there&#8217;s an error you won&#8217;t get a DOM.</p>
+<p>The Reader API on the other hand will start returning nodes to your script via
+<code class="docutils literal"><span class="pre">$reader-&gt;read</span></code> as soon as the parsing starts <a class="footnote-reference" href="#f1" id="id1">[1]</a>.  If there is an error in your
+document, you won&#8217;t know until your parser reaches the error - then you&#8217;ll get
+the exception.</p>
+<p>You need to bear this in mind when parsing with the Reader API.  For example if
+you were reading elements to populate records in a database, you might want to
+wrap all the database INSERT statement in a transaction so that you can roll
+them all back if you encounter a parse error.</p>
+<p>Another useful technique is to parse the document twice, once to check the XML
+is well-formed and once to actually process it.  The <code class="docutils literal"><span class="pre">finish</span></code> method provides
+a quick way to parse from the current position to the end of the document:</p>
+<div class="highlight-perl"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$reader</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="n">IO</span> <span class="o">=&gt;</span> <span class="nv">$fh</span><span class="p">);</span>
+    <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">finish</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>You&#8217;ll then need to reopen the file and create a new Reader object for the
+second parse.</p>
+<p>In some applications you might scan through the file looking for a specific
+section.  Once the target has been located and the required information
+extracted, you might not need to look at any more elements.  However as we&#8217;ve
+seen, you should call <code class="docutils literal"><span class="pre">finish</span></code> to ensure there are no errors in the rest of
+the XML.</p>
+</div>
+<div class="section" id="working-with-patterns">
+<h2>Working With Patterns<a class="headerlink" href="#working-with-patterns" title="Permalink to this headline">¶</a></h2>
+<p>Our sample script is identifying elements at the top of the main loop by
+examining the node type and the node name:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">while</span><span class="p">(</span><span class="nv">$reader</span><span class="o">-&gt;</span><span class="nb">read</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">nodeType</span> <span class="o">==</span> <span class="n">XML_READER_TYPE_ELEMENT</span><span class="p">;</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">name</span> <span class="ow">eq</span> <span class="s">&#39;doc&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Although these are simple checks, they do still involve two method calls and
+passing scalar values across the XS boundary between <code class="docutils literal"><span class="pre">libxml</span></code> and the Perl
+runtime.  An alternative approach is to compile a &#8216;pattern&#8217; (essentially a
+simplified subset of XPath) using <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Pattern">XML::LibXML::Pattern</a> and run a complex set of
+checks with a single method call:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$doc_pattern</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Pattern</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="s">&#39;/feed/doc&#39;</span><span class="p">);</span>
+<span class="k">while</span><span class="p">(</span><span class="nv">$reader</span><span class="o">-&gt;</span><span class="nb">read</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">matchesPattern</span><span class="p">(</span><span class="nv">$doc_pattern</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In our example, the <code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code> elements that we&#8217;re interested in are all
+adjacent, so when we finish processing one, the very next element is another
+<code class="docutils literal"><span class="pre">&lt;doc&gt;</span></code>.  If your document is not structured this way, you might find it
+useful to skip over large sections of document to find the next element that
+matches a pattern, like this:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">nextPatternMatch</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can also use patterns with the <code class="docutils literal"><span class="pre">preservePattern</span></code> method to create a DOM
+subset of a larger document. For example:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;enwiki-latest-abstract1-structure.xml&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$reader</span> <span class="o">=</span> <span class="nn">XML::LibXML::</span><span class="n">Reader</span><span class="o">-&gt;</span><span class="k">new</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
+<span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">preservePattern</span><span class="p">(</span><span class="s">&#39;/feed/doc/title&#39;</span><span class="p">);</span>
+<span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">finish</span><span class="p">;</span>
+
+<span class="n">say</span> <span class="nv">$reader</span><span class="o">-&gt;</span><span class="n">document</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Which will produce this output:</p>
+<div class="highlight-none"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;feed&gt;
+  &lt;doc&gt;
+    &lt;title&gt;Wikipedia: Anarchism&lt;/title&gt;
+  &lt;/doc&gt;
+  &lt;doc&gt;
+    &lt;title&gt;Wikipedia: Autism&lt;/title&gt;
+  &lt;/doc&gt;
+&lt;/feed&gt;
+
+</pre></div>
+</div>
+<p>Note, this technique does construct the DOM in memory and then serialise it at
+the end, so if you have a huge document and many nodes match the pattern then
+you will consume a large amount of memory.</p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>In practice, the Reader API will read the XML in chunks and check each
+chunk is well-formed before it starts delivering node events.  This means
+that a short document with an error may trigger an exception before any
+nodes have been delivered.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="html.html" class="btn btn-neutral float-right" title="Working with HTML" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="namespaces.html" class="btn btn-neutral" title="Working with XML Namespaces" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016-2018, Grant McLean.
+      Last updated on 2018-03-24.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/plxbe.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

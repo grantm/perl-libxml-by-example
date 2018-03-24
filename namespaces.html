@@ -33,7 +33,7 @@
 
   
     <link rel="top" title="Perl XML::LibXML by Example  documentation" href="index.html"/>
-        <link rel="next" title="Working with HTML" href="html.html"/>
+        <link rel="next" title="Working With Large Documents" href="large-docs.html"/>
         <link rel="prev" title="The Document Object Model" href="dom.html"/> 
 
   
@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Working with XML Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-docs.html">Working With Large Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
 </ul>
@@ -116,7 +117,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -140,7 +141,7 @@
             
   <div class="section" id="working-with-xml-namespaces">
 <h1>Working with XML Namespaces<a class="headerlink" href="#working-with-xml-namespaces" title="Permalink to this headline">¶</a></h1>
-<p>Using the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method as described in the
+<p>Using the <code class="docutils literal"><span class="pre">findnodes()</span></code> method as described in the
 <a class="reference internal" href="basics.html"><em>basic examples</em></a> section doesn&#8217;t work when the XML document
 uses &#8216;namespaces&#8217;.  This section describes the extra steps you need to take
 to work with namespaces in XML.</p>
@@ -152,28 +153,8 @@ the <a class="reference external" href="https://www.w3.org/TR/SVG/">W3C</a> and 
 element in your document with a namespace allows a processor to distinguish
 elements that use the same element names.</p>
 <p>The scripts in this section will use the SVG document:
-<a class="reference download internal" href="_downloads/xml-libxml.svg"><tt class="xref download docutils literal"><span class="pre">xml-libxml.svg</span></tt></a>.  Which starts like this:</p>
-<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;</span>
+<a class="reference download internal" href="_downloads/xml-libxml.svg" download=""><code class="xref download docutils literal"><span class="pre">xml-libxml.svg</span></code></a>.  Which starts like this:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;</span>
 <span class="nt">&lt;svg</span>
    <span class="na">xmlns=</span><span class="s">&quot;http://www.w3.org/2000/svg&quot;</span>
    <span class="na">xmlns:svg=</span><span class="s">&quot;http://www.w3.org/2000/svg&quot;</span>
@@ -195,34 +176,33 @@ elements that use the same element names.</p>
    <span class="na">inkscape:export-xdpi=</span><span class="s">&quot;79.860001&quot;</span>
    <span class="na">inkscape:export-ydpi=</span><span class="s">&quot;79.860001&quot;</span><span class="nt">&gt;</span>
 </pre></div>
-</td></tr></table></div>
-<p>Because the top-level <tt class="docutils literal"><span class="pre">&lt;svg&gt;</span></tt> element uses
-<tt class="docutils literal"><span class="pre">xmlns=&quot;http://www.w3.org/2000/svg&quot;</span></tt> to declare a <strong>default namespace</strong> ,
+</div>
+<p>Because the top-level <code class="docutils literal"><span class="pre">&lt;svg&gt;</span></code> element uses
+<code class="docutils literal"><span class="pre">xmlns=&quot;http://www.w3.org/2000/svg&quot;</span></code> to declare a <strong>default namespace</strong> ,
 every other element will be in that namespace unless the element name includes
 a prefix for a different namespace.</p>
-<p>The first child element in the document is a <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element with no
+<p>The first child element in the document is a <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code> element with no
 namespace prefix, so it is associated with the default namespace URI:
-<tt class="docutils literal"><span class="pre">http://www.w3.org/2000/svg</span></tt>.</p>
-<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>  <span class="nt">&lt;title</span> <span class="na">id=</span><span class="s">&quot;title5798&quot;</span><span class="nt">&gt;</span>Example SVG File<span class="nt">&lt;/title&gt;</span>
+<code class="docutils literal"><span class="pre">http://www.w3.org/2000/svg</span></code>.</p>
+<div class="highlight-xml"><div class="highlight"><pre>  <span class="nt">&lt;title</span> <span class="na">id=</span><span class="s">&quot;title5798&quot;</span><span class="nt">&gt;</span>Example SVG File<span class="nt">&lt;/title&gt;</span>
 </pre></div>
-</td></tr></table></div>
-<p>A later section of the document includes a <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element with the <cite>dc:</cite>
+</div>
+<p>A later section of the document includes a <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code> element with the <cite>dc:</cite>
 namespace prefix, so it is associated with the URI:
-<tt class="docutils literal"><span class="pre">http://purl.org/dc/elements/1.1/</span></tt>.</p>
-<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>        <span class="nt">&lt;dc:title&gt;</span>XML::LibXML Logo<span class="nt">&lt;/dc:title&gt;</span>
+<code class="docutils literal"><span class="pre">http://purl.org/dc/elements/1.1/</span></code>.</p>
+<div class="highlight-xml"><div class="highlight"><pre>        <span class="nt">&lt;dc:title&gt;</span>XML::LibXML Logo<span class="nt">&lt;/dc:title&gt;</span>
 </pre></div>
-</td></tr></table></div>
-<p>Using <tt class="docutils literal"><span class="pre">findnodes()</span></tt> to match nodes against the XPath expression <tt class="docutils literal"><span class="pre">//title</span></tt>
+</div>
+<p>Using <code class="docutils literal"><span class="pre">findnodes()</span></code> to match nodes against the XPath expression <code class="docutils literal"><span class="pre">//title</span></code>
 returns no matches:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$match_count</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//title&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$match_count</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//title&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&quot;XPath: //title  Matching node count: $match_count&quot;</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>XPath: //title  Matching node count: 0
+<div class="highlight-none"><div class="highlight"><pre>XPath: //title  Matching node count: 0
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>When an element in a document is associated with a namespace URI it will only
 match an XPath expression that is also associated with the same namespace URI.
 XPath expressions also use namespace prefixes to associate a namespace URI with
@@ -235,24 +215,10 @@ multi-step process:</p>
 <li>create an XPathContext object associated with the document you want to search</li>
 <li>register a prefix and associated URI for each namespace you want to include
 in your query</li>
-<li>call the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method on the XPathContext object rather than
+<li>call the <code class="docutils literal"><span class="pre">findnodes()</span></code> method on the XPathContext object rather than
 directly on the DOM object</li>
 </ol>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">XML::LibXML::</span><span class="n">XPathContext</span><span class="p">;</span>
 
 <span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;xml-libxml.svg&#39;</span><span class="p">;</span>
@@ -268,37 +234,20 @@ directly on the DOM object</li>
 <span class="k">my</span><span class="p">(</span><span class="nv">$match2</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$xpc</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//dub:title&#39;</span><span class="p">);</span>
 <span class="n">say</span> <span class="s">&#39;XPath: //dub:title  Matched: &#39;</span><span class="p">,</span> <span class="nv">$match2</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre>XPath: //vg:title   Matched: &lt;title id=&quot;title5798&quot;&gt;Example SVG File&lt;/title&gt;
+<div class="highlight-none"><div class="highlight"><pre>XPath: //vg:title   Matched: &lt;title id=&quot;title5798&quot;&gt;Example SVG File&lt;/title&gt;
 XPath: //dub:title  Matched: &lt;dc:title&gt;XML::LibXML Logo&lt;/dc:title&gt;
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>You&#8217;ll recall from earlier examples that you can search within a node by
-calling <tt class="docutils literal"><span class="pre">findnodes()</span></tt> on the element node (rather than the document) and
-using an XPath expression like <tt class="docutils literal"><span class="pre">./child</span></tt> where the dot refers to the
+calling <code class="docutils literal"><span class="pre">findnodes()</span></code> on the element node (rather than the document) and
+using an XPath expression like <code class="docutils literal"><span class="pre">./child</span></code> where the dot refers to the
 <em>context</em> node.  However when you&#8217;re dealing with namespaces that won&#8217;t work,
-because you need to call <tt class="docutils literal"><span class="pre">findnodes()</span></tt> on the XPathContext object.  The
-solution is to pass <tt class="docutils literal"><span class="pre">findnodes()</span></tt> a second argument, after the XPath
+because you need to call <code class="docutils literal"><span class="pre">findnodes()</span></code> on the XPathContext object.  The
+solution is to pass <code class="docutils literal"><span class="pre">findnodes()</span></code> a second argument, after the XPath
 expression.  The additional argument is the element to use as a context node:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">XML::LibXML::</span><span class="n">XPathContext</span><span class="p">;</span>
 
 <span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;xml-libxml.svg&#39;</span><span class="p">;</span>
@@ -316,24 +265,19 @@ expression.  The additional argument is the element to use as a context node:</p
     <span class="n">say</span> <span class="s">&quot;$name=$value&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre>format=image/svg+xml
+<div class="highlight-none"><div class="highlight"><pre>format=image/svg+xml
 title=XML::LibXML Logo
 creator=Grant McLean
 date=2016-03-26
 subject=perlxmllibxml
 description=An SVG file created as an example for parsing XML with namespaces.
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>One small feature of that script which is worth noting is the use of
-<tt class="docutils literal"><span class="pre">$el-&gt;localname</span></tt> to get the name of the element <em>without</em> the namespace
-prefix.  The more commonly used <tt class="docutils literal"><span class="pre">$el-&gt;nodeName</span></tt> method does include the
+<code class="docutils literal"><span class="pre">$el-&gt;localname</span></code> to get the name of the element <em>without</em> the namespace
+prefix.  The more commonly used <code class="docutils literal"><span class="pre">$el-&gt;nodeName</span></code> method does include the
 namespace prefix as it appears in the document.</p>
 </div>
 
@@ -344,7 +288,7 @@ namespace prefix as it appears in the document.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="html.html" class="btn btn-neutral float-right" title="Working with HTML" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="large-docs.html" class="btn btn-neutral float-right" title="Working With Large Documents" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="dom.html" class="btn btn-neutral" title="The Document Object Model" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -356,8 +300,8 @@ namespace prefix as it appears in the document.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-09-11.
+        &copy; Copyright 2016-2018, Grant McLean.
+      Last updated on 2018-03-24.
 
     </p>
   </div>

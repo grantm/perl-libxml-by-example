@@ -84,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-docs.html">Working With Large Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
 </ul>
@@ -115,7 +116,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -143,7 +144,7 @@
 wrapper around the <a class="reference external" href="http://www.xmlsoft.org/">libxml2</a> parser library which is
 written in C.  This tutorial uses example code to introduce the features of
 XML::LibXML and the ways in which you can use the module.  The example
-scripts and XML documents are available as a <a class="reference download internal" href="_downloads/perl-libxml-examples.zip"><tt class="xref download docutils literal"><span class="pre">ZIP</span> <span class="pre">file</span> <span class="pre">download</span></tt></a>.</p>
+scripts and XML documents are available as a <a class="reference download internal" href="_downloads/perl-libxml-examples.zip" download=""><code class="xref download docutils literal"><span class="pre">ZIP</span> <span class="pre">file</span> <span class="pre">download</span></code></a>.</p>
 <p>Get started with <a class="reference internal" href="basics.html"><em>a basic example</em></a> or jump directly to a specific
 topic using the Table of Contents.</p>
 <div class="toctree-wrapper compound">
@@ -153,6 +154,7 @@ topic using the Table of Contents.</p>
 <li class="toctree-l2"><a class="reference internal" href="basics.html#a-more-complex-example">A more complex example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="basics.html#accessing-attributes">Accessing attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="basics.html#attributes-via-tied-hash">Attributes via tied hash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basics.html#parsing-errors">Parsing Errors</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a><ul>
@@ -170,6 +172,13 @@ topic using the Table of Contents.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-docs.html">Working With Large Documents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="large-docs.html#the-reader-loop">The Reader Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="large-docs.html#bring-back-the-dom">Bring Back the DOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="large-docs.html#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="large-docs.html#working-with-patterns">Working With Patterns</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="html.html#querying-html-with-xpath">Querying HTML with XPath</a></li>
 <li class="toctree-l2"><a class="reference internal" href="html.html#matching-class-names">Matching class names</a></li>
@@ -190,8 +199,8 @@ topic using the Table of Contents.</p>
 formats are available but may be missing some elements or features which are
 present in the HTML:</p>
 <ul class="simple">
-<li><a class="reference download internal" href="_downloads/PerlXMLLibXMLbyExample.pdf"><tt class="xref download docutils literal"><span class="pre">.pdf</span> <span class="pre">version</span></tt></a></li>
-<li><a class="reference download internal" href="_downloads/PerlXMLLibXMLbyExample.epub"><tt class="xref download docutils literal"><span class="pre">.epub</span> <span class="pre">version</span></tt></a></li>
+<li><a class="reference download internal" href="_downloads/PerlXMLLibXMLbyExample.pdf" download=""><code class="xref download docutils literal"><span class="pre">.pdf</span> <span class="pre">version</span></code></a></li>
+<li><a class="reference download internal" href="_downloads/PerlXMLLibXMLbyExample.epub" download=""><code class="xref download docutils literal"><span class="pre">.epub</span> <span class="pre">version</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="corrections-and-updates">
@@ -222,8 +231,8 @@ Stack Overflow answers etc.  The canonical URL for linking is
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-09-11.
+        &copy; Copyright 2016-2018, Grant McLean.
+      Last updated on 2018-03-24.
 
     </p>
   </div>

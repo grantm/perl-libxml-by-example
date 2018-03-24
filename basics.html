@@ -86,11 +86,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#a-more-complex-example">A more complex example</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#accessing-attributes">Accessing attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#attributes-via-tied-hash">Attributes via tied hash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parsing-errors">Parsing Errors</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="xpath.html">XPath Expressions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dom.html">The Document Object Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="namespaces.html">Working with XML Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-docs.html">Working With Large Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="html.html">Working with HTML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing XML::LibXML</a></li>
 </ul>
@@ -122,7 +124,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -147,7 +149,7 @@
   <div class="section" id="a-basic-example">
 <h1>A Basic Example<a class="headerlink" href="#a-basic-example" title="Permalink to this headline">¶</a></h1>
 <p>The first thing you&#8217;ll need is an XML document.  The example programs in this
-section will use the <a class="reference download internal" href="_downloads/playlist.xml"><tt class="xref download docutils literal"><span class="pre">playlist.xml</span></tt></a>
+section will use the <a class="reference download internal" href="_downloads/playlist.xml" download=""><code class="xref download docutils literal"><span class="pre">playlist.xml</span></code></a>
 file shown below. This file contains details of five different movies:</p>
 <div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
   2
@@ -395,23 +397,9 @@ file shown below. This file contains details of five different movies:</p>
 specifically for this example and does not represent an actual API for
 querying movie details.</p>
 </div>
-<p>Once you have the sample XML document, you can use <a class="reference download internal" href="_downloads/010-list-titles.pl"><tt class="xref download docutils literal"><span class="pre">this</span> <span class="pre">script</span></tt></a> to extract and print the title of each movie,
+<p>Once you have the sample XML document, you can use <a class="reference download internal" href="_downloads/010-list-titles.pl" download=""><code class="xref download docutils literal"><span class="pre">this</span> <span class="pre">script</span></code></a> to extract and print the title of each movie,
 in the order they appear in the XML:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">#!/usr/bin/perl</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="ch">#!/usr/bin/perl</span>
 
 <span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
 <span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
@@ -427,90 +415,84 @@ in the order they appear in the XML:</p>
     <span class="n">say</span> <span class="nv">$title</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>and will produce the following output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre>Apollo 13
+<div class="highlight-none"><div class="highlight"><pre>Apollo 13
 Solaris
 Ender&#39;s Game
 Interstellar
 The Martian
 </pre></div>
-</td></tr></table></div>
+</div>
 <div class="sidebar">
 <p class="first sidebar-title">Is XML::LibXML installed?</p>
 <p>If you try running this example script but you don&#8217;t have the
-<tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> module installed on your system, then you&#8217;ll get an error
+<code class="docutils literal"><span class="pre">XML::LibXML</span></code> module installed on your system, then you&#8217;ll get an error
 like this:</p>
 <blockquote>
 <div>Can&#8217;t locate XML/LibXML.pm in &#64;INC ... at ./010-list-titles.pl line 7.</div></blockquote>
 <p class="last">If you do get this error, then refer to <a class="reference internal" href="installation.html"><em>Installing XML::LibXML</em></a> for help on
-installing <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt>.</p>
+installing <code class="docutils literal"><span class="pre">XML::LibXML</span></code>.</p>
 </div>
 <p>If we break the example down line-by-line we see that after a standard
-boilerplate section, the script loads the <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt> module:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
+boilerplate section, the script loads the <code class="docutils literal"><span class="pre">XML::LibXML</span></code> module:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">use</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
-<p>Next, the <tt class="docutils literal"><span class="pre">load_xml()</span></tt> class method is called to parse the XML file and
+</div>
+<p>Next, the <code class="docutils literal"><span class="pre">load_xml()</span></code> class method is called to parse the XML file and
 return a document object:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
 </pre></div>
-</td></tr></table></div>
-<p>The <tt class="docutils literal"><span class="pre">$dom</span></tt> variable now contains an object representing all the elements of
+</div>
+<p>The <code class="docutils literal"><span class="pre">$dom</span></code> variable now contains an object representing all the elements of
 the XML document arranged in a tree structure known as a
 <a class="reference internal" href="dom.html"><em>Document Object Model</em></a> or &#8216;DOM&#8217;.</p>
-<p>Finally we get to the guts of the script where the <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method is
-called to search the DOM for the elements we&#8217;re interested in and a <tt class="docutils literal"><span class="pre">foreach</span></tt>
+<p>Finally we get to the guts of the script where the <code class="docutils literal"><span class="pre">findnodes()</span></code> method is
+called to search the DOM for the elements we&#8217;re interested in and a <code class="docutils literal"><span class="pre">foreach</span></code>
 loop is used to iterate through the matching elements:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$title</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;/playlist/movie/title&#39;</span><span class="p">))</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$title</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;/playlist/movie/title&#39;</span><span class="p">))</span> <span class="p">{</span>
     <span class="n">say</span> <span class="nv">$title</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
-<p>The <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method takes one argument - an <strong>XPath expression</strong>.  This
+</div>
+<p>The <code class="docutils literal"><span class="pre">findnodes()</span></code> method takes one argument - an <strong>XPath expression</strong>.  This
 is a string describing the location and characteristics of the elements we want
 to find.  XPath is a query language and the way we use it to select elements
 from the DOM is similar to the way we use SQL to select records from a
 relational database.  The next section (<a class="reference internal" href="xpath.html"><em>XPath Expressions</em></a>) will include examples of
 more complex queries.</p>
-<p>The <tt class="docutils literal"><span class="pre">findnodes()</span></tt> method returns a list of objects from the DOM that match
-the XPath expression. Each time through the loop, <tt class="docutils literal"><span class="pre">$title</span></tt> will contain an
+<p>The <code class="docutils literal"><span class="pre">findnodes()</span></code> method returns a list of objects from the DOM that match
+the XPath expression. Each time through the loop, <code class="docutils literal"><span class="pre">$title</span></code> will contain an
 object representing the next matching element.  This object provides a number
 of properties and methods that you can use to access the element and its
 attributes, as well as any text content and &#8216;child&#8217; elements.</p>
-<p>Inside the loop, this example simply calls the <tt class="docutils literal"><span class="pre">to_literal()</span></tt> method to get
-the text content of the element.  The string returned by <tt class="docutils literal"><span class="pre">to_literal()</span></tt> will
+<p>Inside the loop, this example simply calls the <code class="docutils literal"><span class="pre">to_literal()</span></code> method to get
+the text content of the element.  The string returned by <code class="docutils literal"><span class="pre">to_literal()</span></code> will
 not include any of the attributes but will include the text content of any
 child elements.</p>
 <div class="section" id="other-xml-sources">
 <h2>Other XML sources<a class="headerlink" href="#other-xml-sources" title="Permalink to this headline">¶</a></h2>
-<p>The first example script called <tt class="docutils literal"><span class="pre">XML::LibXML-&gt;load_xml()</span></tt> with the
-<tt class="docutils literal"><span class="pre">location</span></tt> argument set to the name of a file.  The <tt class="docutils literal"><span class="pre">location</span></tt> argument
+<p>The first example script called <code class="docutils literal"><span class="pre">XML::LibXML-&gt;load_xml()</span></code> with the
+<code class="docutils literal"><span class="pre">location</span></code> argument set to the name of a file.  The <code class="docutils literal"><span class="pre">location</span></code> argument
 also accepts a URL:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;http://techcrunch.com/feed/&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>If you have the XML in a string, instead of <tt class="docutils literal"><span class="pre">location</span></tt>, use <tt class="docutils literal"><span class="pre">string</span></tt>:</p>
+<p>If you have the XML in a string, instead of <code class="docutils literal"><span class="pre">location</span></code>, use <code class="docutils literal"><span class="pre">string</span></code>:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">string</span> <span class="o">=&gt;</span> <span class="nv">$xml_string</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Or, you can provide a Perl file handle to parse from an  open file or socket,
-using <tt class="docutils literal"><span class="pre">IO</span></tt>:</p>
+using <code class="docutils literal"><span class="pre">IO</span></code>:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">IO</span> <span class="o">=&gt;</span> <span class="nv">$fh</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>When providing a string or a file handle, it&#8217;s crucial that you <strong>do not</strong>
-decode the bytes of the source data (for example by using <tt class="docutils literal"><span class="pre">':utf8'</span></tt> when
-opening a file).  The underlying <tt class="docutils literal"><span class="pre">libxml2</span></tt> library is written in C to decode
+decode the bytes of the source data (for example by using <code class="docutils literal"><span class="pre">':utf8'</span></code> when
+opening a file).  The underlying <code class="docutils literal"><span class="pre">libxml2</span></code> library is written in C to decode
 bytes and does not understand Perl&#8217;s character strings.  If you have assembled
 your XML document by concatenating Perl character strings, you will need to
-encode it to a byte string (for example using <tt class="docutils literal"><span class="pre">Encode::encode_utf8()</span></tt>) and
+encode it to a byte string (for example using <code class="docutils literal"><span class="pre">Encode::encode_utf8()</span></code>) and
 then pass the byte string to the parser.</p>
 <p>If you have enabled UTF-8 globally with something like this in your script:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="k">use</span> <span class="nb">open</span> <span class="s">&#39;:encoding(utf8)&#39;</span><span class="p">;</span>
@@ -526,31 +508,9 @@ that you pass to XML::LibXML:</p>
 </div>
 <div class="section" id="a-more-complex-example">
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Permalink to this headline">¶</a></h2>
-<p>Now let&#8217;s look at a slightly more complex example.  <a class="reference download internal" href="_downloads/040-movie-details.pl"><tt class="xref download docutils literal"><span class="pre">This</span> <span class="pre">script</span></tt></a> takes the same XML input and extracts more
-details from each <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">#!/usr/bin/perl</span>
+<p>Now let&#8217;s look at a slightly more complex example.  <a class="reference download internal" href="_downloads/040-movie-details.pl" download=""><code class="xref download docutils literal"><span class="pre">This</span> <span class="pre">script</span></code></a> takes the same XML input and extracts more
+details from each <code class="docutils literal"><span class="pre">&lt;movie&gt;</span></code> element:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="ch">#!/usr/bin/perl</span>
 
 <span class="k">use</span> <span class="mf">5.010</span><span class="p">;</span>
 <span class="k">use</span> <span class="n">strict</span><span class="p">;</span>
@@ -574,37 +534,9 @@ details from each <tt class="docutils literal"><span class="pre">&lt;movie&gt;</
     <span class="n">say</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>and will produce the following output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29</pre></div></td><td class="code"><div class="highlight"><pre>Title:    Apollo 13
+<div class="highlight-none"><div class="highlight"><pre>Title:    Apollo 13
 Director: Ron Howard
 Rating:   PG
 Duration: 140 minutes
@@ -633,28 +565,17 @@ Director: Ridley Scott
 Rating:   PG-13
 Duration: 144 minutes
 Starring: Matt Damon, Jessica Chastain, Kristen Wiig
+
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Let&#8217;s compare the main loop of the first script:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$title</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;/playlist/movie/title&#39;</span><span class="p">))</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$title</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;/playlist/movie/title&#39;</span><span class="p">))</span> <span class="p">{</span>
     <span class="n">say</span> <span class="nv">$title</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>with the main loop of the second script:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$movie</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//movie&#39;</span><span class="p">))</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre><span class="k">foreach</span> <span class="k">my</span> <span class="nv">$movie</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//movie&#39;</span><span class="p">))</span> <span class="p">{</span>
     <span class="n">say</span> <span class="s">&#39;Title:    &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">);</span>
     <span class="n">say</span> <span class="s">&#39;Director: &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./director&#39;</span><span class="p">);</span>
     <span class="n">say</span> <span class="s">&#39;Rating:   &#39;</span><span class="p">,</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./mpaa-rating&#39;</span><span class="p">);</span>
@@ -666,31 +587,31 @@ Starring: Matt Damon, Jessica Chastain, Kristen Wiig
     <span class="n">say</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>The structure of the main loop is very similar but the XPath expression
-passed to <tt class="docutils literal"><span class="pre">findnodes()</span></tt> is different in each case:</p>
+passed to <code class="docutils literal"><span class="pre">findnodes()</span></code> is different in each case:</p>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">'/playlist/movie/title'</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">'/playlist/movie/title'</span></code></dt>
 <dd><div class="first line-block">
-<div class="line">Will match every <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> element which is the child of ...</div>
-<div class="line">a <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element which is the child of ...</div>
-<div class="line">a <tt class="docutils literal"><span class="pre">&lt;playlist&gt;</span></tt> element which is ...</div>
+<div class="line">Will match every <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code> element which is the child of ...</div>
+<div class="line">a <code class="docutils literal"><span class="pre">&lt;movie&gt;</span></code> element which is the child of ...</div>
+<div class="line">a <code class="docutils literal"><span class="pre">&lt;playlist&gt;</span></code> element which is ...</div>
 <div class="line">the top-level element in the document.</div>
 </div>
 <p class="last">Or, to phrase it a different way, the search will start at the top of the
-document and look for a <tt class="docutils literal"><span class="pre">&lt;playlist&gt;</span></tt> element; if one is found, the search
-will continue for child <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> elements; and for each one that is
-found the search will continue for child <tt class="docutils literal"><span class="pre">&lt;title&gt;</span></tt> elements.</p>
+document and look for a <code class="docutils literal"><span class="pre">&lt;playlist&gt;</span></code> element; if one is found, the search
+will continue for child <code class="docutils literal"><span class="pre">&lt;movie&gt;</span></code> elements; and for each one that is
+found the search will continue for child <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code> elements.</p>
 </dd>
-<dt><tt class="docutils literal"><span class="pre">'//movie'</span></tt></dt>
-<dd>Will match every <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element at any level of nesting.</dd>
+<dt><code class="docutils literal"><span class="pre">'//movie'</span></code></dt>
+<dd>Will match every <code class="docutils literal"><span class="pre">&lt;movie&gt;</span></code> element at any level of nesting.</dd>
 </dl>
 <p>In both cases, the XPath expression starts with a &#8216;/&#8217; which means the search
 will start at the the top of the document.</p>
-<p>Inside the second script&#8217;s loop are a number of calls to <tt class="docutils literal"><span class="pre">findvalue()</span></tt>.  This
+<p>Inside the second script&#8217;s loop are a number of calls to <code class="docutils literal"><span class="pre">findvalue()</span></code>.  This
 is a handy shortcut method that is typically used when you expect the XPath
 expression to match <em>exactly one node</em>.  It combines the functionality of
-<tt class="docutils literal"><span class="pre">findnodes()</span></tt> and <tt class="docutils literal"><span class="pre">to_literal()</span></tt> into a single method.  So this code:</p>
+<code class="docutils literal"><span class="pre">findnodes()</span></code> and <code class="docutils literal"><span class="pre">to_literal()</span></code> into a single method.  So this code:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findvalue</span><span class="p">(</span><span class="s">&#39;./title&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -699,31 +620,28 @@ expression to match <em>exactly one node</em>.  It combines the functionality of
 </pre></div>
 </div>
 <p>There are a couple of other interesting differences with the XPath searches in
-the loop compared to previous examples.  Firstly, the <tt class="docutils literal"><span class="pre">findvalue()</span></tt> method is
-being called on <tt class="docutils literal"><span class="pre">$movie</span></tt> (which represents one <tt class="docutils literal"><span class="pre">&lt;movie&gt;</span></tt> element) rather
-than on <tt class="docutils literal"><span class="pre">$dom</span></tt> (which represents the whole document). This means that the
-<tt class="docutils literal"><span class="pre">$movie</span></tt> element is the <strong>context element</strong>.  Secondly, the XPath expression
+the loop compared to previous examples.  Firstly, the <code class="docutils literal"><span class="pre">findvalue()</span></code> method is
+being called on <code class="docutils literal"><span class="pre">$movie</span></code> (which represents one <code class="docutils literal"><span class="pre">&lt;movie&gt;</span></code> element) rather
+than on <code class="docutils literal"><span class="pre">$dom</span></code> (which represents the whole document). This means that the
+<code class="docutils literal"><span class="pre">$movie</span></code> element is the <strong>context element</strong>.  Secondly, the XPath expression
 starts with a &#8216;.&#8217; which means: start the search at the context element rather
 than at the top of the document.</p>
-<p>This second script illustrates a common pattern when working with <tt class="docutils literal"><span class="pre">XML::LibXML</span></tt>:</p>
+<p>This second script illustrates a common pattern when working with <code class="docutils literal"><span class="pre">XML::LibXML</span></code>:</p>
 <ol class="arabic simple">
 <li>find &#8216;interesting&#8217; elements using an XPath query starting with &#8216;/&#8217; or &#8216;//&#8217;</li>
-<li>iterate through those elements in a <tt class="docutils literal"><span class="pre">foreach</span></tt> loop</li>
+<li>iterate through those elements in a <code class="docutils literal"><span class="pre">foreach</span></code> loop</li>
 <li>get additional data from child elements using XPath queries starting with &#8216;.&#8217;</li>
 </ol>
 </div>
 <div class="section" id="accessing-attributes">
 <h2>Accessing attributes<a class="headerlink" href="#accessing-attributes" title="Permalink to this headline">¶</a></h2>
 <p>When listing cast members in the main loop of the script above, this code ...</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
         <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
     <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person/@name&#39;</span><span class="p">);</span>
     <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>is used to transform this XML ...</p>
 <div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -737,74 +655,134 @@ than at the top of the document.</p>
 </pre></div>
 </td></tr></table></div>
 <p>into this output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>Starring: Matt Damon, Jessica Chastain, Kristen Wiig
+<div class="highlight-none"><div class="highlight"><pre>Starring: Matt Damon, Jessica Chastain, Kristen Wiig
 </pre></div>
-</td></tr></table></div>
-<p>In an XPath expression, a name that starts with <tt class="docutils literal"><span class="pre">&#64;</span></tt> will match an attribute
-rather than an element, so <tt class="docutils literal"><span class="pre">'person/&#64;name'</span></tt> refers to an attribute called
-<tt class="docutils literal"><span class="pre">name</span></tt> on a <tt class="docutils literal"><span class="pre">&lt;person&gt;</span></tt> element.  In this case, the call to
-<tt class="docutils literal"><span class="pre">findnodes('./cast/person/&#64;name')</span></tt> will return three DOM nodes representing
+</div>
+<p>In an XPath expression, a name that starts with <code class="docutils literal"><span class="pre">&#64;</span></code> will match an attribute
+rather than an element, so <code class="docutils literal"><span class="pre">'person/&#64;name'</span></code> refers to an attribute called
+<code class="docutils literal"><span class="pre">name</span></code> on a <code class="docutils literal"><span class="pre">&lt;person&gt;</span></code> element.  In this case, the call to
+<code class="docutils literal"><span class="pre">findnodes('./cast/person/&#64;name')</span></code> will return three DOM nodes representing
 attribute values which are then transformed into plain strings using
-<tt class="docutils literal"><span class="pre">to_literal()</span></tt>, as we&#8217;ve seen for element nodes, inside a <a class="reference external" href="http://perldoc.perl.org/functions/map.html">map</a> block.</p>
+<code class="docutils literal"><span class="pre">to_literal()</span></code>, as we&#8217;ve seen for element nodes, inside a <a class="reference external" href="http://perldoc.perl.org/functions/map.html">map</a> block.</p>
 <p>Another approach is to select the <em>element</em> with XPath and then call a DOM
 method on the element node to get the attribute value:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
         <span class="nv">$_</span><span class="o">-&gt;</span><span class="n">getAttribute</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">);</span>
     <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person&#39;</span><span class="p">);</span>
     <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 </div>
 <div class="section" id="attributes-via-tied-hash">
 <span id="tied-attribute-hash"></span><h2>Attributes via tied hash<a class="headerlink" href="#attributes-via-tied-hash" title="Permalink to this headline">¶</a></h2>
 <p>There&#8217;s a shortcut syntax you can use to make this even easier, simply treat
 the element node as a hashref:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
         <span class="nv">$_</span><span class="o">-&gt;</span><span class="p">{</span><span class="n">name</span><span class="p">};</span>
     <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person&#39;</span><span class="p">);</span>
     <span class="n">say</span> <span class="s">&#39;Starring: &#39;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>You might be a bit wary of poking around directly inside the element object,
 rather than using accessor methods. But don&#8217;t worry, that&#8217;s <strong>not</strong> what this
 shortcut syntax is doing.  Instead, every <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::Element">XML::LibXML::Element</a> object returned from the
 XPath query has been <a class="reference external" href="https://metacpan.org/pod/distribution/perl/pod/perltie.pod">&#8216;tied&#8217;</a> using
 <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::AttributeHash">XML::LibXML::AttributeHash</a> so that hash lookups
-&#8216;inside&#8217; the object actually get proxied to <tt class="docutils literal"><span class="pre">getAttribute()</span></tt> method calls.</p>
-<p>This technique is less efficient than calling <tt class="docutils literal"><span class="pre">getAttribute()</span></tt> directly but
+&#8216;inside&#8217; the object actually get proxied to <code class="docutils literal"><span class="pre">getAttribute()</span></code> method calls.</p>
+<p>This technique is less efficient than calling <code class="docutils literal"><span class="pre">getAttribute()</span></code> directly but
 it is very convenient when you want to access more than one attribute of an
 element or when you want to interpolate an attribute value into a string:</p>
-<div class="highlight-perl"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&quot;\n&quot;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
+<div class="highlight-perl"><div class="highlight"><pre>    <span class="k">my</span> <span class="nv">$cast</span> <span class="o">=</span> <span class="nb">join</span> <span class="s">&quot;\n&quot;</span><span class="p">,</span> <span class="nb">map</span> <span class="p">{</span>
         <span class="s">&quot; * $_-&gt;{name} (as $_-&gt;{role})&quot;</span><span class="p">;</span>
     <span class="p">}</span> <span class="nv">$movie</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;./cast/person&#39;</span><span class="p">);</span>
     <span class="n">say</span> <span class="s">&quot;\nStarring:\n&quot;</span><span class="p">,</span> <span class="nv">$cast</span><span class="p">;</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>Which will produce this output:</p>
-<div class="highlight-none"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre>Starring:
+<div class="highlight-none"><div class="highlight"><pre>Starring:
  * Matt Damon (as Mark Watney)
  * Jessica Chastain (as Melissa Lewis)
  * Kristen Wiig (as Annie Montrose)
 </pre></div>
-</td></tr></table></div>
+</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Overloading &#8216;Element&#8217; nodes to support tied hash access to attribute values
 was added in version 1.91 of XML::LibXML.  If the examples above don&#8217;t work
 for you then it may be because you have a very old version installed.</p>
 </div>
+</div>
+<div class="section" id="parsing-errors">
+<h2>Parsing Errors<a class="headerlink" href="#parsing-errors" title="Permalink to this headline">¶</a></h2>
+<p>One of the advantages of XML is that it has a few strict rules that every
+document must comply with to be considered &#8220;well-formed&#8221;.  If a document is not
+well-formed, it should be rejected in its entirety and no part of the XML
+document content should be used.  Examples of things that would cause a
+document to be not well-formed include:</p>
+<ul class="simple">
+<li>missing or mismatched closing tag</li>
+<li>missing or mismatched quotes around attribute values</li>
+<li>whitespace before the initial XML declaration section</li>
+<li>byte sequences that do not match the document&#8217;s declared character encoding</li>
+<li>any non-whitespace characters after the closing tag for the first top-level
+element</li>
+</ul>
+<p>Like pretty much all XML parser modules, <code class="docutils literal"><span class="pre">libxml</span></code> will throw an exception
+if it encounters any violations of these rules.  Since the whole of the XML
+document is processed when <code class="docutils literal"><span class="pre">load_xml</span></code> is called, an error at any point in
+the document will cause an exception to be raised.</p>
+<p>If you wish to handle exceptions gracefully use must use an <code class="docutils literal"><span class="pre">eval</span></code> block or
+one of the &#8220;try/catch&#8221; syntax extension modules to catch the error.  For
+example, this document contains an error:</p>
+<div class="highlight-xml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39; standalone=&quot;yes&quot; ?&gt;</span>
+<span class="nt">&lt;book</span> <span class="na">edition=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;title&gt;</span>Training Your Pet Ferret<span class="nt">&lt;/title&gt;</span>
+  <span class="nt">&lt;authors&gt;</span>
+    <span class="nt">&lt;author&gt;</span>Gerry Bucsis<span class="nt">&lt;/author&gt;</span>
+    <span class="nt">&lt;author&gt;</span>Barbara Somerville<span class="nt">&lt;/author&gt;</span>
+  <span class="nt">&lt;/authors&gt;</span>
+  <span class="nt">&lt;isbn&gt;</span>9780764142239<span class="nt">&lt;/isnb&gt;</span>
+  <span class="nt">&lt;dimensions</span> <span class="na">width=</span><span class="s">&quot;162.56mm&quot;</span> <span class="na">height=</span><span class="s">&quot;195.58mm&quot;</span> <span class="na">depth=</span><span class="s">&quot;10.16mm&quot;</span> <span class="na">pages=</span><span class="s">&quot;96&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/book&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<p>This script will attempt to parse the bad input:</p>
+<div class="highlight-perl"><div class="highlight"><pre><span class="c1">#my $filename = &#39;book.xml&#39;;</span>
+<span class="k">my</span> <span class="nv">$filename</span> <span class="o">=</span> <span class="s">&#39;book-borkened.xml&#39;</span><span class="p">;</span>
+
+<span class="k">my</span> <span class="nv">$dom</span> <span class="o">=</span> <span class="nb">eval</span> <span class="p">{</span>
+    <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="nv">$filename</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="k">if</span><span class="p">(</span><span class="vg">$@</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1"># Log failure and exit</span>
+    <span class="k">print</span> <span class="s">&quot;Error parsing &#39;$filename&#39;:\n$@&quot;</span><span class="p">;</span>
+    <span class="nb">exit</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">foreach</span> <span class="k">my</span> <span class="nv">$author</span> <span class="p">(</span><span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//author&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">say</span> <span class="nv">$author</span><span class="o">-&gt;</span><span class="n">to_literal</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>and will instead produce this output:</p>
+<div class="highlight-none"><div class="highlight"><pre>Error parsing &#39;book-borkened.xml&#39;:
+book-borkened.xml:8: parser error : Opening and ending tag mismatch: isbn line 8 and isnb
+  &lt;isbn&gt;9780764142239&lt;/isnb&gt;
+                            ^
+</pre></div>
+</div>
+<p>Note that although the script is only looking for <code class="docutils literal"><span class="pre">&lt;author&gt;</span></code> elements and the
+error in the <code class="docutils literal"><span class="pre">&lt;isbn&gt;</span></code> element comes <em>after</em> all the <code class="docutils literal"><span class="pre">&lt;author&gt;</span></code> elements, an
+exception is still raised by the <code class="docutils literal"><span class="pre">load_xml</span></code> call inside the eval block,
+before the DOM has been fully constructed.</p>
 <p>That&#8217;s it for the basic examples.  The next topic will look more closely at
 <a class="reference internal" href="xpath.html"><em>XPath expressions</em></a>.</p>
 </div>
@@ -829,8 +807,8 @@ for you then it may be because you have a very old version installed.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Grant McLean.
-      Last updated on 2016-09-11.
+        &copy; Copyright 2016-2018, Grant McLean.
+      Last updated on 2018-03-24.
 
     </p>
   </div>
