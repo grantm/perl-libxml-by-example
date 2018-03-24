@@ -1,0 +1,29 @@
+<feed>
+  <doc>
+    <title>Wikipedia: Anarchism</title>
+    <url>https://en.wikipedia.org/wiki/Anarchism</url>
+    <abstract>Anarchism is a political philosophy that advocates
+    self-governed societies based on voluntary institutions.
+    These are often described as stateless societies …</abstract>
+    <links>
+      <sublink linktype="nav">
+        <anchor>History</anchor>
+        <link>https://en.wikipedia.org/wiki/Anarchism#History</link>
+      </sublink>
+      <sublink linktype="nav">
+        <anchor>Origins</anchor>
+        <link>https://en.wikipedia.org/wiki/Anarchism#Origins</link>
+      </sublink>
+      <!-- more sublink elements -->
+    </links>
+  </doc>
+  <doc>
+    <title>Wikipedia: Autism</title>
+    <url>https://en.wikipedia.org/wiki/Autism</url>
+    <abstract>…</abstract>
+    <links>
+      <!-- sublink elements -->
+    </links>
+  </doc>
+  <!-- (many) more doc elements -->
+</feed>

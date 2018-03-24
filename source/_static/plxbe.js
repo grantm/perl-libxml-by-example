@@ -39,9 +39,15 @@ jQuery(function($) {
 
     // Add the hover-effect linkages on the on the XML::LibXML::Reader page
 
-    var $events = $('#linked-events pre');
-    if($events.length > 0) {
-        var $nodes = $('#linked-nodes .code pre');
+    var $linked_section = $('#the-reader-loop');
+    if($linked_section.length > 0) {
+        var add_link_handlers = function($el, i) {
+            var cls = 'show-event-' + i;
+            $el.mouseover(function() { $linked_section.addClass(cls); })
+               .mouseout (function() { $linked_section.removeClass(cls); });
+        };
+
+        var $events = $('#linked-events pre');
         var lines = $events.text().split('\n');
         $events.empty();
         $(lines).each(function(i, text){
@@ -52,34 +58,30 @@ jQuery(function($) {
             var $span = $('<span />').text(text);
             if(match) {
                 var cls = 'event-' + match[1];
-                $span.addClass(cls).text(text)
-                    .mouseover(function() {
-                        $events.addClass('show-' + cls);
-                        $nodes.addClass('show-' + cls);
-                    })
-                    .mouseout(function() {
-                        $events.removeClass('show-' + cls)
-                        $nodes.removeClass('show-' + cls)
-                    });
+                $span.addClass(cls).text(text);
+                add_link_handlers($span, match[1]);
             }
             $events.append($span);
         });
 
+        var $nodes = $('#linked-nodes .code pre');
         var xml_source = $nodes.text().replace(/\n$/, '').replace(/\n/g, '\u21b5\n');
         var chunks = xml_source.match(/(?:<[^>]+>|[^<]+)/g);
         $nodes.empty();
         $(chunks).each(function(i, text) {
             var cls = 'event-' + (1 + i);
-            var $span = $('<span />').addClass(cls).text(text)
-                .mouseover(function() {
-                    $nodes.addClass('show-' + cls);
-                    $events.addClass('show-' + cls);
-                })
-                .mouseout(function() {
-                    $nodes.removeClass('show-' + cls)
-                    $events.removeClass('show-' + cls)
-                });
+            var $span = $('<span />').addClass(cls).text(text);
+            add_link_handlers($span, i + 1);
             $nodes.append($span)
+        });
+
+        $linked_section.find('li').each(function() {
+            var $li = $(this);
+            var match = $li.text().match(/^At step (\d+)/);
+            if(match && match.length === 2) {
+                $li.addClass('event-' + match[1]);
+                add_link_handlers($li, match[1]);
+            }
         });
 
         $('span.linked-prompt').text(

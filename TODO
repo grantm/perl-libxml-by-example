@@ -1,7 +1,6 @@
 * validating XML ?
   - handling parse errors
 * URI retrieval (e.g. DTD) and the XML catalog
-* working with huge XML files
 
 * customise the sphinx theme for larger font
 * add an index:
