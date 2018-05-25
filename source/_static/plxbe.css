@@ -100,6 +100,11 @@ a.xpath-try-it {
   margin: 0;
 }
 
+/* Keep 'Try It' buttons on the same line as XPath */
+#xpath-expressions code {
+  white-space: normal;
+}
+
 .document p tt.literal.xpath,
 .document p tt.literal.xpath-try {
   border: 1px solid #e1e1e5;
