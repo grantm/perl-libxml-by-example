@@ -49,3 +49,12 @@ If you find this document useful please link to it from your blogs, tweets,
 Stack Overflow answers etc.  The canonical URL for linking is
 http://grantm.github.io/perl-libxml-by-example/.
 
+
+Contributors
+------------
+
+In alphabetical order:
+
+* Brandon Youngdale
+* Grant McLean
+
