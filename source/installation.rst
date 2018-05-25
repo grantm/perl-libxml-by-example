@@ -71,5 +71,10 @@ For more information about manual builds, refer to the README file in the
 Installing on Mac OS X
 ----------------------
 
-*<to be written - contributions welcome.>*
+You can install libxml2 using homebrew::
+
+    brew install libxml2
+
+If you do not have Homebrew, you can install it at the `homebrew website
+<https://brew.sh/>`_.
 
