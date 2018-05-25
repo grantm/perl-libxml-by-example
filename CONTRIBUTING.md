@@ -27,3 +27,5 @@ By contributing you agree to the [LICENSE](LICENSE.md) of this repository.
 - **IMPORTANT**: by submitting a patch, you agree to allow the project owners
   to license your work under this [LICENSE](LICENSE.md)
 
+- Please add your name to the "Contributors" section in source/index.rst
+
