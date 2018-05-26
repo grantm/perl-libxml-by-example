@@ -52,7 +52,7 @@ body {
 
 #query-xpath {
   font-size: 150%;
-  width: calc(100% - 10em);
+  width: calc(100% - 10.5em);
   padding: 4px 10px 3px;
   border: 1px solid #cccccc;
   border-radius: 0.1em;
