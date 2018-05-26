@@ -12,12 +12,20 @@
     var app = {
 
         ui_element_ids: [
-                            'message-box',
-                            'query-form',
-                            'query-xpath',
-                            'reset-btn',
-                            'doc-tree'
-                        ],
+            'message-box',
+            'query-form',
+            'query-xpath',
+            'reset-btn',
+            'change-file-btn',
+            'doc-tree',
+            'file-dialog',
+            'file-dialog-form',
+            'file-selector-input',
+            'file-selector-proxy',
+            'file-parser-error',
+            'file-dialog-save',
+            'file-dialog-cancel'
+        ],
 
         set_default_xml_source: function () {
             var el = hdoc.getElementById('sample-xml');
@@ -76,9 +84,24 @@
             return el;
         },
 
-        parse_xml: function () {
+        set_parser_error_ns: function () {
             var parser = new DOMParser();
-            return parser.parseFromString(this.xml_source , "text/xml");
+            // This always spews an error into the console :-(
+            var dom = parser.parseFromString('NOT-XML', 'text/xml')
+            this.parser_error_ns = dom.getElementsByTagName("parsererror")[0].namespaceURI;
+        },
+
+        parse_xml: function (source) {
+            var parser = new DOMParser();
+            var dom = parser.parseFromString(source , "text/xml");
+            var err_el = dom.getElementsByTagNameNS(this.parser_error_ns, 'parsererror');
+            if(err_el.length > 0) {
+                var err = new XMLSerializer().serializeToString(
+                    err_el[0]
+                ).replace(/\nLocation: [^\n]+/, '');
+                throw new Error(err);
+            }
+            return dom;
         },
 
         render_xml: function (xml_dom) {
@@ -159,7 +182,7 @@
         show_matches: function (xp) {
             var count = 0;
             this.set_message('');
-            var xml_dom = this.parse_xml();
+            var xml_dom = this.parse_xml(this.xml_source);
             if(xp && xp.match(/\S/)) {
                 var ns_resolver = null;
                 try {
@@ -186,12 +209,34 @@
 
         add_listener: function (el, ev_name, method) {
             var listener = this[method].bind(this);
-            this[el].addEventListener(ev_name, listener, false);
+            if(this[el]) {
+                this[el].addEventListener(ev_name, listener, false);
+            }
+            else {
+                console.log("no bound element: this." + el);
+            }
         },
 
         init_event_handlers: function () {
             this.add_listener('query_form', 'submit', 'submit_form');
             this.add_listener('reset_btn',  'click', 'reset_form');
+            this.add_listener('change_file_btn',  'click', 'show_file_dialog');
+            this.add_listener('file_selector_input',  'change', 'file_selected');
+            this.add_listener('file_selector_proxy',  'click', 'trigger_file_selection');
+            this.add_listener('file_dialog_save',  'click', 'save_file_selection');
+            this.add_listener('file_dialog_cancel',  'click', 'cancel_file_selection');
+        },
+
+        show: function (el) {
+            if(this[el]) {
+                this[el].classList.remove('hidden');
+            }
+        },
+
+        hide: function (el) {
+            if(this[el]) {
+                this[el].classList.add('hidden');
+            }
         },
 
         submit_form: function (e) {
@@ -204,11 +249,61 @@
             this.show_matches('');
         },
 
+        show_file_dialog: function () {
+            this.new_xml_source = null;
+            this.hide('file_parser_error');
+            this.file_dialog_save.disabled = true;
+            this.show('file_dialog');
+        },
+
+        trigger_file_selection: function (e) {
+            this.file_selector_input.click();
+        },
+
+        file_selected: function (e) {
+            var files = e.target.files;
+            if(files.length > 0) {
+                this.try_file(files[0]);
+            }
+        },
+
+        try_file: function (file) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                try {
+                    var xml_source = reader.result;
+                    var dom = app.parse_xml(xml_source);
+                    app.new_xml_source = xml_source;
+                    app.hide('file_parser_error');
+                    app.file_dialog_save.disabled = false;
+                }
+                catch(e) {
+                    app.file_parser_error.innerText = e.message;
+                    app.show('file_parser_error');
+                }
+            }
+            reader.readAsText(file);
+        },
+
+        save_file_selection: function (e) {
+            e.preventDefault();
+            if(this.new_xml_source) {
+                this.xml_source = this.new_xml_source;
+                this.show_matches(this.query_xpath.value);
+            }
+            this.hide('file_dialog');
+        },
+
+        cancel_file_selection: function (e) {
+            this.hide('file_dialog');
+        },
+
         init: function () {
             this.get_ui_elements();
             this.process_query_string();
             this.query_xpath.value = this.url_param.q || '';
             this.init_event_handlers();
+            this.set_parser_error_ns();
             this.set_default_xml_source();
             this.show_matches(this.query_xpath.value);
             this.query_xpath.focus();

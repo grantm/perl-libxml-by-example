@@ -17,14 +17,35 @@
   <form id="query-form">
     <input type="text" id="query-xpath" placeholder="XPath expression">
     <div id="buttons">
-      <input type="submit" value="Run query">
-      <input type="button" id="reset-btn" value="Reset">
+      <input type="submit" class="btn" value="Run query">
+      <input type="button" class="btn" id="reset-btn" value="Reset">
     </div>
   </form>
 
   <div id="message-box"></div>
 
-  <pre id="doc-tree"></pre>
+  <div id="doc-tree-wrapper">
+    <div id="change-file-btn"></div>
+    <pre id="doc-tree"></pre>
+  </div>
+
+  <div id="file-dialog" class="hidden">
+    <div class="overlay"></div>
+    <div id="file-dialog-content">
+      <form id="file-dialog-form">
+        <input id="file-selector-input" type="file">
+        <p>Select an XML file using the button below.</p>
+        <p><input type="button" class="btn" id="file-selector-proxy" value="Select a File"></p>
+        <p>Note: This file will only be opened locally and will not be uploaded
+        to a server.</p>
+        <div id="file-parser-error"></div>
+        <div class="dialog-buttons">
+          <input type="button" class="btn" id="file-dialog-cancel" value="Cancel">
+          <input type="submit" class="btn" id="file-dialog-save" value="Save Selection">
+        </div>
+      </form>
+    </div>
+  </div>
 
 <script id="sample-xml" type="text/xml-doc">
 <playlist>
