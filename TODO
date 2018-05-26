@@ -7,10 +7,9 @@
   - http://www.sphinx-doc.org/en/stable/markup/misc.html#index-generating-markup
 
 * XPath sandbox
-  - update the URL on submit
+  - update the URL on submit (allows going back to previous queries)
   - allow selecting between different canned XML documents
   - add support for namespaces
-  - allow user to upload their own XML::Document
 
 Glossary Terms
 
