@@ -9,9 +9,12 @@
 
     "use strict";
 
+    var xmlns_uri = "http://www.w3.org/2000/xmlns/";
+
     var app = {
 
         ui_element_ids: [
+            'registered-namespaces',
             'message-box',
             'query-form',
             'query-xpath',
@@ -22,12 +25,16 @@
             'file-dialog-form',
             'file-selector-input',
             'file-selector-proxy',
+            'file-selector-filename',
             'file-parser-error',
+            'file-namespaces',
             'file-dialog-save',
             'file-dialog-cancel'
         ],
 
         set_default_xml_source: function () {
+            this.new_xml_source = null;
+            this.namespaces = [];
             var el = hdoc.getElementById('sample-xml');
             this.xml_source = el ? el.innerHTML : '';
         },
@@ -69,7 +76,7 @@
 
         set_message: function (msg, class_name) {
             var text = this.text_node(msg);
-            var el = this.empty(this.message_box)
+            var el = this.empty(this.message_box);
             el.className = '';
             if(class_name) {
                 el.className = class_name;
@@ -87,7 +94,7 @@
         set_parser_error_ns: function () {
             var parser = new DOMParser();
             // This always spews an error into the console :-(
-            var dom = parser.parseFromString('NOT-XML', 'text/xml')
+            var dom = parser.parseFromString('NOT-XML', 'text/xml');
             this.parser_error_ns = dom.getElementsByTagName("parsererror")[0].namespaceURI;
         },
 
@@ -105,7 +112,7 @@
         },
 
         render_xml: function (xml_dom) {
-            this.render_children(this.empty(this.doc_tree), xml_dom.childNodes)
+            this.render_children(this.empty(this.doc_tree), xml_dom.childNodes);
         },
 
         render_children: function (out, nodes) {
@@ -121,7 +128,7 @@
                     this.render_attributes(node_out, node);
                     node_out.appendChild(this.text_node('>'));
                     var ch_out = this.element_node('span', 'children');
-                    this.render_children(ch_out, node.childNodes)
+                    this.render_children(ch_out, node.childNodes);
                     node_out.appendChild(ch_out);
                     node_out.appendChild(this.text_node('</'));
                     var te_out = this.element_node('span', 'tag-name');
@@ -179,15 +186,38 @@
             }
         },
 
+        make_resolver: function () {
+            var map = {};
+            this.resolver_error = null;
+            this.namespaces.forEach(function(ns) {
+                map[ns.prefix] = ns.uri;
+            });
+            return function (prefix) {
+                if(map[prefix]) {
+                    return map[prefix];
+                }
+                var err = 'Query uses namespace prefix "' + prefix + ':" ';
+                if(this.namespaces.length === 0) {
+                    err = err + 'but this document does not contain any namespace declarations.';
+                }
+                else {
+                    err = err + 'which is not listed in the table of registered prefixes.';
+                }
+                this.resolver_error = err;
+                return null;
+            }.bind(this);
+        },
+
         show_matches: function (xp) {
             var count = 0;
             this.set_message('');
+            var el = this.empty(this.registered_namespaces);
+            el.appendChild(this.make_namespace_table(this.namespaces, false));
             var xml_dom = this.parse_xml(this.xml_source);
             if(xp && xp.match(/\S/)) {
-                var ns_resolver = null;
                 try {
                     var result = xml_dom.evaluate(
-                        xp, xml_dom.documentElement, ns_resolver,
+                        xp, xml_dom.documentElement, this.make_resolver(),
                         XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null
                     );
                     var match = result.iterateNext();
@@ -201,7 +231,7 @@
                     this.set_message('Query returned ' + count + ' match' + s, 'success');
                 }
                 catch (e) {
-                    this.set_message(e, 'error');
+                    this.set_message(this.resolver_error || e, 'error');
                 }
             }
             this.render_xml(xml_dom);
@@ -218,13 +248,13 @@
         },
 
         init_event_handlers: function () {
-            this.add_listener('query_form', 'submit', 'submit_form');
-            this.add_listener('reset_btn',  'click', 'reset_form');
-            this.add_listener('change_file_btn',  'click', 'show_file_dialog');
-            this.add_listener('file_selector_input',  'change', 'file_selected');
-            this.add_listener('file_selector_proxy',  'click', 'trigger_file_selection');
-            this.add_listener('file_dialog_save',  'click', 'save_file_selection');
-            this.add_listener('file_dialog_cancel',  'click', 'cancel_file_selection');
+            this.add_listener('query_form',          'submit', 'submit_form');
+            this.add_listener('reset_btn',           'click',  'reset_form');
+            this.add_listener('change_file_btn',     'click',  'show_file_dialog');
+            this.add_listener('file_selector_input', 'change', 'file_selected');
+            this.add_listener('file_selector_proxy', 'click',  'trigger_file_selection');
+            this.add_listener('file_dialog_form',    'submit', 'save_file_selection');
+            this.add_listener('file_dialog_cancel',  'click',  'cancel_file_selection');
         },
 
         show: function (el) {
@@ -250,9 +280,12 @@
         },
 
         show_file_dialog: function () {
-            this.new_xml_source = null;
+            if(this.new_xml_source === null) {
+                this.file_selector_filename.innerText = '';
+                this.empty(this.file_namespaces);
+                this.file_dialog_save.disabled = true;
+            }
             this.hide('file_parser_error');
-            this.file_dialog_save.disabled = true;
             this.show('file_dialog');
         },
 
@@ -268,30 +301,145 @@
         },
 
         try_file: function (file) {
+            this.new_xml_source = null;
+            this.file_dialog_save.disabled = true;
             var reader = new FileReader();
             reader.onload = function () {
                 try {
                     var xml_source = reader.result;
-                    var dom = app.parse_xml(xml_source);
-                    app.new_xml_source = xml_source;
-                    app.hide('file_parser_error');
-                    app.file_dialog_save.disabled = false;
+                    var dom = this.parse_xml(xml_source);
+                    var ns_list = this.find_namespaces(dom);
+                    this.new_xml_source = xml_source;
+                    this.file_selector_filename.innerText = file.name;
+                    this.hide('file_parser_error');
+                    this.make_namespace_form(ns_list);
+                    this.file_dialog_save.disabled = false;
                 }
                 catch(e) {
-                    app.file_parser_error.innerText = e.message;
-                    app.show('file_parser_error');
+                    this.file_parser_error.innerText = e.message;
+                    this.show('file_parser_error');
+                }
+            }.bind(this);
+            reader.readAsText(file);
+        },
+
+        find_namespaces: function (dom) {
+            var ns_list = [];
+            var seen = {};
+            this.dom_ns_search(ns_list, seen, dom.childNodes);
+            return ns_list;
+        },
+
+        dom_ns_search: function (ns_list, seen, nodes) {
+            for(var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                if(node.nodeType === node.ELEMENT_NODE) {
+                    if(node.hasAttributes) {
+                        for(var j = 0; j < node.attributes.length; j++) {
+                            var attr = node.attributes[j];
+                            if(attr.namespaceURI === xmlns_uri) {
+                                this.dom_ns_add(ns_list, seen, attr);
+                            }
+                        }
+                    }
+                    this.dom_ns_search(ns_list, seen, node.childNodes);
                 }
             }
-            reader.readAsText(file);
+        },
+
+        dom_ns_add: function (ns_list, seen, attr) {
+            var uri = attr.nodeValue;
+            if(seen[uri]) return;
+            var prefix = attr.nodeName === 'xmlns'
+                ? attr.nodeValue.replace(/^.*\b(\w+)(?:\W+)?$/, '$1')
+                : attr.localName;
+            if(seen['prefix-' + prefix]) {
+                var i = 2;
+                while(seen['prefix-' + prefix + i]) {
+                    i++;
+                }
+                prefix = prefix + i;
+            }
+            ns_list.push({
+                prefix: prefix,
+                uri: uri
+            });
+            seen[uri] = true;
+            seen['prefix-' + prefix] = true;
+        },
+
+        make_namespace_form: function (ns_list) {
+            var el = this.empty(this.file_namespaces);
+            el.appendChild(this.make_namespace_table(ns_list, true));
+        },
+
+        make_namespace_table: function (ns_list, form_mode) {
+            if(ns_list.length === 0) {
+                var p = this.element_node('p');
+                p.classList.add('no-ns');
+                if(form_mode) {
+                    p.innerText = 'Document contains no namespace declarations';
+                }
+                return p;
+            }
+            var table = this.element_node('table');
+            table.classList.add('ns-table');
+            var thead = this.element_node('thead');
+            var tbody = this.element_node('tbody');
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            var hrow = this.element_node('tr');
+            var thp = this.element_node('th');
+            thp.innerText = 'NS Prefix';
+            hrow.appendChild(thp);
+            var thu = this.element_node('th');
+            thu.innerText = 'Namespace URI';
+            hrow.appendChild(thu);
+            thead.appendChild(hrow);
+            ns_list.forEach(function(ns) {
+                var row = this.element_node('tr');
+                var tdp = this.element_node('td');
+                if(form_mode) {
+                    var inp = this.element_node('input');
+                    inp.setAttribute('type', 'text');
+                    inp.setAttribute('value', ns.prefix);
+                    inp.setAttribute('data-uri', ns.uri);
+                    tdp.appendChild(inp);
+                }
+                else {
+                    tdp.innerText = ns.prefix;
+                }
+                row.appendChild(tdp);
+                var tdu = this.element_node('td');
+                tdu.innerText = ns.uri;
+                row.appendChild(tdu);
+                tbody.appendChild(row);
+            }.bind(this));
+            return table;
         },
 
         save_file_selection: function (e) {
             e.preventDefault();
             if(this.new_xml_source) {
                 this.xml_source = this.new_xml_source;
+                this.namespaces = this.namespaces_from_form(e.target);
                 this.show_matches(this.query_xpath.value);
             }
             this.hide('file_dialog');
+        },
+
+        namespaces_from_form: function (form) {
+            var ns_list = [];
+            for(var i = 0; i < form.elements.length; i++) {
+                var inp = form.elements[i];
+                if(inp.type === 'text') {
+                    ns_list.push({
+                        prefix: inp.value,
+                        uri: inp.dataset.uri,
+                    });
+                }
+            }
+            return ns_list;
         },
 
         cancel_file_selection: function (e) {
