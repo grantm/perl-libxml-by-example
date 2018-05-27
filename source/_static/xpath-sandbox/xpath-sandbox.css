@@ -116,6 +116,10 @@ input.btn {
     text-align: center;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
 #file-dialog .overlay {
     position: fixed;
     top: 0;
