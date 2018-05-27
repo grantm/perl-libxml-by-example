@@ -254,7 +254,7 @@
             this.add_listener('file_selector_input', 'change', 'file_selected');
             this.add_listener('file_selector_proxy', 'click',  'trigger_file_selection');
             this.add_listener('file_dialog_form',    'submit', 'save_file_selection');
-            this.add_listener('file_dialog_cancel',  'click',  'cancel_file_selection');
+            this.add_listener('file_dialog_cancel',  'click',  'hide_file_dialog');
         },
 
         show: function (el) {
@@ -287,6 +287,12 @@
             }
             this.hide('file_parser_error');
             this.show('file_dialog');
+            document.documentElement.classList.add('no-scroll');
+        },
+
+        hide_file_dialog: function () {
+            this.hide('file_dialog');
+            document.documentElement.classList.remove('no-scroll');
         },
 
         trigger_file_selection: function (e) {
@@ -425,7 +431,7 @@
                 this.namespaces = this.namespaces_from_form(e.target);
                 this.show_matches(this.query_xpath.value);
             }
-            this.hide('file_dialog');
+            this.hide_file_dialog();
         },
 
         namespaces_from_form: function (form) {
@@ -440,10 +446,6 @@
                 }
             }
             return ns_list;
-        },
-
-        cancel_file_selection: function (e) {
-            this.hide('file_dialog');
         },
 
         init: function () {
