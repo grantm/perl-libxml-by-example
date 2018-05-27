@@ -22,6 +22,7 @@
             'file-dialog-form',
             'file-selector-input',
             'file-selector-proxy',
+            'file-selector-filename',
             'file-parser-error',
             'file-dialog-save',
             'file-dialog-cancel'
@@ -251,6 +252,7 @@
 
         show_file_dialog: function () {
             this.new_xml_source = null;
+            this.file_selector_filename.innerText = '';
             this.hide('file_parser_error');
             this.file_dialog_save.disabled = true;
             this.show('file_dialog');
@@ -274,6 +276,7 @@
                     var xml_source = reader.result;
                     var dom = app.parse_xml(xml_source);
                     app.new_xml_source = xml_source;
+                    app.file_selector_filename.innerText = file.name;
                     app.hide('file_parser_error');
                     app.file_dialog_save.disabled = false;
                 }
