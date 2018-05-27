@@ -79,12 +79,17 @@ input.btn {
   cursor: pointer;
 }
 
+#registered-namespaces {
+  margin: 1em 0;
+}
+
 #message-box {
   margin: 2.4em 0;
   border-radius: 0.2em;
 }
 
-#message-box.error {
+#message-box.error,
+#file-parser-error {
   padding: 0.5em 1em;
   border: 1px solid #ddaaaa;
   background-color: #ffcccc;
@@ -131,6 +136,7 @@ input.btn {
   margin: 10vh auto;
   padding: 0.2em 1.2em 1.0em;
   max-height: 80vh;
+  max-width: 80vw;
   background: #ffffff;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -154,16 +160,15 @@ input.btn {
 }
 
 #file-parser-error {
-  background-color: #ffd7d7;
-  border: 1px dotted #ad2525;
-  padding: 6px;
-  color: #ad2525;
   font-family: monospace;
   font-size: 90%;
+  border-radius: 0.3em;
   margin-bottom: 1em;
 }
+
 .dialog-buttons {
-text-align: right;
+  text-align: right;
+  padding: 0.8em 0 0.2em;
 }
 
 .btn:disabled {
@@ -206,6 +211,32 @@ text-align: right;
 #change-file-btn:hover::before {
   content: "Change XML File";
   width: 9.5em;
+}
+
+.no-ns {
+  color: #888888;
+  font-style: italic;
+}
+
+.ns-table {
+  border-collapse: collapse;
+}
+
+.ns-table th {
+  background-color: #666666;
+  color: #dddddd;
+  padding: 2px 8px;
+  border: 1px solid #ffffff;
+}
+
+.ns-table td {
+  background-color: #eeeeee;
+  padding: 2px 8px;
+  border: 1px solid #ffffff;
+}
+
+.ns-table input {
+  width: 4.0em;
 }
 
 #doc-tree {
