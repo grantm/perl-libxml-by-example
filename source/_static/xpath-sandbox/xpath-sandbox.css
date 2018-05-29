@@ -67,7 +67,7 @@ body {
   vertical-align: bottom;
 }
 
-input.btn {
+.btn {
   font-size: 130%;
   background-color: #062873;
   color: #eeeeee;
@@ -163,6 +163,10 @@ input.btn {
   font-style: italic;
 }
 
+#file-dialog label {
+  display: block;
+}
+
 #file-parser-error {
   font-family: monospace;
   font-size: 90%;
@@ -217,6 +221,7 @@ input.btn {
   width: 9.5em;
 }
 
+.no-source,
 .no-ns {
   color: #888888;
   font-style: italic;
