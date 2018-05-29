@@ -22,6 +22,7 @@
             'change-file-btn',
             'doc-tree',
             'file-dialog',
+            'file-dialog-content',
             'file-dialog-form',
             'file-selector-input',
             'sample-file-inputs',
@@ -330,6 +331,7 @@
             }
             this.hide('file_parser_error');
             this.show('file_dialog');
+            this.file_dialog_content.scrollTop = 0;
             document.documentElement.classList.add('no-scroll');
         },
 
