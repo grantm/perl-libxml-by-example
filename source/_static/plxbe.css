@@ -101,7 +101,7 @@ a.xpath-try-it {
 }
 
 /* Keep 'Try It' buttons on the same line as XPath */
-#xpath-expressions code {
+code.xpath-try {
   white-space: normal;
 }
 
