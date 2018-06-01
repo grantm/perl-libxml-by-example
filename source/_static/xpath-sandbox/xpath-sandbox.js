@@ -101,11 +101,17 @@
 
         process_query_string: function () {
             this.url_param = {};
+            this.preferred_prefix = {};
             var qs = window.location.search.substring(1);
             var parse = /([^;=]+)=([^;]*)/g;
             var match;
             while (match = parse.exec(qs)) {
-                this.url_param[match[1]] = decodeURIComponent(match[2]);
+                var name = match[1];
+                var value = decodeURIComponent(match[2]);
+                this.url_param[name] = value;
+                if(name.substr(0, 6) === 'xmlns:') {
+                    this.preferred_prefix[value] = name.substr(6);
+                }
             }
         },
 
@@ -420,9 +426,12 @@
         dom_ns_add: function (ns_list, seen, attr) {
             var uri = attr.nodeValue;
             if(seen[uri]) return;
-            var prefix = attr.nodeName === 'xmlns'
-                ? attr.nodeValue.replace(/^.*\b(\w+)(?:\W+)?$/, '$1')
-                : attr.localName;
+            var prefix = this.preferred_prefix[uri];
+            if(!prefix) {
+                prefix = attr.nodeName === 'xmlns'
+                    ? attr.nodeValue.replace(/^.*\b(\w+)(?:\W+)?$/, '$1')
+                    : attr.localName;
+            }
             if(seen['prefix-' + prefix]) {
                 var i = 2;
                 while(seen['prefix-' + prefix + i]) {
