@@ -28,7 +28,8 @@ The scripts in this section will use the SVG document:
 Because the top-level ``<svg>`` element uses
 ``xmlns="http://www.w3.org/2000/svg"`` to declare a **default namespace** ,
 every other element will be in that namespace unless the element name includes
-a prefix for a different namespace.
+a prefix for a different namespace, or unless an element declares a different
+default namespace for itself and its children.
 
 The first child element in the document is a ``<title>`` element with no
 namespace prefix, so it is associated with the default namespace URI:
@@ -46,8 +47,14 @@ namespace prefix, so it is associated with the URI:
     :language: xml
     :lines: 127
 
-Using ``findnodes()`` to match nodes against the XPath expression ``//title``
-returns no matches:
+You can confirm using the XPath sandbox that the XPath expression ``//title``
+does not match either of the ``<title>`` elements in the test document:
+
+.. xpath-try:: //title
+    :filename: xml-libxml.svg
+
+You can also use the following Perl code to confirm that ``findnodes()`` does
+not return any matches for the XPath expression ``//title``:
 
 .. literalinclude:: /code/600-ns-no-context.pl
     :language: perl
@@ -60,10 +67,24 @@ Output:
     :lines: 1
 
 When an element in a document is associated with a namespace URI it will only
-match an XPath expression that is also associated with the same namespace URI.
-XPath expressions also use namespace prefixes to associate a namespace URI with
-an element.  However it's important to stress that it's not the prefix that is
-being matched, but the URI associated with the prefix.
+match an XPath expression that includes a prefix that is also associated with
+the same namespace URI.  However it's important to stress that it's not the
+prefix that is being matched, but the URI associated with the prefix.
+
+Using the XPath sandbox, you can confirm that if we register the 'Dublin Core'
+namespace URI with the prefix ``dc``, the XPath expression ``//dc:title`` will
+match the ``<title>`` element in the ``<metadata>`` section:
+
+.. xpath-try:: //dc:title
+    :filename: xml-libxml.svg
+    :ns_args: xmlns:dc=http://purl.org/dc/elements/1.1/
+
+However if we register the same URI with the prefix ``dublin`` instead then
+we can match the same element using the ``dublin`` prefix in our XPath:
+
+.. xpath-try:: //dublin:title
+    :filename: xml-libxml.svg
+    :ns_args: xmlns:dublin=http://purl.org/dc/elements/1.1/
 
 In order to associate namespace prefixes in XPath expressions with namespace
 URIs, we need to use an `XML::LibXML::XPathContext
