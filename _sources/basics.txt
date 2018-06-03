@@ -97,6 +97,14 @@ also accepts a URL:
 
     $dom = XML::LibXML->load_xml(location => 'http://techcrunch.com/feed/');
 
+.. note::
+
+    Not all versions of ``libxml2`` can retrieve documents over SSL/TLS.  So if
+    the URL is an 'https' URL (or if it redirects to one), you may need to use
+    a module like `LWP <https://metacpan.org/release/libwww-perl>`_ to retrieve
+    the document and pass the response body to the XML parser as a string as
+    shown below.
+
 If you have the XML in a string, instead of ``location``, use ``string``:
 
 .. code-block:: perl

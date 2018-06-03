@@ -22,8 +22,10 @@
             'change-file-btn',
             'doc-tree',
             'file-dialog',
+            'file-dialog-content',
             'file-dialog-form',
             'file-selector-input',
+            'sample-file-inputs',
             'file-selector-proxy',
             'file-selector-filename',
             'file-parser-error',
@@ -32,11 +34,56 @@
             'file-dialog-cancel'
         ],
 
-        set_default_xml_source: function () {
+        load_sample_sources: function () {
             this.new_xml_source = null;
             this.namespaces = [];
-            var el = hdoc.getElementById('sample-xml');
-            this.xml_source = el ? el.innerHTML : '';
+            this.sample_files = [];
+            var scripts = hdoc.getElementsByTagName('script');
+            for(var i = 0; i < scripts.length; i++) {
+                if(scripts[i].type === 'text/xml-sample') {
+                    var filename = scripts[i].dataset.filename;
+                    var xml_source = scripts[i].innerHTML.trim();
+                    this.sample_files.push({
+                        filename: filename,
+                        xml_source: xml_source
+                    });
+                }
+            }
+            this.add_samples_to_file_dialog();
+        },
+
+        add_samples_to_file_dialog: function () {
+            var container = this.sample_file_inputs
+            this.sample_files.forEach(function(file, i) {
+                var label = this.element_node('label');
+                var input = this.element_node('input');
+                input.type = "radio";
+                input.name = "file";
+                input.value = file.filename;
+                label.appendChild(input);
+                var text = this.text_node(' ' + file.filename);
+                label.appendChild(text);
+                container.appendChild(label);
+            }.bind(this));
+        },
+
+        set_default_xml_source: function () {
+            this.xml_source = '';
+            var filename = this.url_param.filename;
+            var file = this.select_sample_file(filename);
+            if(file) {
+                this.xml_source = file.xml_source;
+                this.selected_sample_file = file.filename;
+                var dom = this.parse_xml(this.xml_source);
+                this.namespaces = this.find_namespaces(dom);
+            }
+        },
+
+        select_sample_file: function (filename) {
+            var file = filename
+                ? this.sample_files.find(function(f) { return f.filename === filename})
+                : this.sample_files[0];
+            return file;
         },
 
         get_ui_elements: function () {
@@ -54,11 +101,17 @@
 
         process_query_string: function () {
             this.url_param = {};
+            this.preferred_prefix = {};
             var qs = window.location.search.substring(1);
             var parse = /([^;=]+)=([^;]*)/g;
             var match;
             while (match = parse.exec(qs)) {
-                this.url_param[match[1]] = decodeURIComponent(match[2]);
+                var name = match[1];
+                var value = decodeURIComponent(match[2]);
+                this.url_param[name] = value;
+                if(name.substr(0, 6) === 'xmlns:') {
+                    this.preferred_prefix[value] = name.substr(6);
+                }
             }
         },
 
@@ -213,6 +266,13 @@
             this.set_message('');
             var el = this.empty(this.registered_namespaces);
             el.appendChild(this.make_namespace_table(this.namespaces, false));
+            if(!this.xml_source) {
+                var err = this.element_node('p');
+                err.classList.add('no-source');
+                err.innerText = 'No XML document loaded';
+                this.empty(this.doc_tree).appendChild(err);
+                return;
+            }
             var xml_dom = this.parse_xml(this.xml_source);
             if(xp && xp.match(/\S/)) {
                 try {
@@ -247,16 +307,6 @@
             }
         },
 
-        init_event_handlers: function () {
-            this.add_listener('query_form',          'submit', 'submit_form');
-            this.add_listener('reset_btn',           'click',  'reset_form');
-            this.add_listener('change_file_btn',     'click',  'show_file_dialog');
-            this.add_listener('file_selector_input', 'change', 'file_selected');
-            this.add_listener('file_selector_proxy', 'click',  'trigger_file_selection');
-            this.add_listener('file_dialog_form',    'submit', 'save_file_selection');
-            this.add_listener('file_dialog_cancel',  'click',  'cancel_file_selection');
-        },
-
         show: function (el) {
             if(this[el]) {
                 this[el].classList.remove('hidden');
@@ -287,6 +337,29 @@
             }
             this.hide('file_parser_error');
             this.show('file_dialog');
+            this.file_dialog_content.scrollTop = 0;
+            document.documentElement.classList.add('no-scroll');
+        },
+
+        hide_file_dialog: function () {
+            this.hide('file_dialog');
+            document.documentElement.classList.remove('no-scroll');
+        },
+
+        file_radio_change: function (e) {
+            var el = e.target;
+            if(el.type === 'radio') {
+                var filename = el.value;
+                if(filename) {
+                    var file = this.select_sample_file(filename);
+                    if(file) {
+                        this.try_file_parse(file.xml_source);
+                    }
+                }
+            }
+            else if(el.type === 'file') {
+                this.file_selected(e);
+            }
         },
 
         trigger_file_selection: function (e) {
@@ -296,31 +369,34 @@
         file_selected: function (e) {
             var files = e.target.files;
             if(files.length > 0) {
-                this.try_file(files[0]);
+                this.try_file_upload(files[0]);
             }
         },
 
-        try_file: function (file) {
+        try_file_upload: function (file) {
             this.new_xml_source = null;
             this.file_dialog_save.disabled = true;
             var reader = new FileReader();
             reader.onload = function () {
-                try {
-                    var xml_source = reader.result;
-                    var dom = this.parse_xml(xml_source);
-                    var ns_list = this.find_namespaces(dom);
-                    this.new_xml_source = xml_source;
-                    this.file_selector_filename.innerText = file.name;
-                    this.hide('file_parser_error');
-                    this.make_namespace_form(ns_list);
-                    this.file_dialog_save.disabled = false;
-                }
-                catch(e) {
-                    this.file_parser_error.innerText = e.message;
-                    this.show('file_parser_error');
-                }
+                this.file_selector_filename.innerText = file.name;
+                this.try_file_parse(reader.result);
             }.bind(this);
             reader.readAsText(file);
+        },
+
+        try_file_parse: function (xml_source) {
+            try {
+                var dom = this.parse_xml(xml_source);
+                var ns_list = this.find_namespaces(dom);
+                this.new_xml_source = xml_source;
+                this.hide('file_parser_error');
+                this.make_namespace_form(ns_list);
+                this.file_dialog_save.disabled = false;
+            }
+            catch(e) {
+                this.file_parser_error.innerText = e.message;
+                this.show('file_parser_error');
+            }
         },
 
         find_namespaces: function (dom) {
@@ -350,9 +426,12 @@
         dom_ns_add: function (ns_list, seen, attr) {
             var uri = attr.nodeValue;
             if(seen[uri]) return;
-            var prefix = attr.nodeName === 'xmlns'
-                ? attr.nodeValue.replace(/^.*\b(\w+)(?:\W+)?$/, '$1')
-                : attr.localName;
+            var prefix = this.preferred_prefix[uri];
+            if(!prefix) {
+                prefix = attr.nodeName === 'xmlns'
+                    ? attr.nodeValue.replace(/^.*\b(\w+)(?:\W+)?$/, '$1')
+                    : attr.localName;
+            }
             if(seen['prefix-' + prefix]) {
                 var i = 2;
                 while(seen['prefix-' + prefix + i]) {
@@ -425,7 +504,7 @@
                 this.namespaces = this.namespaces_from_form(e.target);
                 this.show_matches(this.query_xpath.value);
             }
-            this.hide('file_dialog');
+            this.hide_file_dialog();
         },
 
         namespaces_from_form: function (form) {
@@ -442,8 +521,14 @@
             return ns_list;
         },
 
-        cancel_file_selection: function (e) {
-            this.hide('file_dialog');
+        init_event_handlers: function () {
+            this.add_listener('query_form',          'submit', 'submit_form');
+            this.add_listener('reset_btn',           'click',  'reset_form');
+            this.add_listener('change_file_btn',     'click',  'show_file_dialog');
+            this.add_listener('file_dialog_form',    'change', 'file_radio_change');
+            this.add_listener('file_selector_proxy', 'click',  'trigger_file_selection');
+            this.add_listener('file_dialog_form',    'submit', 'save_file_selection');
+            this.add_listener('file_dialog_cancel',  'click',  'hide_file_dialog');
         },
 
         init: function () {
@@ -452,6 +537,7 @@
             this.query_xpath.value = this.url_param.q || '';
             this.init_event_handlers();
             this.set_parser_error_ns();
+            this.load_sample_sources();
             this.set_default_xml_source();
             this.show_matches(this.query_xpath.value);
             this.query_xpath.focus();

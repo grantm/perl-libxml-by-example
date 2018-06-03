@@ -20,7 +20,7 @@ open my $pipe, "| aspell --personal=$ignore_list list | sort -u ";
 binmode $pipe, ':utf8';
 
 my $pattern = "../../build/html/*.html";
-my @files = glob($pattern) or die "No files match pattern: $pattern";
+my @files = glob($pattern);
 foreach my $filename (@files) {
     my $dom = XML::LibXML->load_html(
         location        => $filename,

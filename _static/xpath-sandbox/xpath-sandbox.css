@@ -67,7 +67,7 @@ body {
   vertical-align: bottom;
 }
 
-input.btn {
+.btn {
   font-size: 130%;
   background-color: #062873;
   color: #eeeeee;
@@ -116,6 +116,10 @@ input.btn {
     text-align: center;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
 #file-dialog .overlay {
     position: fixed;
     top: 0;
@@ -157,6 +161,10 @@ input.btn {
   margin-left: 1.2em;
   color: #888888;
   font-style: italic;
+}
+
+#file-dialog label {
+  display: block;
 }
 
 #file-parser-error {
@@ -213,6 +221,7 @@ input.btn {
   width: 9.5em;
 }
 
+.no-source,
 .no-ns {
   color: #888888;
   font-style: italic;

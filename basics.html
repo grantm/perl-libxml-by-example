@@ -478,6 +478,14 @@ also accepts a URL:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">location</span> <span class="o">=&gt;</span> <span class="s">&#39;http://techcrunch.com/feed/&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all versions of <code class="docutils literal"><span class="pre">libxml2</span></code> can retrieve documents over SSL/TLS.  So if
+the URL is an &#8216;https&#8217; URL (or if it redirects to one), you may need to use
+a module like <a class="reference external" href="https://metacpan.org/release/libwww-perl">LWP</a> to retrieve
+the document and pass the response body to the XML parser as a string as
+shown below.</p>
+</div>
 <p>If you have the XML in a string, instead of <code class="docutils literal"><span class="pre">location</span></code>, use <code class="docutils literal"><span class="pre">string</span></code>:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="nv">$dom</span> <span class="o">=</span> <span class="nn">XML::</span><span class="n">LibXML</span><span class="o">-&gt;</span><span class="n">load_xml</span><span class="p">(</span><span class="n">string</span> <span class="o">=&gt;</span> <span class="nv">$xml_string</span><span class="p">);</span>
 </pre></div>
@@ -808,7 +816,7 @@ before the DOM has been fully constructed.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016-2018, Grant McLean.
-      Last updated on 2018-05-27.
+      Last updated on 2018-06-03.
 
     </p>
   </div>

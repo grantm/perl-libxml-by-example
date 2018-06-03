@@ -23,20 +23,6 @@ jQuery(function($) {
         }
     });
 
-    // Add in the 'Try it!' links to link from XPath expressions to load that
-    // expression in the XPath Sandbox
-
-    var sandbox_base_url = '_static/xpath-sandbox/xpath-sandbox.html'
-    $('.xpath-try').each(function() {
-        var xpath = this.textContent;
-        var qs = '?q=' + encodeURIComponent(xpath);
-        $(this).append(
-            $('<a />').addClass('xpath-try-it')
-                .text('Try it!')
-                .attr('href', sandbox_base_url + qs)
-        );
-    });
-
     // Add the hover-effect linkages on the on the XML::LibXML::Reader page
 
     var $linked_section = $('#the-reader-loop');
