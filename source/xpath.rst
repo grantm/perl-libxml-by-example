@@ -27,10 +27,10 @@ descriptions of what they match.
 .. note::
 
     You can try out different XPath expressions in the `XPath sandbox
-    <_static/xpath-sandbox/xpath-sandbox.html>`_.  The sandbox doesn't actually
-    use Perl or libxml, it simply uses Javascript to access the XPath engine
-    built into your browser.  However, the expression matching should work just
-    as it would in your Perl scripts.
+    <http://grantm.github.io/perl-libxml-by-example/_static/xpath-sandbox/xpath-sandbox.html>`_.
+    The sandbox doesn't actually use Perl or libxml, it simply uses Javascript
+    to access the XPath engine built into your browser.  However, the
+    expression matching should work just as it would in your Perl scripts.
 
 .. role:: xpath(code)
 
