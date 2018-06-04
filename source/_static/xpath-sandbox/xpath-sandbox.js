@@ -20,6 +20,9 @@
             'query-xpath',
             'reset-btn',
             'change-file-btn',
+            'nav-buttons',
+            'nav-button-up',
+            'nav-button-down',
             'doc-tree',
             'file-dialog',
             'file-dialog-content',
@@ -327,14 +330,46 @@
                         match = result.iterateNext();
                     }
                     var s = count === 1 ? '' : 'es';
-                    count = count === 0 ? 'no' : count;
-                    this.set_message('Query returned ' + count + ' match' + s, 'success');
+                    var ncount = count === 0 ? 'no' : count;
+                    this.set_message('Query returned ' + ncount + ' match' + s, 'success');
                 }
                 catch (e) {
                     this.set_message(this.resolver_error || e, 'error');
                 }
             }
             this.render_xml(xml_dom);
+            this.activate_nav_buttons(count);
+        },
+
+        activate_nav_buttons: function (count) {
+            if(count === 0) {
+                this.hide('nav_buttons');
+                return;
+            }
+            this.show('nav_buttons');
+            this.match_offsets = [];
+            var doc_tree_top = this.doc_tree.offsetParent.offsetTop;
+            document.querySelectorAll(".xp-match").forEach(function (el){
+                this.match_offsets.push(doc_tree_top + el.offsetTop);
+            }.bind(this));
+        },
+
+        next_match_up: function () {
+            var offset = window.innerHeight / 2;
+            var mid = document.scrollingElement.scrollTop + offset - 5;
+            var next = this.match_offsets.slice().reverse().find(function(m) { return m < mid });
+            if(next) {
+                document.scrollingElement.scrollTop = next - offset;
+            }
+        },
+
+        next_match_down: function () {
+            var offset = window.innerHeight / 2;
+            var mid = document.scrollingElement.scrollTop + offset + 5;
+            var next = this.match_offsets.find(function(m) { return m > mid });
+            if(next) {
+                document.scrollingElement.scrollTop = next - offset
+            }
         },
 
         add_listener: function (el, ev_name, method) {
@@ -579,6 +614,8 @@
             this.add_listener('query_form',          'submit', 'submit_form');
             this.add_listener('reset_btn',           'click',  'reset_form');
             this.add_listener('change_file_btn',     'click',  'show_file_dialog');
+            this.add_listener('nav_button_up',       'click',  'next_match_up');
+            this.add_listener('nav_button_down',     'click',  'next_match_down');
             this.add_listener('file_dialog_form',    'change', 'file_radio_change');
             this.add_listener('file_selector_proxy', 'click',  'trigger_file_selection');
             this.add_listener('file_dialog_form',    'submit', 'save_file_selection');

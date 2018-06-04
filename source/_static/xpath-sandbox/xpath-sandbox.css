@@ -108,12 +108,13 @@ body {
 }
 
 #file-dialog {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  z-index: 20;
 }
 
 .no-scroll {
@@ -121,14 +122,14 @@ body {
 }
 
 #file-dialog .overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, .55);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .55);
 }
 
 #file-dialog-content {
@@ -186,6 +187,43 @@ body {
 
 #doc-tree-wrapper {
   position: relative;
+}
+
+#nav-buttons {
+  z-index: 10;
+  position: fixed;
+  top: -45px;
+  left: 50%;
+  padding: 45px 8px 4px;
+  background-color: #062873;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  transition: padding-top 1.2s;
+}
+
+#nav-buttons.hidden {
+  display: block;
+  padding-top: 0;
+}
+
+#nav-buttons a {
+  color: #d7d7d7;
+  display: inline-block;
+  padding: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+}
+
+#nav-buttons a:hover {
+  color: #ffffff;
+}
+
+#nav-button-up::before {
+  content: "\25B2";
+}
+
+#nav-button-down::before {
+  content: "\25BC";
 }
 
 .metric-ruler {
