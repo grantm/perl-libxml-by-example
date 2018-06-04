@@ -61,7 +61,7 @@ element, e.g.:
 
 Match any element which is the parent of a ``<title>`` element.
 
-.. xpath-try:: /*
+.. xpath-try:: /\*
 
 Match the top-most element of the document regardless of the element name.
 
@@ -69,7 +69,7 @@ Match the top-most element of the document regardless of the element name.
 
 Match the attribute named ``role`` on every ``<person>`` element.
 
-.. xpath-try:: //person/@*
+.. xpath-try:: //person/@\*
 
 Match every attribute on every ``<person>`` element.
 
@@ -77,15 +77,15 @@ Match every attribute on every ``<person>`` element.
 
 Match every ``<person>`` element *that has an attribute* named ``role``.
 
-.. xpath-try:: //*[@url]
+.. xpath-try:: //\*[@url]
 
 Match every element that has an attribute named ``url``.
 
-.. xpath-try:: //*[@*]
+.. xpath-try:: //\*[@\*]
 
 Match every element that has an attribute of any name.
 
-.. xpath-try:: /playlist//*[not(@*)]
+.. xpath-try:: /playlist//\*[not(@\*)]
 
 Match every element that is a descendant of the top-level ``<playlist>``
 element and which does not have any attributes.
@@ -101,7 +101,7 @@ Match every ``<movie>`` element that does not have an attribute named
 ``id`` with the value ``tt0307479`` (including elements that do not have
 an ``id`` attribute at all).
 
-.. xpath-try:: //*[@id="tt0307479"]
+.. xpath-try:: //\*[@id="tt0307479"]
 
 Match every element that has an attribute named ``id`` with the value
 ``tt0307479``.
@@ -136,12 +136,12 @@ Match the last ``<person>`` element in each sequence of adjacent
 Match every ``<cast>`` element which contains exactly 3 ``<person>``
 elements.
 
-.. xpath-try:: //*[name()='genre']
+.. xpath-try:: //\*[name()='genre']
 
 Match every element with the name ``genre`` - exactly equivalent to
 ``//genre``.
 
-.. xpath-try:: //*[starts-with(name(), 'running')]
+.. xpath-try:: //\*[starts-with(name(), 'running')]
 
 Match every element with a name starting with the word ``running``.
 
@@ -179,7 +179,7 @@ there is some whitespace - a newline after the preceding element and then
 some spaces at the start of the next line.  This whitespace is text and is
 therefore matched.
 
-.. xpath-try:: //person[contains(@name,'Matt')]/parent::*
+.. xpath-try:: //person[contains(@name,'Matt')]/parent::\*
 
 Match the parent of every ``<person>`` element which contains ``Matt`` in
 the ``name`` attribute.  (You could also use ``/..`` for the parent).  The
@@ -191,7 +191,7 @@ Match every ``<movie>`` element which is an ancestor of a ``<person>``
 element which contains ``Matt`` in the ``name`` attribute.  The syntax
 ``ancestor::*`` means any element on the ancestor axis.
 
-.. xpath-try:: //genre[text()='drama']/following-sibling::*
+.. xpath-try:: //genre[text()='drama']/following-sibling::\*
 
 Match every element of any name, which is a sibling of a ``<genre>``
 element whose complete text content is ``drama`` and which follows that

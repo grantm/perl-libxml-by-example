@@ -38,8 +38,16 @@ def visit_xpath_try_node_html(self, node):
 def depart_xpath_try_node(self, node):
     self.depart_literal_block(node)
 
-
-from sphinx.locale import _
+def unescape_arg(s):
+    """
+    This function is used to undo backslash-escaping.  While it's not clear that
+    arguments to a directive ought to be escaped, vim syntax highlighting seems
+    to get confused by '*' in arguments. For this reason, '\*' has been used in
+    the rst source and this function turns '\_' into '_' for any value of '_'.
+    The standard docutils.utils.unescape seems to do something else entirely.
+    """
+    a = [ '\\' if part == '' else part for part in s.split('\\') ]
+    return ''.join(a)
 
 class XPathTryDirective(Directive):
     has_content = False
@@ -52,7 +60,7 @@ class XPathTryDirective(Directive):
     }
 
     def run(self):
-        xpath_expr = self.arguments[0]
+        xpath_expr = unescape_arg(self.arguments[0])
         node = xpath_try(xpath_expr, xpath_expr)
         node['language'] = 'none'
         node['highlight_args'] = {}
