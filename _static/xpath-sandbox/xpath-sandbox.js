@@ -20,12 +20,16 @@
             'query-xpath',
             'reset-btn',
             'change-file-btn',
+            'nav-buttons',
+            'nav-button-up',
+            'nav-button-down',
             'doc-tree',
             'file-dialog',
             'file-dialog-content',
             'file-dialog-form',
             'file-selector-input',
             'sample-file-inputs',
+            'file-custom',
             'file-selector-proxy',
             'file-selector-filename',
             'file-parser-error',
@@ -35,8 +39,6 @@
         ],
 
         load_sample_sources: function () {
-            this.new_xml_source = null;
-            this.namespaces = [];
             this.sample_files = [];
             var scripts = hdoc.getElementsByTagName('script');
             for(var i = 0; i < scripts.length; i++) {
@@ -45,6 +47,7 @@
                     var xml_source = scripts[i].innerHTML.trim();
                     this.sample_files.push({
                         filename: filename,
+                        sample: true,
                         xml_source: xml_source
                     });
                 }
@@ -64,17 +67,18 @@
                 var text = this.text_node(' ' + file.filename);
                 label.appendChild(text);
                 container.appendChild(label);
+                file.el = input;
             }.bind(this));
         },
 
-        set_default_xml_source: function () {
-            this.xml_source = '';
+        set_default_source: function () {
+            this.source = null;
+            this.namespaces = [];
             var filename = this.url_param.filename;
             var file = this.select_sample_file(filename);
             if(file) {
-                this.xml_source = file.xml_source;
-                this.selected_sample_file = file.filename;
-                var dom = this.parse_xml(this.xml_source);
+                this.source = file;
+                var dom = this.parse_xml(file.xml_source);
                 this.namespaces = this.find_namespaces(dom);
             }
         },
@@ -165,7 +169,28 @@
         },
 
         render_xml: function (xml_dom) {
+            this.init_metrics();
+            this.xpos = 0;
             this.render_children(this.empty(this.doc_tree), xml_dom.childNodes);
+        },
+
+        init_metrics: function () {
+            var ruler = this.element_node('span', 'metric-ruler');
+            ruler.innerText = 'H'.repeat(30);
+            this.doc_tree.appendChild(ruler);
+            this.tree_char_width = ruler.offsetWidth / 30;
+            this.tree_width = this.doc_tree.offsetWidth - 4 * this.tree_char_width;
+        },
+
+        tracked_text_append: function (parent_node, content) {
+            var nl_offset = content.lastIndexOf('\n');
+            if(nl_offset >= 0) {
+                this.xpos = content.length - nl_offset - 1;
+            }
+            else {
+                this.xpos += content.length;
+            }
+            parent_node.appendChild(this.text_node(content));
         },
 
         render_children: function (out, nodes) {
@@ -174,34 +199,35 @@
                 var node_out = this.element_node('span');
                 if(node.nodeType === node.ELEMENT_NODE) {
                     node_out.classList.add('element');
-                    node_out.appendChild(this.text_node('<'));
+                    this.tracked_text_append(node_out, '<');
                     var ts_out = this.element_node('span', 'tag-name');
-                    ts_out.appendChild(this.text_node(node.nodeName));
+                    this.tracked_text_append(ts_out, node.nodeName);
                     node_out.appendChild(ts_out);
                     this.render_attributes(node_out, node);
-                    node_out.appendChild(this.text_node('>'));
+                    this.tracked_text_append(node_out, '>');
                     var ch_out = this.element_node('span', 'children');
                     this.render_children(ch_out, node.childNodes);
                     node_out.appendChild(ch_out);
-                    node_out.appendChild(this.text_node('</'));
+                    this.tracked_text_append(node_out, '</');
                     var te_out = this.element_node('span', 'tag-name');
-                    te_out.appendChild(this.text_node(node.nodeName));
+                    this.tracked_text_append(te_out, node.nodeName);
                     node_out.appendChild(te_out);
-                    node_out.appendChild(this.text_node('>'));
+                    this.tracked_text_append(node_out, '>');
                 }
                 else if(node.nodeType === node.TEXT_NODE || node.nodeType === node.CDATA_SECTION_NODE) {
+                    var text = node.textContent;
                     node_out.classList.add('text');
-                    node_out.appendChild(this.text_node(node.textContent));
+                    this.tracked_text_append(node_out, text);
                 }
                 else if(node.nodeType === node.COMMENT_NODE) {
                     node_out.classList.add('comment');
-                    node_out.appendChild(this.text_node('<!-- '));
-                    node_out.appendChild(this.text_node(node.textContent));
-                    node_out.appendChild(this.text_node(' -->'));
+                    this.tracked_text_append(node_out, '<!-- ');
+                    this.tracked_text_append(node_out, node.textContent);
+                    this.tracked_text_append(node_out, ' -->');
                 }
                 else {
                     node_out.classList.add('not-implemented');
-                    node_out.appendChild(this.text_node("[Unimplemented nodeType:" + node.nodeType + "]\n"));
+                    this.tracked_text_append(node_out, "[Unimplemented nodeType:" + node.nodeType + "]\n");
                 }
                 if(node._xpsb_match_) {
                     var el_wrap = this.element_node('span', 'xp-match');
@@ -216,18 +242,19 @@
 
         render_attributes: function (out, el) {
             if(!el.hasAttributes) return;
+            var attr_prefix = this.attribute_prefix(el);
             var attr = el.attributes;
             for(var i = 0; i < attr.length; i++) {
-                out.appendChild(this.text_node(' '));
+                this.tracked_text_append(out, attr_prefix);
                 var a_out = this.element_node('span', 'attr');
                 var an_out = this.element_node('span', 'attr-name');
-                an_out.appendChild(this.text_node(attr[i].name));
+                this.tracked_text_append(an_out, attr[i].name);
                 a_out.appendChild(an_out);
-                a_out.appendChild(this.text_node('="'));
+                this.tracked_text_append(a_out, '="');
                 var av_out = this.element_node('span', 'attr-value');
-                av_out.appendChild(this.text_node(attr[i].value));
+                this.tracked_text_append(av_out, attr[i].value);
                 a_out.appendChild(av_out);
-                a_out.appendChild(this.text_node('"'));
+                this.tracked_text_append(a_out, '"');
                 if(attr[i]._xpsb_match_) {
                     var a_wrap = this.element_node('span', 'xp-match');
                     a_wrap.appendChild(a_out);
@@ -237,6 +264,22 @@
                     out.appendChild(a_out);
                 }
             }
+        },
+
+        attribute_prefix: function (el) {
+            var attr = el.attributes;
+            if(attr.length < 2) {
+                return ' ';
+            }
+            var chars = this.xpos;
+            for(var i = 0; i < attr.length; i++) {
+                chars += attr[i].name.length + 4 + attr[i].value.length;
+            }
+            if((chars * this.tree_char_width) < this.tree_width) {
+                return ' ';
+            }
+            var indent = this.xpos - el.nodeName.length + 3;
+            return '\n' + ' '.repeat(indent);
         },
 
         make_resolver: function () {
@@ -266,14 +309,14 @@
             this.set_message('');
             var el = this.empty(this.registered_namespaces);
             el.appendChild(this.make_namespace_table(this.namespaces, false));
-            if(!this.xml_source) {
+            if(!this.source) {
                 var err = this.element_node('p');
                 err.classList.add('no-source');
                 err.innerText = 'No XML document loaded';
                 this.empty(this.doc_tree).appendChild(err);
                 return;
             }
-            var xml_dom = this.parse_xml(this.xml_source);
+            var xml_dom = this.parse_xml(this.source.xml_source);
             if(xp && xp.match(/\S/)) {
                 try {
                     var result = xml_dom.evaluate(
@@ -287,14 +330,46 @@
                         match = result.iterateNext();
                     }
                     var s = count === 1 ? '' : 'es';
-                    count = count === 0 ? 'no' : count;
-                    this.set_message('Query returned ' + count + ' match' + s, 'success');
+                    var ncount = count === 0 ? 'no' : count;
+                    this.set_message('Query returned ' + ncount + ' match' + s, 'success');
                 }
                 catch (e) {
                     this.set_message(this.resolver_error || e, 'error');
                 }
             }
             this.render_xml(xml_dom);
+            this.activate_nav_buttons(count);
+        },
+
+        activate_nav_buttons: function (count) {
+            if(count === 0) {
+                this.hide('nav_buttons');
+                return;
+            }
+            this.show('nav_buttons');
+            this.match_offsets = [];
+            var doc_tree_top = this.doc_tree.offsetParent.offsetTop;
+            document.querySelectorAll(".xp-match").forEach(function (el){
+                this.match_offsets.push(doc_tree_top + el.offsetTop);
+            }.bind(this));
+        },
+
+        next_match_up: function () {
+            var offset = window.innerHeight / 2;
+            var mid = document.scrollingElement.scrollTop + offset - 5;
+            var next = this.match_offsets.slice().reverse().find(function(m) { return m < mid });
+            if(next) {
+                document.scrollingElement.scrollTop = next - offset;
+            }
+        },
+
+        next_match_down: function () {
+            var offset = window.innerHeight / 2;
+            var mid = document.scrollingElement.scrollTop + offset + 5;
+            var next = this.match_offsets.find(function(m) { return m > mid });
+            if(next) {
+                document.scrollingElement.scrollTop = next - offset
+            }
         },
 
         add_listener: function (el, ev_name, method) {
@@ -330,7 +405,18 @@
         },
 
         show_file_dialog: function () {
-            if(this.new_xml_source === null) {
+            if(this.source) {
+                if(this.source.sample) {
+                    this.source.el.checked = true;
+                    this.file_selector_filename.innerText = '';
+                }
+                else {
+                    this.file_custom.checked = true;
+                    this.file_selector_filename.innerText = this.source.filename;
+                }
+                this.make_namespace_form(this.namespaces);
+            }
+            else {
                 this.file_selector_filename.innerText = '';
                 this.empty(this.file_namespaces);
                 this.file_dialog_save.disabled = true;
@@ -353,7 +439,7 @@
                 if(filename) {
                     var file = this.select_sample_file(filename);
                     if(file) {
-                        this.try_file_parse(file.xml_source);
+                        this.try_file_parse(file);
                     }
                 }
             }
@@ -374,21 +460,24 @@
         },
 
         try_file_upload: function (file) {
-            this.new_xml_source = null;
+            this.new_source = null;
             this.file_dialog_save.disabled = true;
             var reader = new FileReader();
             reader.onload = function () {
                 this.file_selector_filename.innerText = file.name;
-                this.try_file_parse(reader.result);
+                this.try_file_parse({
+                    filename: file.name,
+                    xml_source: reader.result
+                });
             }.bind(this);
             reader.readAsText(file);
         },
 
-        try_file_parse: function (xml_source) {
+        try_file_parse: function (source) {
             try {
-                var dom = this.parse_xml(xml_source);
+                var dom = this.parse_xml(source.xml_source);
                 var ns_list = this.find_namespaces(dom);
-                this.new_xml_source = xml_source;
+                this.new_source = source;
                 this.hide('file_parser_error');
                 this.make_namespace_form(ns_list);
                 this.file_dialog_save.disabled = false;
@@ -499,8 +588,8 @@
 
         save_file_selection: function (e) {
             e.preventDefault();
-            if(this.new_xml_source) {
-                this.xml_source = this.new_xml_source;
+            if(this.new_source) {
+                this.source = this.new_source;
                 this.namespaces = this.namespaces_from_form(e.target);
                 this.show_matches(this.query_xpath.value);
             }
@@ -525,6 +614,8 @@
             this.add_listener('query_form',          'submit', 'submit_form');
             this.add_listener('reset_btn',           'click',  'reset_form');
             this.add_listener('change_file_btn',     'click',  'show_file_dialog');
+            this.add_listener('nav_button_up',       'click',  'next_match_up');
+            this.add_listener('nav_button_down',     'click',  'next_match_down');
             this.add_listener('file_dialog_form',    'change', 'file_radio_change');
             this.add_listener('file_selector_proxy', 'click',  'trigger_file_selection');
             this.add_listener('file_dialog_form',    'submit', 'save_file_selection');
@@ -538,7 +629,7 @@
             this.init_event_handlers();
             this.set_parser_error_ns();
             this.load_sample_sources();
-            this.set_default_xml_source();
+            this.set_default_source();
             this.show_matches(this.query_xpath.value);
             this.query_xpath.focus();
         }
