@@ -26,6 +26,7 @@
             'file-dialog-form',
             'file-selector-input',
             'sample-file-inputs',
+            'file-custom',
             'file-selector-proxy',
             'file-selector-filename',
             'file-parser-error',
@@ -35,8 +36,6 @@
         ],
 
         load_sample_sources: function () {
-            this.new_xml_source = null;
-            this.namespaces = [];
             this.sample_files = [];
             var scripts = hdoc.getElementsByTagName('script');
             for(var i = 0; i < scripts.length; i++) {
@@ -45,6 +44,7 @@
                     var xml_source = scripts[i].innerHTML.trim();
                     this.sample_files.push({
                         filename: filename,
+                        sample: true,
                         xml_source: xml_source
                     });
                 }
@@ -64,17 +64,18 @@
                 var text = this.text_node(' ' + file.filename);
                 label.appendChild(text);
                 container.appendChild(label);
+                file.el = input;
             }.bind(this));
         },
 
-        set_default_xml_source: function () {
-            this.xml_source = '';
+        set_default_source: function () {
+            this.source = null;
+            this.namespaces = [];
             var filename = this.url_param.filename;
             var file = this.select_sample_file(filename);
             if(file) {
-                this.xml_source = file.xml_source;
-                this.selected_sample_file = file.filename;
-                var dom = this.parse_xml(this.xml_source);
+                this.source = file;
+                var dom = this.parse_xml(file.xml_source);
                 this.namespaces = this.find_namespaces(dom);
             }
         },
@@ -266,14 +267,14 @@
             this.set_message('');
             var el = this.empty(this.registered_namespaces);
             el.appendChild(this.make_namespace_table(this.namespaces, false));
-            if(!this.xml_source) {
+            if(!this.source) {
                 var err = this.element_node('p');
                 err.classList.add('no-source');
                 err.innerText = 'No XML document loaded';
                 this.empty(this.doc_tree).appendChild(err);
                 return;
             }
-            var xml_dom = this.parse_xml(this.xml_source);
+            var xml_dom = this.parse_xml(this.source.xml_source);
             if(xp && xp.match(/\S/)) {
                 try {
                     var result = xml_dom.evaluate(
@@ -330,7 +331,18 @@
         },
 
         show_file_dialog: function () {
-            if(this.new_xml_source === null) {
+            if(this.source) {
+                if(this.source.sample) {
+                    this.source.el.checked = true;
+                    this.file_selector_filename.innerText = '';
+                }
+                else {
+                    this.file_custom.checked = true;
+                    this.file_selector_filename.innerText = this.source.filename;
+                }
+                this.make_namespace_form(this.namespaces);
+            }
+            else {
                 this.file_selector_filename.innerText = '';
                 this.empty(this.file_namespaces);
                 this.file_dialog_save.disabled = true;
@@ -353,7 +365,7 @@
                 if(filename) {
                     var file = this.select_sample_file(filename);
                     if(file) {
-                        this.try_file_parse(file.xml_source);
+                        this.try_file_parse(file);
                     }
                 }
             }
@@ -374,21 +386,24 @@
         },
 
         try_file_upload: function (file) {
-            this.new_xml_source = null;
+            this.new_source = null;
             this.file_dialog_save.disabled = true;
             var reader = new FileReader();
             reader.onload = function () {
                 this.file_selector_filename.innerText = file.name;
-                this.try_file_parse(reader.result);
+                this.try_file_parse({
+                    filename: file.name,
+                    xml_source: reader.result
+                });
             }.bind(this);
             reader.readAsText(file);
         },
 
-        try_file_parse: function (xml_source) {
+        try_file_parse: function (source) {
             try {
-                var dom = this.parse_xml(xml_source);
+                var dom = this.parse_xml(source.xml_source);
                 var ns_list = this.find_namespaces(dom);
-                this.new_xml_source = xml_source;
+                this.new_source = source;
                 this.hide('file_parser_error');
                 this.make_namespace_form(ns_list);
                 this.file_dialog_save.disabled = false;
@@ -499,8 +514,8 @@
 
         save_file_selection: function (e) {
             e.preventDefault();
-            if(this.new_xml_source) {
-                this.xml_source = this.new_xml_source;
+            if(this.new_source) {
+                this.source = this.new_source;
                 this.namespaces = this.namespaces_from_form(e.target);
                 this.show_matches(this.query_xpath.value);
             }
@@ -538,7 +553,7 @@
             this.init_event_handlers();
             this.set_parser_error_ns();
             this.load_sample_sources();
-            this.set_default_xml_source();
+            this.set_default_source();
             this.show_matches(this.query_xpath.value);
             this.query_xpath.focus();
         }
