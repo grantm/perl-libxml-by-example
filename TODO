@@ -8,8 +8,7 @@
 
 * XPath sandbox
   - update the URL on submit (allows going back to previous queries)
-  - allow selecting between different canned XML documents
-  - add support for namespaces
+  - Next/Prev match links
 
 Glossary Terms
 

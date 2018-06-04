@@ -166,7 +166,28 @@
         },
 
         render_xml: function (xml_dom) {
+            this.init_metrics();
+            this.xpos = 0;
             this.render_children(this.empty(this.doc_tree), xml_dom.childNodes);
+        },
+
+        init_metrics: function () {
+            var ruler = this.element_node('span', 'metric-ruler');
+            ruler.innerText = 'H'.repeat(30);
+            this.doc_tree.appendChild(ruler);
+            this.tree_char_width = ruler.offsetWidth / 30;
+            this.tree_width = this.doc_tree.offsetWidth - 4 * this.tree_char_width;
+        },
+
+        tracked_text_append: function (parent_node, content) {
+            var nl_offset = content.lastIndexOf('\n');
+            if(nl_offset >= 0) {
+                this.xpos = content.length - nl_offset - 1;
+            }
+            else {
+                this.xpos += content.length;
+            }
+            parent_node.appendChild(this.text_node(content));
         },
 
         render_children: function (out, nodes) {
@@ -175,34 +196,35 @@
                 var node_out = this.element_node('span');
                 if(node.nodeType === node.ELEMENT_NODE) {
                     node_out.classList.add('element');
-                    node_out.appendChild(this.text_node('<'));
+                    this.tracked_text_append(node_out, '<');
                     var ts_out = this.element_node('span', 'tag-name');
-                    ts_out.appendChild(this.text_node(node.nodeName));
+                    this.tracked_text_append(ts_out, node.nodeName);
                     node_out.appendChild(ts_out);
                     this.render_attributes(node_out, node);
-                    node_out.appendChild(this.text_node('>'));
+                    this.tracked_text_append(node_out, '>');
                     var ch_out = this.element_node('span', 'children');
                     this.render_children(ch_out, node.childNodes);
                     node_out.appendChild(ch_out);
-                    node_out.appendChild(this.text_node('</'));
+                    this.tracked_text_append(node_out, '</');
                     var te_out = this.element_node('span', 'tag-name');
-                    te_out.appendChild(this.text_node(node.nodeName));
+                    this.tracked_text_append(te_out, node.nodeName);
                     node_out.appendChild(te_out);
-                    node_out.appendChild(this.text_node('>'));
+                    this.tracked_text_append(node_out, '>');
                 }
                 else if(node.nodeType === node.TEXT_NODE || node.nodeType === node.CDATA_SECTION_NODE) {
+                    var text = node.textContent;
                     node_out.classList.add('text');
-                    node_out.appendChild(this.text_node(node.textContent));
+                    this.tracked_text_append(node_out, text);
                 }
                 else if(node.nodeType === node.COMMENT_NODE) {
                     node_out.classList.add('comment');
-                    node_out.appendChild(this.text_node('<!-- '));
-                    node_out.appendChild(this.text_node(node.textContent));
-                    node_out.appendChild(this.text_node(' -->'));
+                    this.tracked_text_append(node_out, '<!-- ');
+                    this.tracked_text_append(node_out, node.textContent);
+                    this.tracked_text_append(node_out, ' -->');
                 }
                 else {
                     node_out.classList.add('not-implemented');
-                    node_out.appendChild(this.text_node("[Unimplemented nodeType:" + node.nodeType + "]\n"));
+                    this.tracked_text_append(node_out, "[Unimplemented nodeType:" + node.nodeType + "]\n");
                 }
                 if(node._xpsb_match_) {
                     var el_wrap = this.element_node('span', 'xp-match');
@@ -217,18 +239,19 @@
 
         render_attributes: function (out, el) {
             if(!el.hasAttributes) return;
+            var attr_prefix = this.attribute_prefix(el);
             var attr = el.attributes;
             for(var i = 0; i < attr.length; i++) {
-                out.appendChild(this.text_node(' '));
+                this.tracked_text_append(out, attr_prefix);
                 var a_out = this.element_node('span', 'attr');
                 var an_out = this.element_node('span', 'attr-name');
-                an_out.appendChild(this.text_node(attr[i].name));
+                this.tracked_text_append(an_out, attr[i].name);
                 a_out.appendChild(an_out);
-                a_out.appendChild(this.text_node('="'));
+                this.tracked_text_append(a_out, '="');
                 var av_out = this.element_node('span', 'attr-value');
-                av_out.appendChild(this.text_node(attr[i].value));
+                this.tracked_text_append(av_out, attr[i].value);
                 a_out.appendChild(av_out);
-                a_out.appendChild(this.text_node('"'));
+                this.tracked_text_append(a_out, '"');
                 if(attr[i]._xpsb_match_) {
                     var a_wrap = this.element_node('span', 'xp-match');
                     a_wrap.appendChild(a_out);
@@ -238,6 +261,22 @@
                     out.appendChild(a_out);
                 }
             }
+        },
+
+        attribute_prefix: function (el) {
+            var attr = el.attributes;
+            if(attr.length < 2) {
+                return ' ';
+            }
+            var chars = this.xpos;
+            for(var i = 0; i < attr.length; i++) {
+                chars += attr[i].name.length + 4 + attr[i].value.length;
+            }
+            if((chars * this.tree_char_width) < this.tree_width) {
+                return ' ';
+            }
+            var indent = this.xpos - el.nodeName.length + 3;
+            return '\n' + ' '.repeat(indent);
         },
 
         make_resolver: function () {

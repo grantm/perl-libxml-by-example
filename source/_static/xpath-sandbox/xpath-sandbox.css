@@ -188,6 +188,12 @@ body {
   position: relative;
 }
 
+.metric-ruler {
+  border: none;
+  padding: none;
+  visibility: hidden;
+}
+
 #change-file-btn {
   display: inline-block;
   position: absolute;
