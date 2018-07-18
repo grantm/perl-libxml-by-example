@@ -1,7 +1,7 @@
 from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
-from urllib import quote_plus
+from urllib import quote
 
 def setup(app):
     """
@@ -66,7 +66,7 @@ class XPathTryDirective(Directive):
         node['highlight_args'] = {}
         node['linenos'] = False
         url = '_static/xpath-sandbox/xpath-sandbox.html?q='
-        url += quote_plus(xpath_expr)
+        url += quote(xpath_expr, safe='/')
         if 'filename' in self.options:
             url += ';filename=' + self.options.get('filename')
         if 'ns_args' in self.options:

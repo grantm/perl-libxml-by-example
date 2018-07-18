@@ -111,7 +111,7 @@
             var match;
             while (match = parse.exec(qs)) {
                 var name = match[1];
-                var value = decodeURIComponent(match[2]);
+                var value = decodeURIComponent(match[2].replace(/[+]/g, '%20'));
                 this.url_param[name] = value;
                 if(name.substr(0, 6) === 'xmlns:') {
                     this.preferred_prefix[value] = name.substr(6);
