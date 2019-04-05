@@ -157,6 +157,16 @@ are a couple of factors to consider first.  Because the module wraps a C
 library, to install this way you must have a C compiler installed and you must
 have already installed the <code class="docutils literal"><span class="pre">libxml2</span></code> library along with its development
 header files.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Since version 2.0200, the XML::LibXML distribution uses a dependency on
+Alien::Libxml2 to install the <code class="docutils literal"><span class="pre">libxml2</span></code> library if your system does not
+already have it.  So if the easier install options listed below are not
+suitable for your use case, you may be able to just use the normal CPAN
+install process:</p>
+<blockquote class="last">
+<div>cpan install XML::LibXML</div></blockquote>
+</div>
 <p>There may be easier install options for your platform.</p>
 <div class="section" id="installing-on-windows">
 <h2>Installing on Windows<a class="headerlink" href="#installing-on-windows" title="Permalink to this headline">¶</a></h2>
@@ -239,7 +249,7 @@ XML::LibXML Perl module using standard tools such as <code class="docutils liter
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016-2018, Grant McLean.
-      Last updated on 2018-07-18.
+      Last updated on 2019-04-06.
 
     </p>
   </div>
