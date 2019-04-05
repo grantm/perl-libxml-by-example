@@ -9,6 +9,16 @@ library, to install this way you must have a C compiler installed and you must
 have already installed the ``libxml2`` library along with its development
 header files.
 
+.. note::
+
+    Since version 2.0200, the XML::LibXML distribution uses a dependency on
+    Alien::Libxml2 to install the ``libxml2`` library if your system does not
+    already have it.  So if the easier install options listed below are not
+    suitable for your use case, you may be able to just use the normal CPAN
+    install process:
+
+        cpan install XML::LibXML
+
 There may be easier install options for your platform.
 
 Installing on Windows
