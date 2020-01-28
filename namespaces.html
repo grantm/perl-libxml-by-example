@@ -196,7 +196,7 @@ namespace prefix, so it is associated with the URI:
 </div>
 <p>You can confirm using the XPath sandbox that the XPath expression <code class="docutils literal"><span class="pre">//title</span></code>
 does not match either of the <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code> elements in the test document:</p>
-<p><code class="code xpath-try docutils literal"><span class="pre">//title</span><a class="xpath-try-it" href="_static/xpath-sandbox/xpath-sandbox.html?xq=%2F%2Ftitle;filename=xml-libxml.svg">Try it!</a></code></p><p>You can also use the following Perl code to confirm that <code class="docutils literal"><span class="pre">findnodes()</span></code> does
+<p><code class="code xpath-try docutils literal"><span class="pre">//title</span><a class="xpath-try-it" href="_static/xpath-sandbox/xpath-sandbox.html?q=//title;filename=xml-libxml.svg">Try it!</a></code></p><p>You can also use the following Perl code to confirm that <code class="docutils literal"><span class="pre">findnodes()</span></code> does
 not return any matches for the XPath expression <code class="docutils literal"><span class="pre">//title</span></code>:</p>
 <div class="highlight-perl"><div class="highlight"><pre><span class="k">my</span> <span class="nv">$match_count</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="n">findnodes</span><span class="p">(</span><span class="s">&#39;//title&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">;</span>
 <span class="n">say</span> <span class="s">&quot;XPath: //title  Matching node count: $match_count&quot;</span><span class="p">;</span>
@@ -213,9 +213,9 @@ prefix that is being matched, but the URI associated with the prefix.</p>
 <p>Using the XPath sandbox, you can confirm that if we register the &#8216;Dublin Core&#8217;
 namespace URI with the prefix <code class="docutils literal"><span class="pre">dc</span></code>, the XPath expression <code class="docutils literal"><span class="pre">//dc:title</span></code> will
 match the <code class="docutils literal"><span class="pre">&lt;title&gt;</span></code> element in the <code class="docutils literal"><span class="pre">&lt;metadata&gt;</span></code> section:</p>
-<p><code class="code xpath-try docutils literal"><span class="pre">//dc:title</span><a class="xpath-try-it" href="_static/xpath-sandbox/xpath-sandbox.html?xq=%2F%2Fdc%3Atitle;filename=xml-libxml.svg;xmlns:dc=http://purl.org/dc/elements/1.1/">Try it!</a></code></p><p>However if we register the same URI with the prefix <code class="docutils literal"><span class="pre">dublin</span></code> instead then
+<p><code class="code xpath-try docutils literal"><span class="pre">//dc:title</span><a class="xpath-try-it" href="_static/xpath-sandbox/xpath-sandbox.html?q=//dc%3Atitle;filename=xml-libxml.svg;xmlns:dc=http://purl.org/dc/elements/1.1/">Try it!</a></code></p><p>However if we register the same URI with the prefix <code class="docutils literal"><span class="pre">dublin</span></code> instead then
 we can match the same element using the <code class="docutils literal"><span class="pre">dublin</span></code> prefix in our XPath:</p>
-<p><code class="code xpath-try docutils literal"><span class="pre">//dublin:title</span><a class="xpath-try-it" href="_static/xpath-sandbox/xpath-sandbox.html?xq=%2F%2Fdublin%3Atitle;filename=xml-libxml.svg;xmlns:dublin=http://purl.org/dc/elements/1.1/">Try it!</a></code></p><p>In order to associate namespace prefixes in XPath expressions with namespace
+<p><code class="code xpath-try docutils literal"><span class="pre">//dublin:title</span><a class="xpath-try-it" href="_static/xpath-sandbox/xpath-sandbox.html?q=//dublin%3Atitle;filename=xml-libxml.svg;xmlns:dublin=http://purl.org/dc/elements/1.1/">Try it!</a></code></p><p>In order to associate namespace prefixes in XPath expressions with namespace
 URIs, we need to use an <a class="reference external" href="https://metacpan.org/pod/XML::LibXML::XPathContext">XML::LibXML::XPathContext</a> object.  This is a
 multi-step process:</p>
 <ol class="arabic simple">
@@ -308,7 +308,7 @@ namespace prefix as it appears in the document.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2016-2018, Grant McLean.
-      Last updated on 2019-04-06.
+      Last updated on 2020-01-29.
 
     </p>
   </div>
