@@ -186,7 +186,7 @@ passed to ``findnodes()`` is different in each case:
     Will match every ``<movie>`` element at any level of nesting.
 
 In both cases, the XPath expression starts with a '/' which means the search
-will start at the the top of the document.
+will start at the top of the document.
 
 Inside the second script's loop are a number of calls to ``findvalue()``.  This
 is a handy shortcut method that is typically used when you expect the XPath

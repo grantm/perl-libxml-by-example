@@ -139,7 +139,7 @@ but it will also match an element like this:
 The most common way to solve the problem is to add an extra space to the
 beginning and the end of the ``class`` attribute value like this:  ``concat("
 ", @class, " ")`` and then add spaces around the classname we're looking for:
-``' member '``.  Giving a expression like this:
+``' member '``.  Giving an expression like this:
 
 .. literalinclude:: /code/540-html-xpath-classes.pl
     :language: perl
